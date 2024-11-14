@@ -365,29 +365,28 @@ needlessly at the expense of the system.  Consider a very common three-tiered
 application made up of a web page, service and database.  This application
 might include the following languages:
 
-	**UI**: 	  HTML, CSS, browser-based JavaScript/DOM
+	UI:       HTML, CSS, browser-based JavaScript/DOM
 
-	**Service**:  back-end Javascript, cloud configuration
+	Service:  back-end Javascript, cloud configuration
 
-	**Database**: SQL, cloud configuration
+	Database: SQL, cloud configuration
 
 ...and requires knowledge like the following to apply them:
 
-	**UI**: 	  declarative programming, cascading styling HTTP, REST API, 
-  				  TLS, browser modeling, API concurrency
+	UI:       declarative programming, cascading styling HTTP, REST API, 
+              TLS, browser modeling, API concurrency
 
-	**Service**:  HTTP, service concurrency, database integration, 
-		  		  virtualization and deployment, TLS configuration, load 
-		  	      balancing
+	Service:  HTTP, service concurrency, database integration, 
+              virtualization and deployment, TLS configuration, load balancing
 
-	**Database**: relational theory, data modeling, backup strategies
+	Database: relational theory, data modeling, backup strategies
 
 While it is possible one of the often highly sought 'full stack' devs as a
 small company could manage all this, either sooner or later, this technology
 begins to shift into specialized roles where there are at least three categories
 of developer and often many more and the system matures:
 
-	UI: 	   front-end and design
+	UI:        front-end and design
 
 	Service:   back-end, dev-ops
 
@@ -402,7 +401,7 @@ train them in the specialized workings of each silo.
 
 Now compare that with an intentionally abstract, systemic language: 
 ... one syntax uniformly describes UI, processing and storage, eliminating
-    cognitive context switching betwen specialized technologies
+cognitive context switching betwen specialized technologies
 
 ... algorithms are the only required knowledge 
 
@@ -412,7 +411,7 @@ Now compare that with an intentionally abstract, systemic language:
 
 ... code is more durable, not requiring upgrades for new platform behavior
 	
-The secret is that like traditional programming where compilation is
+The secret is that similar to traditional programming where compilation is
 optimized for a local machine and linkage was deferred until all of the local 
 symbols are known, _systemic programming dynamically compiles itself for
 distributed machines and defers linkage until all the distributed symbols *and
