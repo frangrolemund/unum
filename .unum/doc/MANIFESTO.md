@@ -1,5 +1,5 @@
 # The Systemic Manifesto
-By: F.Grolemund
+By: F. Grolemund
 
 ## Overview
 
@@ -119,7 +119,7 @@ historicially, within this context it will be described in the following ways:
 both in explicit results like a return value and implicit ones like 
 internal/state being modified.
 
-- **objective outcome** a linkage outcome that is predicted may be achieved
+- **objective outcome** a linkage outcome that may be predicted and achieved
 
 - **subjective outcome** a linkage outcome that cannot be predicted or was 
 predicted and not achieved.
@@ -176,8 +176,7 @@ for a zero value, although by code inspection or testing we can confirm it
 indeed does what it says it will.
 
 ii. Because each of the points of intersection are only a possible outcome, each
-implicitly has a probability that intersection may generate a outcome.  
-Therefore as developers we would optimistically assign a high probability to the
+implicitly has a probability that intersection may generate a outcome.  Therefore as developers we would optimistically assign a high probability to the 
 function returning 'true' for non-zero and low probility to the function 
 returning 'true' for zero values.
 
@@ -188,6 +187,7 @@ possible outcomes.
 
 iv. If we treat the total number of grid squares with objective outcomes as `O`
 and the total number of subjective ones as `S` it naturally means that:
+
 	O+S = LxM
 
 v. Because the linkage `(LxM)` area represents the set of all permutations of 
@@ -195,6 +195,7 @@ invocation and result, we can imagine that the predictability of linkage
 outcome and by extension its expectation of quality can be generalized to the 
 percentage of objective outcomes.  This will be described as the quality `Q` of
 the linkage such that:
+
 	Q = O / LxM
 
 Everyone who learns to program implicitly gains some degree of understanding of 
@@ -224,11 +225,11 @@ devices between the the caller and the callee.
 - timing differences between local and remote and even between remote 
 invocations depending on networking quality at any point in time
 
-As the overview indicated this third dimension has been quietly and increasingly
-added to modern software over the last thirty years so that we're increasingly
-not working with a linkage area but with a linkage _**volume**_!.  When the 
-distributed vector is considered in a single scenario, it would produce a
-line segment **D** from `k:0 to N` and any one outcome described as 
+As the overview indicated this third dimension has been quietly and more
+frequently added to modern software over the last thirty years so that we're 
+increasingly not working with a linkage area but with a linkage _**volume**_!.
+When the distributed vector is considered in a single scenario, it would 
+produce a line segment **D** from `k:0 to N` and any one outcome described as 
 **(Ii, Bj, Dk)** and part of a space that is `LxMxN` in size.  The negative 
 impact on `Q` that we've all anecdotally noticed in recent years is caused by 
 our means of interacting with that dimension.
@@ -266,16 +267,15 @@ code or throwing an exception ignores the much deeper question of 'what should
 a conscientious developer do with it?'
 
 One possible solution is to rethink software archictectures running in a
-distributed space.  If we're usually going to conceptually write most software 
-in a two-dimensional space, perhaps we can create tools to support that 
-intention.
+distributed space.  If we're usually going to conceptually write our software 
+in a two-dimensional space, perhaps we can create tools to support that mindset.
 
 
 ## Systemic Programming
 
 If we accept that the amount of complexity and unpredictability of modern 
-software is proportional to low quality Q as defined by O/MxNxL, then 
-simplicity and accuracy will be achieved by maximizing Q by reducing each of 
+software is proportional to low quality `Q` as defined by `O/MxNxL`, then 
+simplicity and accuracy will be achieved by maximizing `Q` by reducing each of 
 the three dimensions.  It is from this premise that the concept of _systemic 
 programming_ can be introduced.
 
@@ -287,14 +287,14 @@ hand?  Likely not many, but why?
 The reason they don't is that most don't need to and haven't for a long time.  
 Classic compilers and linkers continued to evolve over the last thirty years 
 to successfully manage complexity for all but the most demanding scenarios.  
-One could argue the I or B dimensions would have been much larger for many of 
-us if not for the continued advancements in that layer of tooling.  Because of 
-this we might imagine that the overall linkage volume of a solution is constant
-for a given problem space, but that the volume can be sub-divided either by 
-code or tooling to manage it.
+One could argue the **I** or **B** dimensions would have been much larger for 
+many of us if not for the continued advancements in that layer of tooling.  
+Because of this we might imagine that the overall linkage volume of a solution 
+is constant for a given problem space, but that the volume can be sub-divided 
+either by code or tooling to manage it.
 
-Many languages and tools appear to be optimizing for invocation and behavior, 
-but rarely for distribution.  Why is that?
+Many languages and tools appear to be optimizing for _invocation_ and 
+_behavior_, but rarely for _distribution_.  Why is that?
 
 One possible reason is that in our desire to quickly and efficiently build our
 next products, we all continue to use the foundational components that have 
@@ -314,31 +314,30 @@ to try to manage every eventuality in the code today.
 Still another reason could be that current language tools were derived from 
 others that didn't need to consider distribution when they were invented.
 Although there is now an increased introduction of concurrency syntax into
-languages now, which further focuses on behavior and sometimes distribution, 
-many of the underlying challenges of the distributed space are unresolved.
+languages now, which further focuses on _behavior_ and sometimes 
+_distribution_, many of the underlying challenges of the distributed space are 
+unresolved.
 
 What would a linker look like that more actively considered the distributed
 vector but also reduced invocation and behavioral dimensions?
 
-	* it would need to reconcile many different common integrations with
-	supporting systems like databases, other services, custom hardware, etc.
+* it would need to reconcile many different common integrations with supporting
+systems like databases, other services, custom hardware, etc.
 
-	* it would need to quickly adapt to changes in platforms or network 
-	topology
+* it would need to quickly adapt to changes in platforms or network topology
 
-	* it would have to address most concurrency pitfalls
+* it would have to address most concurrency pitfalls
 
-	* it would need to operate more abstractly so that processing could 
-	adapt to new technologies without developers needing to dive deeply 
-	into and learn yet another technical layer in order to deliver the same
-	fundamental algorithms
+* it would need to operate more abstractly so that processing could adapt to 
+new technologies without developers needing to dive deeply into and learn yet 
+another technical layer in order to deliver the same fundamental algorithms
 
 Because each of these features mandate that our hypothetical distributed linker
 coordinate with processing abstractions while intimately understanding and
-adapting its runtime behavior and also bridging between systems of programming, 
-platform, and services, it is obvious we need to a different approach for
-developing complex software.  To that end, we'll refer to the philosophy of
-that approach as _systemic programming_.
+adapting its runtime behavior while also bridging between systems of 
+programming, platform, and services, it is obvious we need to a different 
+approach for developing complex software.  To that end, we'll refer to the 
+philosophy of that approach as _systemic programming_.
 
 Systemic programming is to the development of software in which algorithms and 
 processing are organized into isolated domains called systems and combined 
@@ -347,17 +346,16 @@ its deployment across all physical and often network-connected resources.
 
 In order to be systemic, a solution must provide:
 
-	* a single, abstract programming language that normalizes all processing
-	into a common syntax that clearly defines service boundaries and data
-	movement
+* a single, abstract programming language that normalizes all processing into a
+common syntax that clearly defines service boundaries and data movement
 
-	* a general-purpose kernel that is deployed to all coordinating
-	physical platforms to provide security, versioning, compilation, 
-	deployment, execution, and integration with external systems
+* a general-purpose kernel that is deployed to all coordinating physical 
+platforms to provide security, versioning, compilation, deployment, execution, 
+and integration with external systems
 
-	* comprehensive runtime anaylytics that provide an immediate feedback 
-	loopback into deployment and the coordation of the service kernels 
-	based on runtime activity and operating statistics
+* comprehensive runtime anaylytics that provide an immediate feedback loop back 
+into deployment to automatically coordinate the behavior of service kernels 
+based on runtime activity and operating statistics
 
 
 ### Systemic - Language
@@ -367,22 +365,22 @@ needlessly at the expense of the system.  Consider a very common three-tiered
 application made up of a web page, service and database.  This application
 might include the following languages:
 
-	UI: 	  HTML, CSS, browser-based JavaScript/DOM
+	**UI**: 	  HTML, CSS, browser-based JavaScript/DOM
 
-	Service:  back-end Javascript, cloud configuration
+	**Service**:  back-end Javascript, cloud configuration
 
-	Database: SQL, cloud configuration
+	**Database**: SQL, cloud configuration
 
 ...and requires knowledge like the following to apply them:
 
-	UI: 	  declarative programming, cascading styling HTTP, REST API, 
-		  TLS, browser modeling, API concurrency
+	**UI**: 	  declarative programming, cascading styling HTTP, REST API, 
+  				  TLS, browser modeling, API concurrency
 
-	Service:  HTTP, service concurrency, database integration, 
-		  virtualization and deployment, TLS configuration, load 
-		  balancing
+	**Service**:  HTTP, service concurrency, database integration, 
+		  		  virtualization and deployment, TLS configuration, load 
+		  	      balancing
 
-	Database: relational theory, data modeling, backup strategies
+	**Database**: relational theory, data modeling, backup strategies
 
 While it is possible one of the often highly sought 'full stack' devs as a
 small company could manage all this, either sooner or later, this technology
