@@ -1,5 +1,5 @@
 # The Systemic Manifesto
-By: F. Grolemund
+By: F. Grolemund, 2024
 
 ## Overview
 
@@ -434,8 +434,8 @@ binary, when requirements changed, a developer wrote code and then
 compiled/linked it before executing it.
 
 	coding  -->  compile  -->  link  -->  run
-	  ^		         ^
-       [manual]	    [        automated           ]
+	   ^                     ^
+	[manual]    [        automated           ]
 
 With the introduction of distributed linkage in addition to internal, the 
 link step is shifted into the coding phase and involves coordination with the 
@@ -445,8 +445,8 @@ favor of interpreted languages to try to regain some iteration efficiency:
 	ui:              --> coding  -->  interpret -->  
 	service:    link --> coding  -->  interpret -->  run
 	database:        --> coding  -->  interpret --> 
-	                    ^		       ^
-                   [     manual    ]	  [ automated ]
+	                   ^		          ^
+	           [     manual    ]     [ automated ]
  
 This sequence shows that not only did much of today's software require new 
 manual steps of coordinating between technologies or platforms, but in
@@ -456,32 +456,32 @@ number of coordinating tiers/platforms:
 To be more specific, the manual linking 'costs' mentioned here often include
 the following tasks:
 
-	* marshalling data between one system and the other
+* marshalling data between one system and the other
 
-	* reaching a common understanding of the data model
+* reaching a common understanding of the data model
 
-	* achieving the performance requirements for co-dependent operations
+* achieving the performance requirements for co-dependent operations
 
-	* ensuring secure access and user privacy
+* ensuring secure access and user privacy
 
-	* translating and reconciling with different technical solutions
+* translating and reconciling with different technical solutions
 
-	* understanding and mitigating distributed failure scenarios
+* understanding and mitigating distributed failure scenarios
 
-	* ensuring transactional updates to data
+* ensuring transactional updates to data
 
-	* deploying and/or scaling resources according to demand
+* deploying and/or scaling resources according to demand
 
-	* documenting all the linkage choices so that future modifications
+* documenting all the linkage choices so that future modifications
 	can consider and/or replace them
 
-	...these are all _recently acquired costs, independent of the actual 
-	logic of the system AND must be performed *every* time a new product
-	requirement is implemented_!
+...these are all _recently acquired costs, independent of the actual logic of 
+the system AND must be performed *every* time a new product requirement is 
+implemented_!
 
 With these in mind it is alarmingly more accurate to say that the costs of
-manual development work grows with O(n^2) as the number of systems
-multiplied by the number of manual link tasks that are performed!
+manual development work grows with O(n^2) as the number of systems multiplied by
+the number of manual link tasks that are performed!
 
 It is no wonder that software is so much more expensive to build today while 
 performing so poorly compared to legacy achievements.  It also explains the 
@@ -560,7 +560,7 @@ time to enjoy its benefits.  If at some point in our year, we realized that to
 mitigate problems with the solid state drives (SSD) we need to offline half of 
 the nodes to replace the hardware, we'd refactor the code of our algorithm to 
 support dynamic rebalancing of network load while hardware fixes are performed.
-In this example the product would become more deterministic in the face of 
+In this example, the product would become more deterministic in the face of 
 these challenges by analyzing and adjusting how it links the nodes together.
 
 Since few real world scenarios on the Internet aren't as contrived as the 
@@ -582,13 +582,13 @@ measure of self-criticism in the software industry.  Whether the terminology
 is the same, we've noticed how much time spent on 'linkage' doesn't by itself
 add product value.  It can feel like an accomplishment to build a working mobile
 app that communicates through a gateway into a back-end microservice 
-architecture until you see how long it display a simple list of items with some
-trivial actions for each.  In the past year as the economy has cooled, many once
-gainfully employed fullstack devs have been laid off in all sectors.  If the 
-costs are simply too high to display that mobile list, one can appreciate
-businesess deciding to simply operate without it.  It is sadly easy to predict
-that someone who is paid a high premium but gets less done each year will
-eventually not justify continued investment.
+architecture until you reflect upon how much effort was required to display a 
+simple list of items with some trivial actions for each.  In the past year as 
+the economy has cooled, many once gainfully employed fullstack devs have been 
+laid off in all sectors.  If the costs are simply too high to display that 
+mobile list, one can appreciate businesess deciding to simply operate without 
+it.  It is sadly easy to predict that someone who is paid a high premium but 
+gets less done each year will eventually not justify continued investment.
 
 The encouraging counterpoint is that we've spent 30 years exploring countless 
 areas of research in computer science.  Many aspects of hardware, language, 
