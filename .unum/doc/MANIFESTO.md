@@ -169,29 +169,30 @@ possible outcome, the two segments represent a co-dependent relationship of
 linkage that we can treat as _two-dimensional_ and begin to draw some 
 conclusions about that relationship:
 
-i. Each of the points of intersection are only _a possible outcome, not a 
+**i.** Each of the points of intersection are only _a possible outcome, not a 
 guaranteed one_.  That is, we may understand that a hypothetial function which 
 accepts a byte and returns `true` for a non-zero value _could_ return `true` 
 for a zero value, although by code inspection or testing we can confirm it 
 indeed does what it says it will.
 
-ii. Because each of the points of intersection are only a possible outcome, each
-implicitly has a probability that intersection may generate a outcome.  Therefore as developers we would optimistically assign a high probability to the 
+**ii.** Because each of the points of intersection are only a possible outcome,
+each implicitly has a probability that intersection may generate a outcome.  
+Therefore as developers we would optimistically assign a high probability to the
 function returning 'true' for non-zero and low probility to the function 
 returning 'true' for zero values.
 
-iii. Because each permutation along vectors is discrete, we can display the 
+**iii.** Because each permutation along vectors is discrete, we can display the 
 graph as a grid of squares representing co-dependent relationships at 
 **(Ii, Bj)** and assign the area between them `(LxM)` as the working set of 
 possible outcomes.
 
-iv. If we treat the total number of grid squares with objective outcomes as `O`
-and the total number of subjective ones as `S` it naturally means that:
+**iv.** If we treat the total number of grid squares with objective outcomes as
+`O` and the total number of subjective ones as `S` it naturally means that:
 
 	O+S = LxM
 
-v. Because the linkage `(LxM)` area represents the set of all permutations of 
-invocation and result, we can imagine that the predictability of linkage 
+**v.** Because the linkage `(LxM)` area represents the set of all permutations 
+of invocation and result, we can imagine that the predictability of linkage 
 outcome and by extension its expectation of quality can be generalized to the 
 percentage of objective outcomes.  This will be described as the quality `Q` of
 the linkage such that:
@@ -274,7 +275,7 @@ in a two-dimensional space, perhaps we can create tools to support that mindset.
 ## Systemic Programming
 
 If we accept that the amount of complexity and unpredictability of modern 
-software is proportional to low quality `Q` as defined by `O/MxNxL`, then 
+software is proportional to low quality `Q` as defined by `O / MxNxL`, then 
 simplicity and accuracy will be achieved by maximizing `Q` by reducing each of 
 the three dimensions.  It is from this premise that the concept of _systemic 
 programming_ can be introduced.
@@ -286,11 +287,11 @@ hand?  Likely not many, but why?
 
 The reason they don't is that most don't need to and haven't for a long time.  
 Classic compilers and linkers continued to evolve over the last thirty years 
-to successfully manage complexity for all but the most demanding scenarios.  
-One could argue the **I** or **B** dimensions would have been much larger for 
-many of us if not for the continued advancements in that layer of tooling.  
-Because of this we might imagine that the overall linkage volume of a solution 
-is constant for a given problem space, but that the volume can be sub-divided 
+to successfully manage complexity for all but the most demanding scenarios.  One
+could argue the **I** or **B** dimensions would have been much larger for many 
+of us if not for the continued advancements in that layer of tooling.  Because 
+of this we might imagine that the overall linkage volume of a solution is 
+constant for a given problem space, but that the volume can be sub-divided 
 either by code or tooling to manage it.
 
 Many languages and tools appear to be optimizing for _invocation_ and 
@@ -450,8 +451,8 @@ favor of interpreted languages to try to regain some iteration efficiency:
  
 This sequence shows that not only did much of today's software require new 
 manual steps of coordinating between technologies or platforms, but in
-algorithmic notation, the cost of the manual work grows with O(n) where n = the
-number of coordinating tiers/platforms:
+algorithmic notation, the cost of the manual work grows with `O(n)` where 
+n equals the number of coordinating tiers/platforms:
 
 To be more specific, the manual linking 'costs' mentioned here often include
 the following tasks:
@@ -480,8 +481,8 @@ the system AND must be performed *every* time a new product requirement is
 implemented_!
 
 With these in mind it is alarmingly more accurate to say that the costs of
-manual development work grows with O(n^2) as the number of systems multiplied by
-the number of manual link tasks that are performed!
+manual development work grows with `O(n^2)` as the number of systems multiplied
+by the number of manual link tasks that are performed!
 
 It is no wonder that software is so much more expensive to build today while 
 performing so poorly compared to legacy achievements.  It also explains the 
@@ -501,14 +502,14 @@ programming.  The s-kernel operates as a realtime linker for the entire product
 architecture.
 
 While it might be easy to dismiss the s-kernel 'is just another form of CI/CD' 
-or 'a type of code generation', and although it includes both of those features,
+or 'a type of code generation', and while it applies both of those techniques,
 what makes it unique is that it performs those and other tasks _holistically_ 
 with complete knowledge of the system and its resources as described by its 
-implementation language.  Unlike custom build tools or infrastructure/platform-
-as-code approaches, the s-kernel uses the application programming language to
-compute the optimal configurations for processing, platform and infrastructure
-based on the best information at that moment, while allowing for a completely
-new deployment to emerge in the next based on new information.
+implementation language.  Unlike custom build tools or platform-as-code 
+approaches, the s-kernel uses the application programming language to compute 
+the optimal configurations for processing, platform and infrastructure based on
+the best information at that moment, while allowing for a completely new 
+deployment to emerge in the next based on new information.
 
 
 ### Systemic - Analytics
