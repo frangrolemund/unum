@@ -400,6 +400,7 @@ replacing or onboarding to not only ensure equivalent experience but to also
 train them in the specialized workings of each silo.
 
 Now compare that with an intentionally abstract, systemic language: 
+
 ... one syntax uniformly describes UI, processing and storage, eliminating
 cognitive context switching betwen specialized technologies
 
