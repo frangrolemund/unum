@@ -17,7 +17,7 @@ development often required a combionation of both compiling and then _linking_
 of software to other libraries on the same system to benefit from modularizing 
 or sharing algorithms and common implementations.  This was so useful to 
 development that the _linker_ was a dedicated tool used to compute and
-guarantee the most highly efficient interaction between dependent codebases.
+guarantee the most efficient interaction between dependent codebases.
 
 When the industry moved away from platform-specific binaries and towards Just In
 Time (JIT) compilation or interpreted script, the idea of linkage was hidden 
@@ -25,8 +25,8 @@ from most workflows, even though it still existed.  Although binary code is
 generated on the fly or a script quickly starts and processes a file with 
 regular expressions, something deep inside the toolchain connected the code from
 one codebase to another.  Maybe it was from a main program and into the system 
-libraries or maybe it was between two components of a larger program.  In both 
-cases the act of linking, now dynamically, allowed the different codepaths to 
+libraries or it was between two components of a larger program.  In both cases 
+the act of linking, now dynamically, allowed the different codepaths to 
 coordinate.
 
 The purpose of these early shifts was to simplify the process of dealing with
@@ -44,10 +44,11 @@ obscured, developers could rely on invariants like process isolation, fast
 memory accesses, and most importantly - reliabily deterministic linkage.  When 
 two functions are linked together in a single process, the operation of moving
 the CPU's instruction pointer from one function to an instruction in another
-_cannot fail_, which becomes an indepespensible asset while writing software.  
-Although a function may return an error computed from is processing for any 
-number of reasons, the _act of invoking another function call_ will never generate any error.  Conversely, that hasn't largely been the behavior on the Internet
-even though many still operate as if it were.
+_cannot fail_, which becomes an indepespensible invariant while writing 
+software.  Although a function may return an error computed from is processing 
+for any number of reasons, the _act of invoking another function call_ will 
+never generate any error.  Conversely, that hasn't largely been the behavior on
+the Internet even though many still operate as if it were.
 
 The act of calling a remote function from one system to another over
 networking can fail for a myriad of reasons.  It requires the two systems are
@@ -57,7 +58,7 @@ received with precise expectations about the sequence of each byte and type of
 information.  It requires there's a program on the other end that is listening 
 and has the capacity to respond to a request.  It requires the electricity stays
 on for _every computer between the first one, through all the routers and 
-gateways and into the destination _and back again_.  If any one of these 
+gateways and into the destination and back again_.  If any one of these 
 requirements are not met, the function will fail.  If we imagine that moving 
 the instruction pointer on a single CPU is one-dimensional linkage, and 
 understanding the domain of inputs and outputs for a local function is 
@@ -86,18 +87,18 @@ and back-again.  When startups eventually succeed, their only choice is to
 specialize each of these responsibilities with specific people and teams.  This
 can be summarized in two ways:
 
-- creating new software requires literal understanding of the linkage between 
-dozens of different technologies and efficient application by a few developers.
-This usually guarantees that only the most capable developers who can juggle and
-rapidly shift between many different concepts can build new companies or solve 
-new problems.
+- quickly creating new, modern software requires literal understanding of 
+_binary linkage_ between dozens of different technologies and programming 
+platforms.  This usually guarantees that only the most capable developers who 
+can juggle and rapidly shift between many different concepts can build 
+companies or solve new problems.
 
 - growing existing successful software requires conceptual understanding of the
 linkage between dozens of different technologies, efficient specializations by 
-many developers, and strong _organizational linkage_.  This usually guarantees 
-that many successful startups never grow beyond moderate success for lack of the
-necessary organization and the ones who do have such economies of scale as to 
-make competition impossible.
+many developers, while applying strong _organizational linkage_.  This usually 
+guarantees that many successful startups never grow beyond moderate success for
+lack of the necessary organization and the ones who do succeed have such 
+economies of scale as to make competition impossible.
 
 There is an opportunity for much of the world's software to move beyond these
 costs of linkage by revisiting our assumptions about programming.
