@@ -18,10 +18,8 @@
 # --------------------------------------------------------------
 .PHONY : all clean
 
-# Common
 BOOT := ./.unum/boot
 
-# Targets
 all : $(BOOT)/uboot
 	@$(BOOT)/uboot --cc=$(CC) --ccflags=$(CFLAGS) --ld=$(LD) --ldflags=$(LDFLAGS) --ldlibs=$(LDLIBS)
 
