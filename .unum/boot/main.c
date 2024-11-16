@@ -28,11 +28,56 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
 
+// - types
+typedef enum {
+	WINDOWS = 0,
+	MACOS,
+	LINUX,
+	UNKNOWN	
+} platform_t;
+
+// - forward declarations
+void abortFail(const char *msg);
+void detectPathSep();
+
+// - state
+char 		pathSep;
+platform_t 	platformType	= UNKNOWN;
+
+/*
+ *  The start of it all.
+ */
 int main(int argc, char *argv[]) {
-	printf("inside unum boot...\n");
+	detectPathSep();
+
+	printf("inside unum boot (sep=%c)...\n", pathSep);
 
 	while (--argc) {
 		printf("arg --> %s\n", *++argv);		
 	}
+
+	return 0;
+}
+
+
+void abortFail(const char *msg) {
+	printf("boot error: %s\n", msg);
+	exit(1);
+}
+
+
+void detectPathSep() {
+	const char *path = getenv("PATH");
+	char c;
+
+	while (path && (c = *path++)) {
+		if (c == '/' || c == '\\') {
+			pathSep = c;
+			return;
+		}
+	}
+
+	abortFail("missing PATH environment");
 }
