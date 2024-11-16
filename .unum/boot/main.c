@@ -29,8 +29,19 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 // - types
+typedef enum {
+	T_CC = 0,
+	T_CFLAGS,
+	T_LD,
+	T_LDFLAGS,
+	T_LDLIBS,
+
+	T_COUNT
+} tool_t;
+
 typedef enum {
 	WINDOWS = 0,
 	MACOS,
@@ -41,29 +52,29 @@ typedef enum {
 // - forward declarations
 void abortFail(const char *msg);
 void detectPathSep();
+const char *parseOption(const char *optName, const char *from);
+void parseCmdLine(int argc, char *argv[]);
 
 // - state
-char 		pathSep;
-platform_t 	platformType	= UNKNOWN;
+char 			pathSep;
+platform_t 		platformType	= UNKNOWN;
+const char *	tools[T_COUNT]  = { NULL, NULL, NULL, NULL, NULL };
 
 /*
  *  The start of it all.
  */
 int main(int argc, char *argv[]) {
 	detectPathSep();
+	parseCmdLine(argc, argv);
 
-	printf("inside unum boot (sep=%c)...\n", pathSep);
-
-	while (--argc) {
-		printf("arg --> %s\n", *++argv);		
-	}
+	printf("inside uboot...\n");
 
 	return 0;
 }
 
 
 void abortFail(const char *msg) {
-	printf("boot error: %s\n", msg);
+	printf("uboot error: %s\n", msg);
 	exit(1);
 }
 
@@ -80,4 +91,38 @@ void detectPathSep() {
 	}
 
 	abortFail("missing PATH environment");
+}
+
+const char *parseOption(const char *optName, const char *from) {
+	char optPrefix[64];
+	snprintf(optPrefix, sizeof(optPrefix), "--%s=", optName);
+	if (strncmp(from, optPrefix, strlen(optPrefix))) {
+		return NULL;	
+	}
+	return from + strlen(optPrefix);
+}
+
+void parseCmdLine(int argc, char *argv[]) {
+	const char *opt = NULL;
+	int i;
+	while (--argc) {
+		const char *item = *++argv;
+		if ((opt = parseOption("cc", item))) {
+			tools[T_CC] = opt;
+		} else if ((opt = parseOption("ccflags", item))) {
+			tools[T_CFLAGS] = opt;
+		} else if ((opt = parseOption("ld", item))) {
+			tools[T_LD] = opt;
+		} else if ((opt = parseOption("ldflags", item))) {
+			tools[T_LDFLAGS] = opt;
+		} else if ((opt = parseOption("ldlibs", item))) {
+			tools[T_LDLIBS] = opt;
+		}
+	}
+
+	for (i = 0; i < T_COUNT; i++) {
+		if (!tools[i]) {
+			abortFail("missing one or more required tool parameters.");
+		}
+	}
 }
