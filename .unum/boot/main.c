@@ -53,18 +53,18 @@ typedef enum {
 } platform_t;
 
 // - forward declarations
-void abortFail(const char *msg);
-void detectPathSep();
-void detectPlatform();
-int execCC(const char *code);
-const char *parseOption(const char *optName, const char *from);
-void parseCmdLine(int argc, char *argv[]);
+static void abortFail(const char *msg);
+static void detectPathSep();
+static void detectPlatform();
+static int execCC(const char *code);
+static const char *parseOption(const char *optName, const char *from);
+static void parseCmdLine(int argc, char *argv[]);
 
 // - state
-char 			pathSep;
-platform_t 		platform 		= P_UNKNOWN;
-const char *	tools[T_COUNT]  = { NULL, NULL, NULL, NULL, NULL };
-FILE *			altErr			= NULL;
+static char 			pathSep;
+static platform_t 		platform 		= P_UNKNOWN;
+static const char *		tools[T_COUNT]  = { NULL, NULL, NULL, NULL, NULL };
+static FILE *			altErr			= NULL;
 
 
 int main(int argc, char *argv[]) {
@@ -84,13 +84,13 @@ int main(int argc, char *argv[]) {
 }
 
 
-void abortFail(const char *msg) {
+static void abortFail(const char *msg) {
 	fprintf(altErr ? altErr : stdout, "uboot error: %s\n", msg);
 	exit(1);
 }
 
 
-void detectPathSep() {
+static void detectPathSep() {
 	const char *path = getenv("PATH");
 	char c;
 
@@ -104,7 +104,7 @@ void detectPathSep() {
 	abortFail("missing PATH environment");
 }
 
-const char *parseOption(const char *optName, const char *from) {
+static const char *parseOption(const char *optName, const char *from) {
 	char optPrefix[64];
 	snprintf(optPrefix, sizeof(optPrefix), "--%s=", optName);
 	if (strncmp(from, optPrefix, strlen(optPrefix))) {
@@ -113,7 +113,7 @@ const char *parseOption(const char *optName, const char *from) {
 	return from + strlen(optPrefix);
 }
 
-void parseCmdLine(int argc, char *argv[]) {
+static void parseCmdLine(int argc, char *argv[]) {
 	const char *opt = NULL;
 	int i;
 	while (--argc) {
@@ -138,7 +138,7 @@ void parseCmdLine(int argc, char *argv[]) {
 	}
 }
 
-int execCC(const char *source) {
+static int execCC(const char *source) {
 	const char *tmpEnv[] 	= { "TMPDIR", "TMP", "TEMP", "TEMPDIR", NULL };
 	int i, rc;
 	char srcName[PATH_MAX]	= "\0";
@@ -177,7 +177,7 @@ int execCC(const char *source) {
 	return rc;
 }
 
-void detectPlatform() {
+static void detectPlatform() {
 	if (execCC(	"#include <Carbon/Carbon.h>\n"	
 				"#include <stdio.h>\n\n"
 				"int main(int argc, char **argv) {\n"
