@@ -20,16 +20,19 @@
 /*
  *  The purpose of bootstrapping is to ingest the C compiler environment
  *  from a platform-specific toolchain (ie. `make`) into the 
- *  platform-independent `unum` toolchain and have the latter take over further
- *  build processing.  
+ *  platform-independent `unum` toolchain to allow the latter take over all
+ *  further build processing.  
  *
  *  This program figures out where it is running, encodes fundamental 
- *  configuration and builds the first `unum` kernel.
+ *  configuration and builds the first `unum` kernel.  The objective is for
+ *  it to be as minimal as possible without confusing the process.
  */
 
+#include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 // - types
 typedef enum {
@@ -43,29 +46,37 @@ typedef enum {
 } tool_t;
 
 typedef enum {
-	WINDOWS = 0,
-	MACOS,
-	LINUX,
-	UNKNOWN	
+	P_WINDOWS = 0,
+	P_MACOS,
+	P_LINUX,
+	P_UNKNOWN	
 } platform_t;
 
 // - forward declarations
 void abortFail(const char *msg);
 void detectPathSep();
+void detectPlatform();
+int execCC(const char *code);
 const char *parseOption(const char *optName, const char *from);
 void parseCmdLine(int argc, char *argv[]);
 
 // - state
 char 			pathSep;
-platform_t 		platformType	= UNKNOWN;
+platform_t 		platform 		= P_UNKNOWN;
 const char *	tools[T_COUNT]  = { NULL, NULL, NULL, NULL, NULL };
+FILE *			altErr			= NULL;
 
-/*
- *  The start of it all.
- */
+
 int main(int argc, char *argv[]) {
-	detectPathSep();
+	// - don't spam stderr with system()
+	altErr = fdopen(dup(fileno(stderr)), "w");
+	fclose(stderr);
+
 	parseCmdLine(argc, argv);
+	detectPathSep();
+	detectPlatform();
+
+	
 
 	printf("inside uboot...\n");
 
@@ -74,7 +85,7 @@ int main(int argc, char *argv[]) {
 
 
 void abortFail(const char *msg) {
-	printf("uboot error: %s\n", msg);
+	fprintf(altErr ? altErr : stdout, "uboot error: %s\n", msg);
 	exit(1);
 }
 
@@ -125,4 +136,56 @@ void parseCmdLine(int argc, char *argv[]) {
 			abortFail("missing one or more required tool parameters.");
 		}
 	}
+}
+
+int execCC(const char *source) {
+	// ...avoids the scary warning from macos for using tmpnam
+	const char *tmpEnv[] 	= { "TMPDIR", "TMP", "TEMP", "TEMPDIR", NULL };
+	int i, rc;
+	char srcName[PATH_MAX]	= "\0";
+	char binName[PATH_MAX];
+	char ccCmd[2048];
+	FILE *srcFile;
+
+	for (i = 0; tmpEnv[i]; i++) {
+		const char *eVal;
+		if ((eVal = getenv(tmpEnv[i]))) {
+			snprintf(srcName, PATH_MAX, "%s%cunum-boot.c", eVal, pathSep);
+			break;
+		}
+	}
+
+	if (!srcName[0]) {
+		abortFail("failed to find temp directory.");
+	}
+
+	snprintf(binName, PATH_MAX, "%s.out", srcName);
+
+	srcFile = fopen(srcName, "w");
+	if (!srcFile || !fwrite(source, strlen(source), 1, srcFile)) {
+		abortFail("failed to create temp file.");
+	}
+	fclose(srcFile);
+
+	snprintf(ccCmd, sizeof(ccCmd), "%s -o %s %s", 
+				tools[T_CC], binName, srcName);
+
+	rc = system(ccCmd);	
+	unlink(srcName);
+	unlink(binName);
+
+	return rc;
+}
+
+void detectPlatform() {
+	if (execCC(	"#include <Carbon/Carbon.h>\n"	
+				"#include <stdio.h>\n\n"
+				"int main(int argc, char **argv) {\n"
+				"  printf(\"hello unum\");\n"
+				"}\n") == 0) {
+		platform = P_MACOS;
+		return;
+	}
+
+	abortFail("unsupported platform type");
 }
