@@ -139,7 +139,6 @@ void parseCmdLine(int argc, char *argv[]) {
 }
 
 int execCC(const char *source) {
-	// ...avoids the scary warning from macos for using tmpnam
 	const char *tmpEnv[] 	= { "TMPDIR", "TMP", "TEMP", "TEMPDIR", NULL };
 	int i, rc;
 	char srcName[PATH_MAX]	= "\0";
@@ -147,6 +146,7 @@ int execCC(const char *source) {
 	char ccCmd[2048];
 	FILE *srcFile;
 
+	// ...avoids the scary warning from macos for using tmpnam
 	for (i = 0; tmpEnv[i]; i++) {
 		const char *eVal;
 		if ((eVal = getenv(tmpEnv[i]))) {
