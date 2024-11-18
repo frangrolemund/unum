@@ -53,28 +53,28 @@ typedef enum {
 } platform_t;
 
 // - forward declarations
-static void abortFail(const char *msg);
-static void detectPathSep();
-static void detectPlatform();
-static int execCC(const char *code);
-static const char *parseOption(const char *optName, const char *from);
-static void parseCmdLine(int argc, char *argv[]);
+static void abort_fail(const char *msg);
+static void detect_path_style();
+static void detect_platform();
+static int exec_cc(const char *code);
+static const char *parse_option(const char *optName, const char *from);
+static void parse_cmd_line(int argc, char *argv[]);
 
 // - state
-static char 			pathSep;
+static char 			path_sep;
 static platform_t 		platform 		= P_UNKNOWN;
 static const char *		tools[T_COUNT]  = { NULL, NULL, NULL, NULL, NULL };
-static FILE *			altErr			= NULL;
+static FILE *			uberr			= NULL;
 
 
 int main(int argc, char *argv[]) {
 	// - don't spam stderr with system()
-	altErr = fdopen(dup(fileno(stderr)), "w");
+	uberr = fdopen(dup(fileno(stderr)), "w");
 	fclose(stderr);
 
-	parseCmdLine(argc, argv);
-	detectPathSep();
-	detectPlatform();
+	parse_cmd_line(argc, argv);
+	detect_path_style();
+	detect_platform();
 
 	
 
@@ -84,101 +84,104 @@ int main(int argc, char *argv[]) {
 }
 
 
-static void abortFail(const char *msg) {
-	fprintf(altErr ? altErr : stdout, "uboot error: %s\n", msg);
+static void abort_fail(const char *msg) {
+	fprintf(uberr ? uberr : stdout, "uboot error: %s\n", msg);
 	exit(1);
 }
 
 
-static void detectPathSep() {
-	const char *path = getenv("PATH");
-	char c;
+static void detect_path_style() {
+	const char 	*path = getenv("PATH");
+	char 		c;
 
 	while (path && (c = *path++)) {
 		if (c == '/' || c == '\\') {
-			pathSep = c;
+			path_sep = c;
 			return;
 		}
 	}
 
-	abortFail("missing PATH environment");
+	abort_fail("missing PATH environment");
 }
 
-static const char *parseOption(const char *optName, const char *from) {
-	char optPrefix[64];
-	snprintf(optPrefix, sizeof(optPrefix), "--%s=", optName);
-	if (strncmp(from, optPrefix, strlen(optPrefix))) {
+static const char *parse_option(const char *optName, const char *from) {
+	char 	prefix[64];
+
+	snprintf(prefix, sizeof(prefix), "--%s=", optName);
+	if (strncmp(from, prefix, strlen(prefix))) {
 		return NULL;	
 	}
-	return from + strlen(optPrefix);
+
+	return from + strlen(prefix);
 }
 
-static void parseCmdLine(int argc, char *argv[]) {
-	const char *opt = NULL;
-	int i;
+static void parse_cmd_line(int argc, char *argv[]) {
+	const char 	*opt = NULL;
+	int 		i;
+
 	while (--argc) {
 		const char *item = *++argv;
-		if ((opt = parseOption("cc", item))) {
+		if ((opt = parse_option("cc", item))) {
 			tools[T_CC] = opt;
-		} else if ((opt = parseOption("ccflags", item))) {
+		} else if ((opt = parse_option("ccflags", item))) {
 			tools[T_CFLAGS] = opt;
-		} else if ((opt = parseOption("ld", item))) {
+		} else if ((opt = parse_option("ld", item))) {
 			tools[T_LD] = opt;
-		} else if ((opt = parseOption("ldflags", item))) {
+		} else if ((opt = parse_option("ldflags", item))) {
 			tools[T_LDFLAGS] = opt;
-		} else if ((opt = parseOption("ldlibs", item))) {
+		} else if ((opt = parse_option("ldlibs", item))) {
 			tools[T_LDLIBS] = opt;
 		}
 	}
 
 	for (i = 0; i < T_COUNT; i++) {
 		if (!tools[i]) {
-			abortFail("missing one or more required tool parameters.");
+			abort_fail("missing one or more required tool parameters.");
 		}
 	}
 }
 
-static int execCC(const char *source) {
-	const char *tmpEnv[] 	= { "TMPDIR", "TMP", "TEMP", "TEMPDIR", NULL };
-	int i, rc;
-	char srcName[PATH_MAX]	= "\0";
-	char binName[PATH_MAX];
-	char ccCmd[2048];
-	FILE *srcFile;
+static int exec_cc(const char *source) {
+	const char 	*tmp_env[] 	= { "TMPDIR", "TMP", "TEMP", "TEMPDIR", NULL };
+	int 		i, rc;
+	char 		src_name[PATH_MAX]	= "\0";
+	char 		bin_name[PATH_MAX];
+	char 		cc_cmd[2048];
+	FILE 		*src_file;
 
 	// ...avoids the scary warning from macos for using tmpnam
-	for (i = 0; tmpEnv[i]; i++) {
+	for (i = 0; tmp_env[i]; i++) {
 		const char *eVal;
-		if ((eVal = getenv(tmpEnv[i]))) {
-			snprintf(srcName, PATH_MAX, "%s%cunum-boot.c", eVal, pathSep);
+		if ((eVal = getenv(tmp_env[i]))) {
+			snprintf(src_name, PATH_MAX, "%s%cunum-boot.c", eVal, path_sep);
 			break;
 		}
 	}
 
-	if (!srcName[0]) {
-		abortFail("failed to find temp directory.");
+	if (!src_name[0]) {
+		abort_fail("failed to find temp directory.");
 	}
 
-	snprintf(binName, PATH_MAX, "%s.out", srcName);
+	snprintf(bin_name, PATH_MAX, "%s.out", src_name);
 
-	srcFile = fopen(srcName, "w");
-	if (!srcFile || !fwrite(source, strlen(source), 1, srcFile)) {
-		abortFail("failed to create temp file.");
+	src_file = fopen(src_name, "w");
+	if (!src_file || !fwrite(source, strlen(source), 1, src_file)) {
+		abort_fail("failed to create temp file.");
 	}
-	fclose(srcFile);
+	fclose(src_file);
 
-	snprintf(ccCmd, sizeof(ccCmd), "%s -o %s %s", 
-				tools[T_CC], binName, srcName);
+	snprintf(cc_cmd, sizeof(cc_cmd), "%s -o %s %s", 
+				tools[T_CC], bin_name, src_name);
 
-	rc = system(ccCmd);	
-	unlink(srcName);
-	unlink(binName);
+	rc = system(cc_cmd);	
+	unlink(src_name);
+	unlink(bin_name);
 
 	return rc;
 }
 
-static void detectPlatform() {
-	if (execCC(	"#include <Carbon/Carbon.h>\n"	
+static void detect_platform() {
+	if (exec_cc("#include <Carbon/Carbon.h>\n"	
 				"#include <stdio.h>\n\n"
 				"int main(int argc, char **argv) {\n"
 				"  printf(\"hello unum\");\n"
@@ -187,5 +190,5 @@ static void detectPlatform() {
 		return;
 	}
 
-	abortFail("unsupported platform type");
+	abort_fail("unsupported platform type");
 }
