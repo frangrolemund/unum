@@ -56,7 +56,7 @@ typedef enum {
 static void abort_fail(const char *msg);
 static void detect_path_style();
 static void detect_platform();
-static int exec_cc(const char *code);
+static int run_cc(const char *code);
 static const char *parse_option(const char *optName, const char *from);
 static void parse_cmd_line(int argc, char *argv[]);
 
@@ -141,26 +141,29 @@ static void parse_cmd_line(int argc, char *argv[]) {
 	}
 }
 
-static int exec_cc(const char *source) {
-	const char 	*tmp_env[] 	= { "TMPDIR", "TMP", "TEMP", "TEMPDIR", NULL };
-	int 		i, rc;
-	char 		src_name[PATH_MAX]	= "\0";
+static int run_cc(const char *source) {
+	const char 	*tmp_env[] 			= { "TMPDIR", "TMP", "TEMP", "TEMPDIR", 
+										NULL };
+	const char **tp 				= tmp_env;
+	int 		rc;
+	char 		src_name[PATH_MAX];
 	char 		bin_name[PATH_MAX];
 	char 		cc_cmd[2048];
 	FILE 		*src_file;
 
 	// ...avoids the scary warning from macos for using tmpnam
-	for (i = 0; tmp_env[i]; i++) {
-		const char *eVal;
-		if ((eVal = getenv(tmp_env[i]))) {
-			snprintf(src_name, PATH_MAX, "%s%cunum-boot.c", eVal, path_sep);
-			break;
-		}
-	}
+	do {
+		const char *e_val = getenv(*tp);
 
-	if (!src_name[0]) {
-		abort_fail("failed to find temp directory.");
-	}
+		if (e_val) {
+			snprintf(src_name, PATH_MAX, "%s%cunum-boot.c", e_val, path_sep);
+			break;	
+		}
+
+		if (!*++tp) {
+			abort_fail("failed to find temp directory!.");
+		}
+	} while (*tp);
 
 	snprintf(bin_name, PATH_MAX, "%s.out", src_name);
 
@@ -173,7 +176,8 @@ static int exec_cc(const char *source) {
 	snprintf(cc_cmd, sizeof(cc_cmd), "%s -o %s %s", 
 				tools[T_CC], bin_name, src_name);
 
-	rc = system(cc_cmd);	
+	rc = system(cc_cmd);
+
 	unlink(src_name);
 	unlink(bin_name);
 
@@ -181,7 +185,7 @@ static int exec_cc(const char *source) {
 }
 
 static void detect_platform() {
-	if (exec_cc("#include <Carbon/Carbon.h>\n"	
+	if (run_cc("#include <Carbon/Carbon.h>\n"	
 				"#include <stdio.h>\n\n"
 				"int main(int argc, char **argv) {\n"
 				"  printf(\"hello unum\");\n"
