@@ -46,11 +46,11 @@ typedef enum {
 } tool_e;
 
 static const struct { tool_e tool; const char *oname; } tool_map[] = {
-	{ T_CC, "cc" },
-	{ T_CFLAGS, "ccflags" },
-	{ T_LD, "ld" },
+	{ T_CC,      "cc" },
+	{ T_CFLAGS,  "ccflags" },
+	{ T_LD,      "ld" },
 	{ T_LDFLAGS, "ldflags" },
-	{ T_LDLIBS, "ldlibs" }
+	{ T_LDLIBS,  "ldlibs" }
 };
 
 typedef enum {
