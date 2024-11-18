@@ -193,12 +193,12 @@ static int run_cc(const char *source) {
 
 static void detect_platform() {
 	if (run_cc(
-			"#include <Carbon/Carbon.h>\n"	
-			"#include <stdio.h>\n\n"
-			"int main(int argc, char **argv) {\n"
-			"  printf(\"hello unum\");\n"
-			"}\n"
-			) == 0) {
+	           "#include <Carbon/Carbon.h>\n"	
+	           "#include <stdio.h>\n\n"
+	           "int main(int argc, char **argv) {\n"
+	           "  printf(\"hello unum\");\n"
+	           "}\n"
+	          ) == 0) {
 		platform = P_MACOS;
 		return;
 	}
