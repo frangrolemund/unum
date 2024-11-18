@@ -43,14 +43,14 @@ typedef enum {
 	T_LDLIBS,
 
 	T_COUNT
-} tool_t;
+} tool_e;
 
-static const struct { tool_t tool; const char *oname; } tool_map[] = {
-	{ T_CC, 		"cc" },
-	{ T_CFLAGS, 	"ccflags" },
-	{ T_LD, 		"ld" },
-	{ T_LDFLAGS, 	"ldflags" },
-	{ T_LDLIBS, 	"ldlibs" }
+static const struct { tool_e tool; const char *oname; } tool_map[] = {
+	{ T_CC, "cc" },
+	{ T_CFLAGS, "ccflags" },
+	{ T_LD, "ld" },
+	{ T_LDFLAGS, "ldflags" },
+	{ T_LDLIBS, "ldlibs" }
 };
 
 typedef enum {
@@ -58,7 +58,7 @@ typedef enum {
 	P_MACOS,
 	P_LINUX,
 	P_UNKNOWN	
-} platform_t;
+} platform_e;
 
 // - forward declarations
 static void abort_fail(const char *msg);
@@ -69,10 +69,10 @@ static const char *parse_option(const char *optName, const char *from);
 static void parse_cmd_line(int argc, char *argv[]);
 
 // - state
-static char 			path_sep;
-static platform_t 		platform 		= P_UNKNOWN;
-static const char *		tools[T_COUNT]  = { NULL, NULL, NULL, NULL, NULL };
-static FILE *			uberr			= NULL;
+static char        path_sep;
+static platform_e  platform = P_UNKNOWN;
+static const char  *tools[T_COUNT] = { NULL, NULL, NULL, NULL, NULL };
+static FILE        *uberr = NULL;
 
 
 int main(int argc, char *argv[]) {
@@ -105,8 +105,8 @@ static void abort_fail(const char *msg) {
 
 
 static void detect_path_style() {
-	const char 	*path = getenv("PATH");
-	char 		c;
+	const char  *path = getenv("PATH");
+	char        c;
 
 	while (path && (c = *path++)) {
 		if (c == '/' || c == '\\') {
@@ -119,7 +119,7 @@ static void detect_path_style() {
 }
 
 static const char *parse_option(const char *opt_name, const char *from) {
-	char 	prefix[64];
+	char prefix[64];
 
 	snprintf(prefix, sizeof(prefix), "--%s=", opt_name);
 	if (strncmp(from, prefix, strlen(prefix))) {
@@ -130,8 +130,8 @@ static const char *parse_option(const char *opt_name, const char *from) {
 }
 
 static void parse_cmd_line(int argc, char *argv[]) {
-	const char 	*opt = NULL;
-	int 		i;
+	const char  *opt = NULL;
+	int         i;
 
 	while (--argc) {
 		const char *item = *++argv;
@@ -149,14 +149,14 @@ static void parse_cmd_line(int argc, char *argv[]) {
 }
 
 static int run_cc(const char *source) {
-	const char 	*tmp_env[] 			= { "TMPDIR", "TMP", "TEMP", "TEMPDIR", 
-										NULL };
-	const char **tp 				= tmp_env;
-	int 		rc;
-	char 		src_name[PATH_MAX];
-	char 		bin_name[PATH_MAX];
-	char 		cc_cmd[2048];
-	FILE 		*src_file;
+	const char *tmp_env[] = { "TMPDIR", "TMP", "TEMP", "TEMPDIR", 
+	                          NULL };
+	const char **tp       = tmp_env;
+	int        rc;
+	char       src_name[PATH_MAX];
+	char       bin_name[PATH_MAX];
+	char       cc_cmd[2048];
+	FILE       *src_file;
 
 	// ...avoids the scary warning from macos for using tmpnam
 	do {
@@ -192,11 +192,13 @@ static int run_cc(const char *source) {
 }
 
 static void detect_platform() {
-	if (run_cc("#include <Carbon/Carbon.h>\n"	
-				"#include <stdio.h>\n\n"
-				"int main(int argc, char **argv) {\n"
-				"  printf(\"hello unum\");\n"
-				"}\n") == 0) {
+	if (run_cc(
+			"#include <Carbon/Carbon.h>\n"	
+			"#include <stdio.h>\n\n"
+			"int main(int argc, char **argv) {\n"
+			"  printf(\"hello unum\");\n"
+			"}\n"
+			) == 0) {
 		platform = P_MACOS;
 		return;
 	}
