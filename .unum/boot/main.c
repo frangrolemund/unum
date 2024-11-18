@@ -67,8 +67,10 @@ static void detect_platform();
 static int run_cc(const char *code);
 static const char *parse_option(const char *optName, const char *from);
 static void parse_cmd_line(int argc, char *argv[]);
+static void set_basis();
 
 // - state
+static char        basis_dir[PATH_MAX];
 static char        path_sep;
 static platform_e  platform        = P_UNKNOWN;
 static const char  *tools[T_COUNT] = { NULL, NULL, NULL, NULL, NULL };
@@ -80,13 +82,15 @@ int main(int argc, char *argv[]) {
 	uberr = fdopen(dup(fileno(stderr)), "w");
 	fclose(stderr);
 
-	parse_cmd_line(argc, argv);
 	detect_path_style();
+	set_basis();
+	parse_cmd_line(argc, argv);
 	detect_platform();
 
 	
 
 	printf("inside uboot...\n");
+	printf("- basis:          %s\n", basis_dir);
 	printf("- path separator: '%c'\n", path_sep);
 	printf("- platform:  	   %d\n", platform);
 	for (int i = 0; i < T_COUNT; i++) {
@@ -118,6 +122,38 @@ static void detect_path_style() {
 	abort_fail("missing PATH environment");
 }
 
+
+static void set_basis() {
+	char cwd[PATH_MAX];
+	char *pos;
+
+	if (!getcwd(cwd, PATH_MAX)) {
+		abort_fail("cannot retrieve cwd");
+	}
+	
+	if (strncmp(cwd, __FILE__, strlen(cwd))) {
+		snprintf(basis_dir, sizeof(basis_dir), "%s%c%s", cwd, path_sep, 
+		         __FILE__);
+	} else {
+		strncpy(basis_dir, __FILE__, sizeof(basis_dir));
+	}
+
+	pos = basis_dir + strlen(basis_dir);
+	while (--pos >= basis_dir) {
+		if (!strncmp(pos, "boot", 4)) {
+			*pos = '\0';
+			break;
+		}
+	}
+
+	if (pos <= basis_dir) {
+		abort_fail("basis not found");
+	}
+
+	chdir(basis_dir);
+}
+
+
 static const char *parse_option(const char *opt_name, const char *from) {
 	char       prefix[64] = "\0";
 	const char *p         = prefix;
@@ -132,6 +168,7 @@ static const char *parse_option(const char *opt_name, const char *from) {
 
 	return from;
 }
+
 
 static void parse_cmd_line(int argc, char *argv[]) {
 	const char  *opt = NULL;
@@ -151,6 +188,7 @@ static void parse_cmd_line(int argc, char *argv[]) {
 		abort_fail("missing one or more required tool parameters.");
 	}
 }
+
 
 static int run_cc(const char *source) {
 	const char *tmp_env[]         = { "TMPDIR", "TMP", "TEMP", "TEMPDIR", 
@@ -194,6 +232,7 @@ static int run_cc(const char *source) {
 
 	return rc;
 }
+
 
 static void detect_platform() {
 	if (run_cc(
