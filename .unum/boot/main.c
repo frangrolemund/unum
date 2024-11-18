@@ -149,9 +149,9 @@ static void parse_cmd_line(int argc, char *argv[]) {
 }
 
 static int run_cc(const char *source) {
-	const char *tmp_env[] = { "TMPDIR", "TMP", "TEMP", "TEMPDIR", 
-	                          NULL };
-	const char **tp       = tmp_env;
+	const char *tmp_env[]         = { "TMPDIR", "TMP", "TEMP", "TEMPDIR", 
+	                                  NULL };
+	const char **tp               = tmp_env;
 	int        rc;
 	char       src_name[PATH_MAX];
 	char       bin_name[PATH_MAX];
