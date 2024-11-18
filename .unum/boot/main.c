@@ -70,9 +70,9 @@ static void parse_cmd_line(int argc, char *argv[]);
 
 // - state
 static char        path_sep;
-static platform_e  platform = P_UNKNOWN;
+static platform_e  platform        = P_UNKNOWN;
 static const char  *tools[T_COUNT] = { NULL, NULL, NULL, NULL, NULL };
-static FILE        *uberr = NULL;
+static FILE        *uberr          = NULL;
 
 
 int main(int argc, char *argv[]) {
