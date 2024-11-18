@@ -45,6 +45,14 @@ typedef enum {
 	T_COUNT
 } tool_t;
 
+static const struct { tool_t tool; const char *oname; } tool_map[] = {
+	{ T_CC, 		"cc" },
+	{ T_CFLAGS, 	"ccflags" },
+	{ T_LD, 		"ld" },
+	{ T_LDFLAGS, 	"ldflags" },
+	{ T_LDLIBS, 	"ldlibs" }
+};
+
 typedef enum {
 	P_WINDOWS = 0,
 	P_MACOS,
@@ -79,7 +87,13 @@ int main(int argc, char *argv[]) {
 	
 
 	printf("inside uboot...\n");
+	printf("- path separator: '%c'\n", path_sep);
+	printf("- platform:  	   %d\n", platform);
+	for (int i = 0; i < T_COUNT; i++) {
+	printf("- tool %d:         %s\n", i, tools[i]);
+	}
 
+	fclose(uberr);
 	return 0;
 }
 
@@ -104,10 +118,10 @@ static void detect_path_style() {
 	abort_fail("missing PATH environment");
 }
 
-static const char *parse_option(const char *optName, const char *from) {
+static const char *parse_option(const char *opt_name, const char *from) {
 	char 	prefix[64];
 
-	snprintf(prefix, sizeof(prefix), "--%s=", optName);
+	snprintf(prefix, sizeof(prefix), "--%s=", opt_name);
 	if (strncmp(from, prefix, strlen(prefix))) {
 		return NULL;	
 	}
@@ -121,23 +135,16 @@ static void parse_cmd_line(int argc, char *argv[]) {
 
 	while (--argc) {
 		const char *item = *++argv;
-		if ((opt = parse_option("cc", item))) {
-			tools[T_CC] = opt;
-		} else if ((opt = parse_option("ccflags", item))) {
-			tools[T_CFLAGS] = opt;
-		} else if ((opt = parse_option("ld", item))) {
-			tools[T_LD] = opt;
-		} else if ((opt = parse_option("ldflags", item))) {
-			tools[T_LDFLAGS] = opt;
-		} else if ((opt = parse_option("ldlibs", item))) {
-			tools[T_LDLIBS] = opt;
+
+		for (i = 0; i < sizeof(tool_map)/sizeof(tool_map[0]); i++) {
+			if ((opt = parse_option(tool_map[i].oname, item))) {
+				tools[tool_map[i].tool] = opt;
+			}	
 		}
 	}
 
-	for (i = 0; i < T_COUNT; i++) {
-		if (!tools[i]) {
-			abort_fail("missing one or more required tool parameters.");
-		}
+	if (!tools[T_CC] || !tools[T_LD]) {
+		abort_fail("missing one or more required tool parameters.");
 	}
 }
 
