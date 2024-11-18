@@ -119,14 +119,18 @@ static void detect_path_style() {
 }
 
 static const char *parse_option(const char *opt_name, const char *from) {
-	char prefix[64];
+	char       prefix[64] = "\0";
+	const char *p         = prefix;
 
 	snprintf(prefix, sizeof(prefix), "--%s=", opt_name);
-	if (strncmp(from, prefix, strlen(prefix))) {
-		return NULL;	
+
+	while (*p) {
+		if (*p++ != *from++) {
+			return NULL;
+		}
 	}
 
-	return from + strlen(prefix);
+	return from;
 }
 
 static void parse_cmd_line(int argc, char *argv[]) {
