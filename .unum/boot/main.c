@@ -32,6 +32,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/stat.h>
 #include <unistd.h>
 
 // - types
@@ -64,9 +65,11 @@ typedef enum {
 static void abort_fail(const char *msg);
 static void detect_path_style();
 static void detect_platform();
+static char *find_in_path(const char *cmd);
 static int run_cc(const char *code);
 static const char *parse_option(const char *optName, const char *from);
 static void parse_cmd_line(int argc, char *argv[]);
+static const char *resolve_cmd(const char *cmd);
 static void set_basis();
 
 // - state
@@ -76,15 +79,18 @@ static platform_e  platform        = P_UNKNOWN;
 static const char  *tools[T_COUNT] = { NULL, NULL, NULL, NULL, NULL };
 static FILE        *uberr          = NULL;
 
+#define path_sep_s ((char [2]) { path_sep, '\0' })
+
 
 int main(int argc, char *argv[]) {
 	// - don't spam stderr with system()
 	uberr = fdopen(dup(fileno(stderr)), "w");
 	fclose(stderr);
 
+	// - order is important here
 	detect_path_style();
-	set_basis();
 	parse_cmd_line(argc, argv);
+	set_basis();
 	detect_platform();
 
 	
@@ -94,7 +100,7 @@ int main(int argc, char *argv[]) {
 	printf("- path separator: '%c'\n", path_sep);
 	printf("- platform:  	   %d\n", platform);
 	for (int i = 0; i < T_COUNT; i++) {
-	printf("- tool %d:         %s\n", i, tools[i]);
+		printf("- tool %d:         %s\n", i, tools[i]);
 	}
 
 	fclose(uberr);
@@ -120,6 +126,92 @@ static void detect_path_style() {
 	}
 
 	abort_fail("missing PATH environment");
+}
+
+
+static const char *parse_option(const char *opt_name, const char *from) {
+	char       prefix[64] = "\0";
+	const char *p         = prefix;
+
+	snprintf(prefix, sizeof(prefix), "--%s=", opt_name);
+
+	while (*p) {
+		if (*p++ != *from++) {
+			return NULL;
+		}
+	}
+
+	return from;
+}
+
+static char *find_in_path(const char *cmd) {
+	const char   *path = getenv("PATH");
+	static char  buf[PATH_MAX];
+	char         *ppos = buf;
+	struct stat  sinfo;
+	char         c;
+
+	while ((c = *path++)) {
+		if (c == ':' || c == ';') {
+			*ppos++ = path_sep;
+			strcpy(ppos, cmd);
+
+			if (stat(buf, &sinfo) == 0 && sinfo.st_mode & S_IFREG) {
+				return buf;
+			}
+
+			ppos = buf;
+		} else {
+			*ppos++ = c;
+		}
+	}
+
+	return NULL;
+}
+
+static const char *resolve_cmd(const char *cmd) {
+	char rpath[PATH_MAX];
+	const char *rc;
+
+	if (!cmd || !cmd[0]) {
+		return NULL;
+	}
+
+	const int has_dir = strstr(cmd, path_sep_s) != NULL;
+	
+	if (has_dir) {
+		rc = realpath(cmd, rpath);
+	} else if ((rc = find_in_path(cmd))){
+		rc = realpath(rc, rpath);
+	}
+
+	if (!rc || (rc = strdup(rc)) == NULL) {
+		abort_fail("unresolvable command path");
+	}
+
+	return rc;
+}
+
+
+static void parse_cmd_line(int argc, char *argv[]) {
+	const char  *opt = NULL;
+	int         i;
+
+	while (--argc) {
+		const char *item = *++argv;
+
+		for (i = 0; i < sizeof(tool_map)/sizeof(tool_map[0]); i++) {
+			if ((opt = parse_option(tool_map[i].oname, item))) {
+				opt = (opt && opt[0]) ? opt : NULL;
+				opt = (i == T_CC || i == T_LD) ? resolve_cmd(opt) : opt;
+				tools[tool_map[i].tool] = opt;
+			}	
+		}
+	}
+
+	if (!tools[T_CC] || !tools[T_LD]) {
+		abort_fail("missing one or more required tool parameters.");
+	}
 }
 
 
@@ -151,42 +243,6 @@ static void set_basis() {
 	}
 
 	chdir(basis_dir);
-}
-
-
-static const char *parse_option(const char *opt_name, const char *from) {
-	char       prefix[64] = "\0";
-	const char *p         = prefix;
-
-	snprintf(prefix, sizeof(prefix), "--%s=", opt_name);
-
-	while (*p) {
-		if (*p++ != *from++) {
-			return NULL;
-		}
-	}
-
-	return from;
-}
-
-
-static void parse_cmd_line(int argc, char *argv[]) {
-	const char  *opt = NULL;
-	int         i;
-
-	while (--argc) {
-		const char *item = *++argv;
-
-		for (i = 0; i < sizeof(tool_map)/sizeof(tool_map[0]); i++) {
-			if ((opt = parse_option(tool_map[i].oname, item))) {
-				tools[tool_map[i].tool] = opt;
-			}	
-		}
-	}
-
-	if (!tools[T_CC] || !tools[T_LD]) {
-		abort_fail("missing one or more required tool parameters.");
-	}
 }
 
 
