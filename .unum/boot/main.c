@@ -29,6 +29,7 @@
  */
 
 #include <limits.h>
+#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -62,7 +63,7 @@ typedef enum {
 } platform_e;
 
 // - forward declarations
-static void abort_fail(const char *msg);
+static void abort_fail(const char *fmt, ...);
 static void detect_path_style();
 static void detect_platform();
 static char *find_in_path(const char *cmd);
@@ -108,8 +109,15 @@ int main(int argc, char *argv[]) {
 }
 
 
-static void abort_fail(const char *msg) {
-	fprintf(uberr ? uberr : stdout, "uboot error: %s\n", msg);
+static void abort_fail(const char *fmt, ...) {
+	va_list ap;
+	char    buf[2048];
+
+	va_start(ap, fmt);
+	vsnprintf(buf, sizeof(buf), fmt, ap);
+	va_end(ap);
+
+	fprintf(uberr ? uberr : stdout, "uboot error: %s\n", buf);
 	exit(1);
 }
 
@@ -186,7 +194,7 @@ static const char *resolve_cmd(const char *cmd) {
 	}
 
 	if (!rc || (rc = strdup(rc)) == NULL) {
-		abort_fail("unresolvable command path");
+		abort_fail("unresolvable command path '%s'", cmd);
 	}
 
 	return rc;
