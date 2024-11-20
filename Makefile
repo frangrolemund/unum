@@ -18,13 +18,17 @@
 # --------------------------------------------------------------
 .PHONY : all clean
 
-BOOT := ./.unum/boot
+BASIS := ./.unum
+BOOT  := $(BASIS)/boot
+RMDIR := rm -rf
 
 all : $(BOOT)/uboot
 	@$(BOOT)/uboot --cc=$(CC) --ld=$(LD) 
 
 clean :
 	$(RM) $(BOOT)/uboot
+	$(RMDIR) $(BASIS)/build
+	$(RMDIR) $(BASIS)/bin
 
 $(BOOT)/uboot: $(BOOT)/main.c
 	$(CC) -o $@ $^

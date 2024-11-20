@@ -78,6 +78,7 @@ static FILE        *uberr          = NULL;
 
 #define BUILD_DIR 	       "./build"
 #define BUILD_INCLUDE_DIR  "./build/include"
+#define BIN_DIR            "./bin"
 #define is_file(p)         (file_mode((p)) & S_IFREG)
 #define is_dir(p)          (file_mode((p)) & S_IFDIR)
 #define path_sep_s         ((char [2]) { path_sep, '\0' })
@@ -251,8 +252,10 @@ static void parse_cmd_line(int argc, char *argv[]) {
 
 
 static void set_basis() {
-	char cwd[PATH_MAX];
-	char *pos;
+	char        cwd[PATH_MAX];
+	char        *pos;
+	const char  *build_dirs[] = { BUILD_DIR, BUILD_INCLUDE_DIR, BIN_DIR };
+	int         i;
 
 	if (!getcwd(cwd, PATH_MAX)) {
 		abort_fail("cannot retrieve cwd");
@@ -279,12 +282,10 @@ static void set_basis() {
 
 	chdir(basis_dir);
 
-	if (!is_dir(BUILD_DIR) && mkdir(BUILD_DIR, S_IRWXU) != 0) {
-		abort_fail("failed to create build directory");
-	}
-
-	if (!is_dir(BUILD_INCLUDE_DIR) && mkdir(BUILD_INCLUDE_DIR, S_IRWXU) != 0) {
-		abort_fail("failed to create include directory");
+	for (i = 0; i < sizeof(build_dirs)/sizeof(build_dirs[0]); i++) {
+		if (!is_dir(build_dirs[i]) && mkdir(build_dirs[i], S_IRWXU) != 0) {
+			abort_fail("failed to create build directory '%s'", build_dirs[i]);
+		}
 	}
 }
 

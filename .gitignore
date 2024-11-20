@@ -57,3 +57,4 @@ dkms.conf
 # Project build
 .unum/boot/uboot
 .unum/build/
+.unum/bin/
