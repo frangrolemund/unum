@@ -63,7 +63,6 @@ static void abort_fail(const char *fmt, ...);
 static void detect_path_style();
 static void detect_platform();
 static char *find_in_path(const char *cmd);
-static int is_file(const char *path);
 static int run_cc(const char *code);
 static const char *parse_option(const char *optName, const char *from);
 static void parse_cmd_line(int argc, char *argv[]);
@@ -77,7 +76,11 @@ static platform_e  platform        = P_UNKNOWN;
 static const char  *tools[T_COUNT] = { NULL, NULL };
 static FILE        *uberr          = NULL;
 
-#define path_sep_s ((char [2]) { path_sep, '\0' })
+#define BUILD_DIR 	       "./build"
+#define BUILD_INCLUDE_DIR  "./build/include"
+#define is_file(p)         (file_mode((p)) & S_IFREG)
+#define is_dir(p)          (file_mode((p)) & S_IFDIR)
+#define path_sep_s         ((char [2]) { path_sep, '\0' })
 
 
 int main(int argc, char *argv[]) {
@@ -150,10 +153,14 @@ static const char *parse_option(const char *opt_name, const char *from) {
 }
 
 
-static int is_file(const char *path) {
+static mode_t file_mode(const char *path) {
 	struct stat sinfo;
 
-	return path && stat(path, &sinfo) == 0 && sinfo.st_mode & S_IFREG; 
+	if (path && stat(path, &sinfo) == 0) {
+		return sinfo.st_mode;
+	}
+
+	return 0;
 }
 
 
@@ -271,6 +278,14 @@ static void set_basis() {
 	}
 
 	chdir(basis_dir);
+
+	if (!is_dir(BUILD_DIR) && mkdir(BUILD_DIR, S_IRWXU) != 0) {
+		abort_fail("failed to create build directory");
+	}
+
+	if (!is_dir(BUILD_INCLUDE_DIR) && mkdir(BUILD_INCLUDE_DIR, S_IRWXU) != 0) {
+		abort_fail("failed to create include directory");
+	}
 }
 
 
