@@ -62,6 +62,7 @@ typedef enum {
 static void abort_fail(const char *fmt, ...);
 static void detect_path_style();
 static void detect_platform();
+static struct stat file_info(const char *path);
 static char *find_in_path(const char *cmd);
 static int run_cc(const char *code);
 static const char *parse_option(const char *optName, const char *from);
@@ -79,8 +80,8 @@ static FILE        *uberr          = NULL;
 #define BUILD_DIR 	       "./build"
 #define BUILD_INCLUDE_DIR  "./build/include"
 #define BIN_DIR            "./bin"
-#define is_file(p)         (file_mode((p)) & S_IFREG)
-#define is_dir(p)          (file_mode((p)) & S_IFDIR)
+#define is_file(p)         (file_info((p)).st_mode & S_IFREG)
+#define is_dir(p)          (file_info((p)).st_mode & S_IFDIR)
 #define path_sep_s         ((char [2]) { path_sep, '\0' })
 
 
@@ -154,14 +155,15 @@ static const char *parse_option(const char *opt_name, const char *from) {
 }
 
 
-static mode_t file_mode(const char *path) {
+static struct stat file_info(const char *path) {
 	struct stat sinfo;
 
 	if (path && stat(path, &sinfo) == 0) {
-		return sinfo.st_mode;
+		return sinfo;
 	}
 
-	return 0;
+	memset(&sinfo, 0, sizeof(sinfo));
+	return sinfo;
 }
 
 
