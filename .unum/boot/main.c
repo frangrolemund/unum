@@ -24,8 +24,10 @@
  *  further build processing.  
  *
  *  This program figures out where it is running, encodes fundamental 
- *  configuration and builds the first `unum` kernel.  The objective is for
- *  it to be as minimal as possible without confusing the process.
+ *  configuration and builds the first `unum` kernel, called the pre-kernel
+ *  or 'pre-k' for short.  The objective is for it to be as minimal as possible
+ *  without confusing the process or introducing needless waste when `make` is
+ *  is re-invoked on an existing repo.
  */
 
 #include <limits.h>
@@ -39,20 +41,14 @@
 // - types
 typedef enum {
 	T_CC = 0,
-	T_CFLAGS,
 	T_LD,
-	T_LDFLAGS,
-	T_LDLIBS,
 
 	T_COUNT
 } tool_e;
 
 static const struct { tool_e tool; const char *oname; } tool_map[] = {
-	{ T_CC,      "cc" },
-	{ T_CFLAGS,  "ccflags" },
-	{ T_LD,      "ld" },
-	{ T_LDFLAGS, "ldflags" },
-	{ T_LDLIBS,  "ldlibs" }
+	{ T_CC, "cc" },
+	{ T_LD, "ld" }
 };
 
 typedef enum {
@@ -78,7 +74,7 @@ static void set_basis();
 static char        basis_dir[PATH_MAX];
 static char        path_sep;
 static platform_e  platform        = P_UNKNOWN;
-static const char  *tools[T_COUNT] = { NULL, NULL, NULL, NULL, NULL };
+static const char  *tools[T_COUNT] = { NULL, NULL };
 static FILE        *uberr          = NULL;
 
 #define path_sep_s ((char [2]) { path_sep, '\0' })
@@ -92,9 +88,9 @@ int main(int argc, char *argv[]) {
 	// - order is important here
 	detect_path_style();
 	parse_cmd_line(argc, argv);
-	set_basis();
 	detect_platform();
 
+	set_basis();
 	
 
 	printf("inside uboot...\n");
@@ -225,13 +221,19 @@ static void parse_cmd_line(int argc, char *argv[]) {
 
 	while (--argc) {
 		const char *item = *++argv;
-
+		int is_sup = 0;
 		for (i = 0; i < sizeof(tool_map)/sizeof(tool_map[0]); i++) {
 			if ((opt = parse_option(tool_map[i].oname, item))) {
 				opt = (opt && opt[0]) ? opt : NULL;
 				opt = (i == T_CC || i == T_LD) ? resolve_cmd(opt) : opt;
 				tools[tool_map[i].tool] = opt;
+				is_sup = 1;
+				break;
 			}	
+		}
+
+		if (!is_sup) {
+			abort_fail("unsuported command-line parameter '%s'", item);
 		}
 	}
 

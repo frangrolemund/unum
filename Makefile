@@ -21,7 +21,7 @@
 BOOT := ./.unum/boot
 
 all : $(BOOT)/uboot
-	@$(BOOT)/uboot --cc=$(CC) --ccflags=$(CFLAGS) --ld=$(LD) --ldflags=$(LDFLAGS) --ldlibs=$(LDLIBS)
+	@$(BOOT)/uboot --cc=$(CC) --ld=$(LD) 
 
 clean :
 	$(RM) $(BOOT)/uboot
