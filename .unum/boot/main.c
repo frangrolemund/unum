@@ -67,6 +67,7 @@ static void abort_fail(const char *fmt, ...);
 static void detect_path_style();
 static void detect_platform();
 static char *find_in_path(const char *cmd);
+static int is_file(const char *path);
 static int run_cc(const char *code);
 static const char *parse_option(const char *optName, const char *from);
 static void parse_cmd_line(int argc, char *argv[]);
@@ -152,11 +153,18 @@ static const char *parse_option(const char *opt_name, const char *from) {
 	return from;
 }
 
+
+static int is_file(const char *path) {
+	struct stat sinfo;
+
+	return path && stat(path, &sinfo) == 0 && sinfo.st_mode & S_IFREG; 
+}
+
+
 static char *find_in_path(const char *cmd) {
 	const char   *path = getenv("PATH");
 	static char  buf[PATH_MAX];
 	char         *ppos = buf;
-	struct stat  sinfo;
 	char         c;
 
 	while ((c = *path++)) {
@@ -164,7 +172,7 @@ static char *find_in_path(const char *cmd) {
 			*ppos++ = path_sep;
 			strcpy(ppos, cmd);
 
-			if (stat(buf, &sinfo) == 0 && sinfo.st_mode & S_IFREG) {
+			if (is_file(buf)) {
 				return buf;
 			}
 
@@ -178,22 +186,32 @@ static char *find_in_path(const char *cmd) {
 }
 
 static const char *resolve_cmd(const char *cmd) {
-	char rpath[PATH_MAX];
-	const char *rc;
+	char tmp[PATH_MAX];
+	const char *rc     = NULL;
 
 	if (!cmd || !cmd[0]) {
 		return NULL;
 	}
 
 	const int has_dir = strstr(cmd, path_sep_s) != NULL;
-	
-	if (has_dir) {
-		rc = realpath(cmd, rpath);
-	} else if ((rc = find_in_path(cmd))){
-		rc = realpath(rc, rpath);
+	const int is_rel  = cmd[0] == '.';
+
+	// - the principle here is to use as little and make this as
+	//   simple as possible to  establish that the path exists while 
+	//	 assuming the kernel will more carefully assess behavior later.  
+	// 	 Ooddly-formed paths are permitted, (eg. /usr/bin/../bin/cc)
+	if (is_rel) {
+		getcwd(tmp, PATH_MAX);
+		strcat(tmp, path_sep_s);
+		strcat(tmp, cmd);
+		rc = tmp;
+	} else if (has_dir) {
+		rc = cmd;
+	} else {
+		rc = find_in_path(cmd);	
 	}
 
-	if (!rc || (rc = strdup(rc)) == NULL) {
+	if (!rc || !is_file(rc) || (rc = strdup(rc)) == NULL) {
 		abort_fail("unresolvable command path '%s'", cmd);
 	}
 
