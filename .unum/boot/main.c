@@ -71,13 +71,7 @@ static void parse_cmd_line(int argc, char *argv[]);
 static const char *resolve_cmd(const char *cmd);
 static void set_basis();
 static const char *to_basis(const char *path);
-
-// - state
-static char        basis_dir[PATH_MAX];
-static char        path_sep;
-static platform_e  platform        = P_UNKNOWN;
-static const char  *tools[T_COUNT] = { NULL, NULL };
-static FILE        *uberr          = NULL;
+static void write_config();
 
 #define BUILD_DIR 	       "./build"
 #define BUILD_INCLUDE_DIR  "./build/include"
@@ -85,6 +79,16 @@ static FILE        *uberr          = NULL;
 #define is_file(p)         (file_info((p)).st_mode & S_IFREG)
 #define is_dir(p)          (file_info((p)).st_mode & S_IFDIR)
 #define path_sep_s         ((char [2]) { path_sep, '\0' })
+#define CFG_SIZE           32768
+
+// - state
+static char        basis_dir[PATH_MAX];
+static char        path_sep;
+static platform_e  platform        = P_UNKNOWN;
+static const char  *tools[T_COUNT] = { NULL, NULL };
+static FILE        *uberr          = NULL;
+static char        config[CFG_SIZE];
+static char        *cfg_offset     = config;
 
 
 int main(int argc, char *argv[]) {
@@ -98,7 +102,7 @@ int main(int argc, char *argv[]) {
 	detect_platform();
 
 	set_basis();
-	
+	write_config();	
 
 	printf("inside uboot...\n");
 	printf("- basis:          %s\n", basis_dir);
@@ -371,4 +375,73 @@ static void detect_platform() {
 	}
 
 	abort_fail("unsupported platform type");
+}
+
+
+void printf_config(const char *fmt, ...) {
+	va_list ap;
+	va_start(ap, fmt);
+	cfg_offset += vsnprintf(cfg_offset, sizeof(config) - (cfg_offset - config),
+	                        fmt, ap);
+	va_end(ap);
+	*cfg_offset++ = '\n';
+}
+
+
+void write_config() {
+	FILE        *fp;
+	char        buf[CFG_SIZE];
+	const char  *cfg_file;
+
+	memset(config, 0, sizeof(config));
+	printf_config("#ifndef UNUM_CONFIG_H");	
+	printf_config("#define UNUM_CONFIG_H");	
+	printf_config("");
+	printf_config("/*");
+	printf_config(" * !!  DO NOT modify, this file is auto-generated. !!");
+	printf_config(" */");
+	printf_config("");
+
+	
+	printf_config("#define UNUM_OS_WIN          %d", 
+	                platform == P_WINDOWS ? 1 : 0);
+	printf_config("#define UNUM_OS_MACOS        %d", 
+	                platform == P_MACOS ? 1 : 0);
+	printf_config("#define UNUM_OS_LINUX        %d", 
+	                platform == P_LINUX ? 1 : 0);
+	printf_config("");
+
+
+	printf_config("#define UNUM_PATH_SEP        '%c'", path_sep);
+	printf_config("#define UNUM_PATH_SEP_S      \"%c\"", path_sep);
+	printf_config("");
+
+
+	printf_config("#define UNUM_BASIS_DIR       \"%s\"", basis_dir);
+	printf_config("");
+
+
+	printf_config("#define UNUM_TOOL_CC         \"%s\"", tools[T_CC]);
+	printf_config("#define UNUM_TOOL_LD         \"%s\"", tools[T_LD]);
+	printf_config("");
+
+	printf_config("#endif /* UNUM_CONFIG_H */");
+
+	// - don't rewrite identicial content to avoid needless rebuilds
+	cfg_file = to_basis("./build/include/config.h");
+	fp = fopen(cfg_file, "r");
+	if (fp) {
+		size_t rc = fread(buf, 1, CFG_SIZE, fp);
+		int err   = ferror(fp);	
+		fclose(fp);
+		if (rc > 0 && !err && !strcmp(buf, config)) {
+			return;
+		}
+	}
+
+	fp = fopen(cfg_file, "w");
+	if (!fp || fwrite(config, 1, strlen(config), fp) == 0) {
+		abort_fail("failed to generate config '%s'", cfg_file);
+	}
+	fclose(fp);
 }
