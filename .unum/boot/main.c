@@ -398,7 +398,7 @@ void write_config() {
 	printf_config("#define UNUM_CONFIG_H");	
 	printf_config("");
 	printf_config("/*");
-	printf_config(" * !!  DO NOT modify, this file is auto-generated. !!");
+	printf_config(" *  This file is auto-generated.");
 	printf_config(" */");
 	printf_config("");
 
@@ -417,6 +417,9 @@ void write_config() {
 	printf_config("");
 
 
+	// - the anchor of any deployment and by putting this here it ensures
+	//   that copying the deployment somewhere else will be detected by
+	//   simply running `make` again.
 	printf_config("#define UNUM_BASIS_DIR       \"%s\"", basis_dir);
 	printf_config("");
 
