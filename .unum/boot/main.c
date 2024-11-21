@@ -30,6 +30,7 @@
  *  is re-invoked on an existing repo.
  */
 
+#include <assert.h>
 #include <limits.h>
 #include <stdarg.h>
 #include <stdio.h>
@@ -69,6 +70,7 @@ static const char *parse_option(const char *optName, const char *from);
 static void parse_cmd_line(int argc, char *argv[]);
 static const char *resolve_cmd(const char *cmd);
 static void set_basis();
+static const char *to_basis(const char *path);
 
 // - state
 static char        basis_dir[PATH_MAX];
@@ -253,9 +255,28 @@ static void parse_cmd_line(int argc, char *argv[]) {
 }
 
 
+static const char *to_basis(const char *path) {
+	static char  buf[PATH_MAX];
+	char         *bp = buf, *tmp;
+
+	for (tmp = basis_dir; *tmp; tmp++, bp++) {
+		*bp = (*tmp == '/') ? path_sep : *tmp;
+	}
+
+	for (; *path; path++, bp++) {
+		*bp = *path;
+	}
+
+	*bp = '\0';
+	
+	return buf;
+}
+
+
 static void set_basis() {
 	char        cwd[PATH_MAX];
 	char        *pos;
+	const char  *bd;
 	const char  *build_dirs[] = { BUILD_DIR, BUILD_INCLUDE_DIR, BIN_DIR };
 	int         i;
 
@@ -285,8 +306,9 @@ static void set_basis() {
 	chdir(basis_dir);
 
 	for (i = 0; i < sizeof(build_dirs)/sizeof(build_dirs[0]); i++) {
-		if (!is_dir(build_dirs[i]) && mkdir(build_dirs[i], S_IRWXU) != 0) {
-			abort_fail("failed to create build directory '%s'", build_dirs[i]);
+		bd = to_basis(build_dirs[i]);
+		if (!is_dir(bd) && mkdir(bd, S_IRWXU) != 0) {
+			abort_fail("failed to create build directory '%s'", bd);
 		}
 	}
 }
