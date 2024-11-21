@@ -21,10 +21,21 @@
 
 #ifdef UNUM_BOOTSTRAP
 
+	/*
+	 *  The pre-kernel of unum is run from `make` and only as much as is
+	 *  necessary to deploy the full kernel from source so that the build
+	 *  machinery is used for every full build of the kernel, including the
+	 *  first.
+ 	 */
 	#include "main_prek.c"
 
 #else 
 
+	/*
+ 	 *  The unum kernel manages the entire systemic development pipeline 
+	 *  (source, build, runtime, analytics, networking, logging) for a 
+     *  deployment and its integration with the basis.
+ 	 */
 	#include "main_k.c"
 
 #endif /* UNUM_BOOTSTRAP */

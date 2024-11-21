@@ -21,12 +21,7 @@
 
 extern void deploy();
 
-/*
- *  The bootstrapping implementation is the smallest unum kernel (known as 
- *  'pre-k') that has a minimally-compatible command-line and can complete
- *  a deployment.
- */
-
+// - unum pre-kernel (pre-k)
 int main(int argc, char *argv[]) {
 	printf("DEBUG: Bootstrapping.\n");
 	deploy();

@@ -19,6 +19,7 @@
 
 #include <stdio.h>
 
+// - unum kernel
 int main(int argc, char *argv[]) {
 	printf("DEBUG: Hello unum.\n");
 }
