@@ -431,7 +431,7 @@ void write_config() {
 	printf_config("#endif /* UNUM_CONFIG_H */");
 
 	// - don't rewrite identicial content to avoid needless rebuilds
-	cfg_file = to_basis("./build/include/config.h");
+	cfg_file = to_basis("./build/include/uconfig.h");
 	fp = fopen(cfg_file, "r");
 	if (fp) {
 		size_t rc = fread(buf, 1, CFG_SIZE, fp);
