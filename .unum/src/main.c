@@ -27,7 +27,7 @@
 	 *  machinery is used for every full build of the kernel, including the
 	 *  first.
  	 */
-	#include "main_prek.c"
+	#include "main_pre_k.c"
 
 #else 
 

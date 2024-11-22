@@ -18,11 +18,15 @@
 | ---------------------------------------------------------------*/
 
 #include <stdio.h>
+#include "uconfig.h"
 
 extern void deploy();
 
 // - unum pre-kernel (pre-k)
 int main(int argc, char *argv[]) {
 	printf("DEBUG: Bootstrapping.\n");
+	#if UNUM_OS_MACOS
+	printf("DEBUG: --> RUNNING ON MACOS\n");
+	#endif
 	deploy();
 }
