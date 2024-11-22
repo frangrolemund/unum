@@ -26,7 +26,7 @@
  *  This program figures out where it is running, encodes fundamental 
  *  configuration and builds the first `unum` kernel, called the pre-kernel
  *  or 'pre-k' for short.  The objective is for it to be as minimal as possible
- *  without confusing the process or introducing needless waste when `make` is
+ *  without confusing the process or introducing needless waste if/when `make` 
  *  is re-invoked on an existing repo.
  */
 
@@ -381,7 +381,7 @@ static const char *to_basis(const char *path) {
 }
 
 
-void write_config() {
+static void write_config() {
 	FILE        *fp;
 	char        buf[CFG_SIZE];
 	const char  *cfg_file;
@@ -443,7 +443,7 @@ void write_config() {
 }
 
 
-void printf_config(const char *fmt, ...) {
+static void printf_config(const char *fmt, ...) {
 	va_list ap;
 	va_start(ap, fmt);
 	cfg_offset += vsnprintf(cfg_offset, sizeof(config) - (cfg_offset - config),
