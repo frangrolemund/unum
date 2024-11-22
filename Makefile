@@ -24,6 +24,7 @@ RMDIR := rm -rf
 
 all : $(BOOT)/uboot
 	@$(BOOT)/uboot --cc=$(CC) --ld=$(LD) 
+	@$(BASIS)/bin/unum deploy
 
 clean :
 	$(RM) $(BOOT)/uboot

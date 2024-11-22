@@ -63,12 +63,14 @@ typedef const char * cstrarr_t[];
 
 
 static void abort_fail(const char *fmt, ...);
+static const char *bin_ext();
+static void build_pre_k();
 static void detect_path_style();
 static void detect_platform();
 static struct stat file_info(const char *path);
 static char *find_in_path(const char *cmd);
-static int run_cc(const char *bin_file, const char *include_dirs[], 
-                  const char *source_files[]);
+static int run_cc(const char *bin_file, cstrarr_t include_dirs, 
+                  cstrarr_t pproc_defs, cstrarr_t source_files); 
 static int run_cc_with_source(const char *source); 
 static const char *parse_option(const char *optName, const char *from);
 static void parse_cmd_line(int argc, char *argv[]);
@@ -82,6 +84,8 @@ static void write_config();
 #define BUILD_DIR 	       "./build"
 #define BUILD_INCLUDE_DIR  "./build/include"
 #define BIN_DIR            "./bin"
+#define UCONFIG_FILE       "./build/include/uconfig.h"
+#define UKERN_FILE         "./bin/unum"
 #define is_file(p)         (file_info((p)).st_mode & S_IFREG)
 #define is_dir(p)          (file_info((p)).st_mode & S_IFDIR)
 #define path_sep_s         ((char [2]) { path_sep, '\0' })
@@ -110,13 +114,7 @@ int main(int argc, char *argv[]) {
 	set_basis();
 	write_config();	
 
-	printf("DEBUG: inside uboot...\n");
-	printf("- basis:          %s\n", basis_dir);
-	printf("- path separator: '%c'\n", path_sep);
-	printf("- platform:  	   %d\n", platform);
-	for (int i = 0; i < T_COUNT; i++) {
-		printf("- tool %d:         %s\n", i, tools[i]);
-	}
+	build_pre_k();
 
 	fclose(uberr);
 	return 0;
@@ -313,7 +311,10 @@ static int run_cc_with_source(const char *source) {
 	}
 	fclose(src_file);
 
-	rc = run_cc(bin_name, (cstrarr_t) { NULL }, (cstrarr_t) { src_name, NULL });
+	rc = run_cc(bin_name, 
+	            (cstrarr_t) { NULL }, 
+	            (cstrarr_t) { NULL },
+	            (cstrarr_t) { src_name, NULL });
 
 	unlink(src_name);
 	unlink(bin_name);
@@ -322,22 +323,27 @@ static int run_cc_with_source(const char *source) {
 }
 
 
-// - both include_dirs and source_files must be terminated with NULL
+// - include_dirs, pp_defs, and source_files must be terminated with NULL
 static int run_cc(const char *bin_file, cstrarr_t include_dirs, 
-                  cstrarr_t source_files) {
-	char cmd[8192];
-	
-	strncpy(cmd, tools[T_CC], sizeof(cmd));
+                  cstrarr_t pproc_defs, cstrarr_t source_files) {
+	char cmd[16384];
 
-	for (;*include_dirs;include_dirs++) {
+	strcpy(cmd, tools[T_CC]);	
+
+	for (; *include_dirs ; include_dirs++) {
 		strcat(cmd, " -I");
 		strcat(cmd, *include_dirs);
 	}
 
-	strcat(cmd, " -o");
+	for (; *pproc_defs; pproc_defs++) {
+		strcat(cmd, " -D");
+		strcat(cmd, *pproc_defs);
+	}
+
+	strcat(cmd, " -o ");
 	strcat(cmd, bin_file);
 
-	for (;*source_files;source_files++) {
+	for (; *source_files; source_files++) {
 		strcat(cmd, " ");
 		strcat(cmd, *source_files);
 	}
@@ -448,7 +454,7 @@ static void write_config() {
 	printf_config("#endif /* UNUM_CONFIG_H */");
 
 	// - don't rewrite identicial content to avoid needless rebuilds
-	cfg_file = to_basis("./build/include/uconfig.h");
+	cfg_file = to_basis(UCONFIG_FILE);
 	fp = fopen(cfg_file, "r");
 	if (fp) {
 		size_t rc = fread(buf, 1, CFG_SIZE, fp);
@@ -474,4 +480,61 @@ static void printf_config(const char *fmt, ...) {
 	                        fmt, ap);
 	va_end(ap);
 	*cfg_offset++ = '\n';
+}
+
+
+static void build_pre_k() {
+	char   bin_file[PATH_MAX];	
+	char   inc_dir[PATH_MAX];	
+	char   ucfg_file[PATH_MAX];
+	char   src[2][PATH_MAX];
+	time_t bin_mod;	
+	int    rc;
+
+	strcpy(bin_file, to_basis(UKERN_FILE));
+	strcat(bin_file, bin_ext());
+
+	strcpy(inc_dir, to_basis(BUILD_INCLUDE_DIR));
+
+	strcpy(ucfg_file, to_basis(UCONFIG_FILE));
+
+	strcpy(src[0], to_basis("./src/main.c"));
+	strcpy(src[1], to_basis("./src/deploy.c"));
+
+	bin_mod = file_info(bin_file).st_mtime;
+
+	// - do not rebuild if fundamentals are unchanged because there
+	//   may be a full build sitting there that shouldn't be recreated
+	if (bin_mod >= file_info(ucfg_file).st_mtime && 
+	    bin_mod > file_info(src[0]).st_mtime &&
+	    bin_mod > file_info(src[1]).st_mtime) {
+		return;
+	}
+
+	rc = run_cc(bin_file, 
+	            (cstrarr_t) { inc_dir, NULL }, 
+	            (cstrarr_t) { "UNUM_BOOTSTRAP", NULL }, 
+	            (cstrarr_t) { src[0], src[1], NULL });
+
+	if (rc != 0) {
+		abort_fail("failed to build pre-k, rc=%d", rc);
+	}
+
+	printf("uboot: unum is bootstrapped\n");
+}
+
+
+static const char *bin_ext() {
+	const char *ptr = NULL;
+
+	ptr = tools[T_CC] + strlen(tools[T_CC]);
+	while (*--ptr) {
+		if (*ptr == '.' && strlen(ptr) > 1) {
+			return ptr;
+		} else if (*ptr == path_sep) {
+			break;
+		}
+	}
+
+	return "";
 }
