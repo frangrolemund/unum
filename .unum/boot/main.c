@@ -59,13 +59,17 @@ typedef enum {
 	P_UNKNOWN	
 } platform_e;
 
+typedef const char * cstrarr_t[];
+
 
 static void abort_fail(const char *fmt, ...);
 static void detect_path_style();
 static void detect_platform();
 static struct stat file_info(const char *path);
 static char *find_in_path(const char *cmd);
-static int run_cc(const char *code);
+static int run_cc(const char *bin_file, const char *include_dirs[], 
+                  const char *source_files[]);
+static int run_cc_with_source(const char *source); 
 static const char *parse_option(const char *optName, const char *from);
 static void parse_cmd_line(int argc, char *argv[]);
 static void printf_config(const char *fmt, ...);
@@ -263,7 +267,7 @@ static struct stat file_info(const char *path) {
 
 
 static void detect_platform() {
-	if (run_cc(
+	if (run_cc_with_source(
 	           "#include <Carbon/Carbon.h>\n"	
 	           "#include <stdio.h>\n\n"
 	           "int main(int argc, char **argv) {\n"
@@ -278,14 +282,13 @@ static void detect_platform() {
 }
 
 
-static int run_cc(const char *source) {
+static int run_cc_with_source(const char *source) {
 	const char *tmp_env[]         = { "TMPDIR", "TMP", "TEMP", "TEMPDIR", 
 	                                  NULL };
 	const char **tp               = tmp_env;
 	int        rc;
 	char       src_name[PATH_MAX];
 	char       bin_name[PATH_MAX];
-	char       cc_cmd[2048];
 	FILE       *src_file;
 
 	// ...avoids the scary warning from macos for using tmpnam
@@ -310,15 +313,36 @@ static int run_cc(const char *source) {
 	}
 	fclose(src_file);
 
-	snprintf(cc_cmd, sizeof(cc_cmd), "%s -o %s %s", 
-				tools[T_CC], bin_name, src_name);
-
-	rc = system(cc_cmd);
+	rc = run_cc(bin_name, (cstrarr_t) { NULL }, (cstrarr_t) { src_name, NULL });
 
 	unlink(src_name);
 	unlink(bin_name);
 
 	return rc;
+}
+
+
+// - both include_dirs and source_files must be terminated with NULL
+static int run_cc(const char *bin_file, cstrarr_t include_dirs, 
+                  cstrarr_t source_files) {
+	char cmd[8192];
+	
+	strncpy(cmd, tools[T_CC], sizeof(cmd));
+
+	for (;*include_dirs;include_dirs++) {
+		strcat(cmd, " -I");
+		strcat(cmd, *include_dirs);
+	}
+
+	strcat(cmd, " -o");
+	strcat(cmd, bin_file);
+
+	for (;*source_files;source_files++) {
+		strcat(cmd, " ");
+		strcat(cmd, *source_files);
+	}
+
+	return system(cmd);
 }
 
 
