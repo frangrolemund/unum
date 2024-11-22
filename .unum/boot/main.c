@@ -39,7 +39,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-// - types
+
 typedef enum {
 	T_CC = 0,
 	T_LD,
@@ -59,7 +59,7 @@ typedef enum {
 	P_UNKNOWN	
 } platform_e;
 
-// - forward declarations
+
 static void abort_fail(const char *fmt, ...);
 static void detect_path_style();
 static void detect_platform();
@@ -68,10 +68,12 @@ static char *find_in_path(const char *cmd);
 static int run_cc(const char *code);
 static const char *parse_option(const char *optName, const char *from);
 static void parse_cmd_line(int argc, char *argv[]);
+static void printf_config(const char *fmt, ...);
 static const char *resolve_cmd(const char *cmd);
 static void set_basis();
 static const char *to_basis(const char *path);
 static void write_config();
+
 
 #define BUILD_DIR 	       "./build"
 #define BUILD_INCLUDE_DIR  "./build/include"
@@ -81,14 +83,14 @@ static void write_config();
 #define path_sep_s         ((char [2]) { path_sep, '\0' })
 #define CFG_SIZE           32768
 
-// - state
+
 static char        basis_dir[PATH_MAX];
 static char        path_sep;
-static platform_e  platform        = P_UNKNOWN;
-static const char  *tools[T_COUNT] = { NULL, NULL };
-static FILE        *uberr          = NULL;
+static platform_e  platform           = P_UNKNOWN;
+static const char  *tools[T_COUNT]    = { NULL, NULL };
+static FILE        *uberr             = NULL;
 static char        config[CFG_SIZE];
-static char        *cfg_offset     = config;
+static char        *cfg_offset        = config;
 
 
 int main(int argc, char *argv[]) {
@@ -104,7 +106,7 @@ int main(int argc, char *argv[]) {
 	set_basis();
 	write_config();	
 
-	printf("inside uboot...\n");
+	printf("DEBUG: inside uboot...\n");
 	printf("- basis:          %s\n", basis_dir);
 	printf("- path separator: '%c'\n", path_sep);
 	printf("- platform:  	   %d\n", platform);
@@ -114,19 +116,6 @@ int main(int argc, char *argv[]) {
 
 	fclose(uberr);
 	return 0;
-}
-
-
-static void abort_fail(const char *fmt, ...) {
-	va_list ap;
-	char    buf[2048];
-
-	va_start(ap, fmt);
-	vsnprintf(buf, sizeof(buf), fmt, ap);
-	va_end(ap);
-
-	fprintf(uberr ? uberr : stdout, "uboot error: %s\n", buf);
-	exit(1);
 }
 
 
@@ -145,6 +134,47 @@ static void detect_path_style() {
 }
 
 
+static void abort_fail(const char *fmt, ...) {
+	va_list ap;
+	char    buf[2048];
+
+	va_start(ap, fmt);
+	vsnprintf(buf, sizeof(buf), fmt, ap);
+	va_end(ap);
+
+	fprintf(uberr ? uberr : stdout, "uboot error: %s\n", buf);
+	exit(1);
+}
+
+
+static void parse_cmd_line(int argc, char *argv[]) {
+	const char  *opt = NULL;
+	int         i;
+
+	while (--argc) {
+		const char *item = *++argv;
+		int is_sup = 0;
+		for (i = 0; i < sizeof(tool_map)/sizeof(tool_map[0]); i++) {
+			if ((opt = parse_option(tool_map[i].oname, item))) {
+				opt = (opt && opt[0]) ? opt : NULL;
+				opt = (i == T_CC || i == T_LD) ? resolve_cmd(opt) : opt;
+				tools[tool_map[i].tool] = opt;
+				is_sup = 1;
+				break;
+			}	
+		}
+
+		if (!is_sup) {
+			abort_fail("unsuported command-line parameter '%s'", item);
+		}
+	}
+
+	if (!tools[T_CC] || !tools[T_LD]) {
+		abort_fail("missing one or more required tool parameters.");
+	}
+}
+
+
 static const char *parse_option(const char *opt_name, const char *from) {
 	char       prefix[64] = "\0";
 	const char *p         = prefix;
@@ -160,42 +190,6 @@ static const char *parse_option(const char *opt_name, const char *from) {
 	return from;
 }
 
-
-static struct stat file_info(const char *path) {
-	struct stat sinfo;
-
-	if (path && stat(path, &sinfo) == 0) {
-		return sinfo;
-	}
-
-	memset(&sinfo, 0, sizeof(sinfo));
-	return sinfo;
-}
-
-
-static char *find_in_path(const char *cmd) {
-	const char   *path = getenv("PATH");
-	static char  buf[PATH_MAX];
-	char         *ppos = buf;
-	char         c;
-
-	while ((c = *path++)) {
-		if (c == ':' || c == ';') {
-			*ppos++ = path_sep;
-			strcpy(ppos, cmd);
-
-			if (is_file(buf)) {
-				return buf;
-			}
-
-			ppos = buf;
-		} else {
-			*ppos++ = c;
-		}
-	}
-
-	return NULL;
-}
 
 static const char *resolve_cmd(const char *cmd) {
 	char tmp[PATH_MAX];
@@ -231,90 +225,56 @@ static const char *resolve_cmd(const char *cmd) {
 }
 
 
-static void parse_cmd_line(int argc, char *argv[]) {
-	const char  *opt = NULL;
-	int         i;
-
-	while (--argc) {
-		const char *item = *++argv;
-		int is_sup = 0;
-		for (i = 0; i < sizeof(tool_map)/sizeof(tool_map[0]); i++) {
-			if ((opt = parse_option(tool_map[i].oname, item))) {
-				opt = (opt && opt[0]) ? opt : NULL;
-				opt = (i == T_CC || i == T_LD) ? resolve_cmd(opt) : opt;
-				tools[tool_map[i].tool] = opt;
-				is_sup = 1;
-				break;
-			}	
-		}
-
-		if (!is_sup) {
-			abort_fail("unsuported command-line parameter '%s'", item);
-		}
-	}
-
-	if (!tools[T_CC] || !tools[T_LD]) {
-		abort_fail("missing one or more required tool parameters.");
-	}
-}
-
-
-static const char *to_basis(const char *path) {
+static char *find_in_path(const char *cmd) {
+	const char   *path = getenv("PATH");
 	static char  buf[PATH_MAX];
-	char         *bp = buf, *tmp;
+	char         *ppos = buf;
+	char         c;
 
-	for (tmp = basis_dir; *tmp; tmp++, bp++) {
-		*bp = (*tmp == '/') ? path_sep : *tmp;
+	while ((c = *path++)) {
+		if (c == ':' || c == ';') {
+			*ppos++ = path_sep;
+			strcpy(ppos, cmd);
+
+			if (is_file(buf)) {
+				return buf;
+			}
+
+			ppos = buf;
+		} else {
+			*ppos++ = c;
+		}
 	}
 
-	for (; *path; path++, bp++) {
-		*bp = *path;
-	}
-
-	*bp = '\0';
-	
-	return buf;
+	return NULL;
 }
 
 
-static void set_basis() {
-	char        cwd[PATH_MAX];
-	char        *pos;
-	const char  *bd;
-	const char  *build_dirs[] = { BUILD_DIR, BUILD_INCLUDE_DIR, BIN_DIR };
-	int         i;
+static struct stat file_info(const char *path) {
+	struct stat sinfo;
 
-	if (!getcwd(cwd, PATH_MAX)) {
-		abort_fail("cannot retrieve cwd");
-	}
-	
-	if (strncmp(cwd, __FILE__, strlen(cwd))) {
-		snprintf(basis_dir, sizeof(basis_dir), "%s%c%s", cwd, path_sep, 
-		         __FILE__);
-	} else {
-		strncpy(basis_dir, __FILE__, sizeof(basis_dir));
+	if (path && stat(path, &sinfo) == 0) {
+		return sinfo;
 	}
 
-	pos = basis_dir + strlen(basis_dir);
-	while (--pos >= basis_dir) {
-		if (!strncmp(pos, "boot", 4)) {
-			*pos = '\0';
-			break;
-		}
+	memset(&sinfo, 0, sizeof(sinfo));
+	return sinfo;
+}
+
+
+static void detect_platform() {
+	if (run_cc(
+	           "#include <Carbon/Carbon.h>\n"	
+	           "#include <stdio.h>\n\n"
+	           "int main(int argc, char **argv) {\n"
+	           "  printf(\"hello unum\");\n"
+	           "}\n"
+	          ) == 0) {
+		platform = P_MACOS;
+		return;
 	}
 
-	if (pos <= basis_dir) {
-		abort_fail("basis not found");
-	}
-
-	chdir(basis_dir);
-
-	for (i = 0; i < sizeof(build_dirs)/sizeof(build_dirs[0]); i++) {
-		bd = to_basis(build_dirs[i]);
-		if (!is_dir(bd) && mkdir(bd, S_IRWXU) != 0) {
-			abort_fail("failed to create build directory '%s'", bd);
-		}
-	}
+	abort_fail("unsupported platform type");
 }
 
 
@@ -362,29 +322,62 @@ static int run_cc(const char *source) {
 }
 
 
-static void detect_platform() {
-	if (run_cc(
-	           "#include <Carbon/Carbon.h>\n"	
-	           "#include <stdio.h>\n\n"
-	           "int main(int argc, char **argv) {\n"
-	           "  printf(\"hello unum\");\n"
-	           "}\n"
-	          ) == 0) {
-		platform = P_MACOS;
-		return;
+static void set_basis() {
+	char        cwd[PATH_MAX];
+	char        *pos;
+	const char  *bd;
+	const char  *build_dirs[] = { BUILD_DIR, BUILD_INCLUDE_DIR, BIN_DIR };
+	int         i;
+
+	if (!getcwd(cwd, PATH_MAX)) {
+		abort_fail("cannot retrieve cwd");
+	}
+	
+	if (strncmp(cwd, __FILE__, strlen(cwd))) {
+		snprintf(basis_dir, sizeof(basis_dir), "%s%c%s", cwd, path_sep, 
+		         __FILE__);
+	} else {
+		strncpy(basis_dir, __FILE__, sizeof(basis_dir));
 	}
 
-	abort_fail("unsupported platform type");
+	pos = basis_dir + strlen(basis_dir);
+	while (--pos >= basis_dir) {
+		if (!strncmp(pos, "boot", 4)) {
+			*pos = '\0';
+			break;
+		}
+	}
+
+	if (pos <= basis_dir) {
+		abort_fail("basis not found");
+	}
+
+	chdir(basis_dir);
+
+	for (i = 0; i < sizeof(build_dirs)/sizeof(build_dirs[0]); i++) {
+		bd = to_basis(build_dirs[i]);
+		if (!is_dir(bd) && mkdir(bd, S_IRWXU) != 0) {
+			abort_fail("failed to create build directory '%s'", bd);
+		}
+	}
 }
 
 
-void printf_config(const char *fmt, ...) {
-	va_list ap;
-	va_start(ap, fmt);
-	cfg_offset += vsnprintf(cfg_offset, sizeof(config) - (cfg_offset - config),
-	                        fmt, ap);
-	va_end(ap);
-	*cfg_offset++ = '\n';
+static const char *to_basis(const char *path) {
+	static char  buf[PATH_MAX];
+	char         *bp = buf, *tmp;
+
+	for (tmp = basis_dir; *tmp; tmp++, bp++) {
+		*bp = (*tmp == '/') ? path_sep : *tmp;
+	}
+
+	for (; *path; path++, bp++) {
+		*bp = *path;
+	}
+
+	*bp = '\0';
+	
+	return buf;
 }
 
 
@@ -447,4 +440,14 @@ void write_config() {
 		abort_fail("failed to generate config '%s'", cfg_file);
 	}
 	fclose(fp);
+}
+
+
+void printf_config(const char *fmt, ...) {
+	va_list ap;
+	va_start(ap, fmt);
+	cfg_offset += vsnprintf(cfg_offset, sizeof(config) - (cfg_offset - config),
+	                        fmt, ap);
+	va_end(ap);
+	*cfg_offset++ = '\n';
 }
