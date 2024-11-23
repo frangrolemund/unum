@@ -69,8 +69,8 @@ static void detect_path_style();
 static void detect_platform();
 static struct stat file_info(const char *path);
 static char *find_in_path(const char *cmd);
-static int run_cc(const char *bin_file, cstrarr_t include_dirs, 
-                  cstrarr_t pproc_defs, cstrarr_t source_files); 
+static int run_cc(const char *bin_file, const char *inc_dir, 
+                  const char *pp_defs, cstrarr_t src_files);
 static int run_cc_with_source(const char *source); 
 static const char *parse_option(const char *optName, const char *from);
 static void parse_cmd_line(int argc, char *argv[]);
@@ -311,10 +311,7 @@ static int run_cc_with_source(const char *source) {
 	}
 	fclose(src_file);
 
-	rc = run_cc(bin_name, 
-	            (cstrarr_t) { NULL }, 
-	            (cstrarr_t) { NULL },
-	            (cstrarr_t) { src_name, NULL });
+	rc = run_cc(bin_name, NULL, NULL, (cstrarr_t) { src_name, NULL });
 
 	unlink(src_name);
 	unlink(bin_name);
@@ -323,29 +320,29 @@ static int run_cc_with_source(const char *source) {
 }
 
 
-// - include_dirs, pp_defs, and source_files must be terminated with NULL
-static int run_cc(const char *bin_file, cstrarr_t include_dirs, 
-                  cstrarr_t pproc_defs, cstrarr_t source_files) {
+// - source_files must be terminated with NULL
+static int run_cc(const char *bin_file, const char *inc_dir, 
+                  const char *pp_defs, cstrarr_t src_files) {
 	char cmd[16384];
 
 	strcpy(cmd, tools[T_CC]);	
 
-	for (; *include_dirs ; include_dirs++) {
+	if (inc_dir && *inc_dir) {
 		strcat(cmd, " -I");
-		strcat(cmd, *include_dirs);
+		strcat(cmd, inc_dir);
 	}
 
-	for (; *pproc_defs; pproc_defs++) {
+	if (pp_defs && *pp_defs) {
 		strcat(cmd, " -D");
-		strcat(cmd, *pproc_defs);
+		strcat(cmd, pp_defs);
 	}
 
 	strcat(cmd, " -o ");
 	strcat(cmd, bin_file);
 
-	for (; *source_files; source_files++) {
+	for (; *src_files; src_files++) {
 		strcat(cmd, " ");
-		strcat(cmd, *source_files);
+		strcat(cmd, *src_files);
 	}
 
 	return system(cmd);
@@ -486,14 +483,6 @@ static void printf_config(const char *fmt, ...) {
 static void build_pre_k() {
 	char      bin_file[PATH_MAX];	
 	char      ucfg_file[PATH_MAX];
-	cstrarr_t inc_dir               = {
-		strdup(to_basis(BUILD_INCLUDE_DIR)),
-		NULL
-    };
-	cstrarr_t pp_def                = {
-		"UNUM_BOOTSTRAP",
-		NULL
-    };
 	cstrarr_t src                   = {
 		strdup(to_basis("./src/main.c")),
 		strdup(to_basis("./src/main_pre_k.c")),
@@ -520,13 +509,14 @@ static void build_pre_k() {
 		return;
 	}
 
-	rc = run_cc(bin_file, inc_dir, pp_def, src);
+	rc = run_cc(bin_file, strdup(to_basis(BUILD_INCLUDE_DIR)),
+	            "UNUM_BOOTSTRAP", src);
 
 	if (rc != 0) {
 		abort_fail("failed to build pre-k, rc=%d", rc);
 	}
 
-	printf("uboot: unum pre-kernel is ready for deployment\n");
+	printf("uboot: unum is ready for bootstrapping.\n");
 }
 
 
