@@ -20,13 +20,33 @@
 #include <stdio.h>
 #include "uconfig.h"
 
-extern void deploy();
+#ifndef UNUM_BOOTSTRAP
+#error "Bootstrapping only."
+#endif
 
-// - unum pre-kernel (pre-k)
-int main(int argc, char *argv[]) {
-	printf("DEBUG: Bootstrapping.\n");
+/*
+ *  Pre-kernel: The binary build of `unum` created when preparing a repo
+ *              with the Makefile for a new compiler toolchain or platform.
+ *              It includes the minimal amount of infrastructure to build 
+ *              previously-deployed kernel code using the same mechanisms 
+ *              used in the unum workflows.  The pre-kernel is built by the 
+ *              bootstrapping control (uboot) using a fairly brute-forced 
+ *              approach without providing a lot of feedback on  errors.  
+ *              The pre-kernel can then rebuild the full kernel using the 
+ *              official machinery of deployment, which includes more precise
+ *              error reporting.
+ * 
+ */
+
+extern void UD_deploy();
+
+int UM_main(int argc, char *argv[]) {
+	printf("DEBUG: In pre-kernel.\n");
 	#if UNUM_OS_MACOS
 	printf("DEBUG: --> RUNNING ON MACOS\n");
 	#endif
-	deploy();
+	UD_deploy();
+	
+	printf("unum is bootstrapped\n");
+	return 0;
 }

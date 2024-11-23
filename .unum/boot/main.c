@@ -81,7 +81,7 @@ static const char *to_basis(const char *path);
 static void write_config();
 
 
-#define BUILD_DIR 	       "./build"
+#define BUILD_DIR          "./build"
 #define BUILD_INCLUDE_DIR  "./build/include"
 #define BIN_DIR            "./bin"
 #define UCONFIG_FILE       "./build/include/uconfig.h"
@@ -484,43 +484,49 @@ static void printf_config(const char *fmt, ...) {
 
 
 static void build_pre_k() {
-	char   bin_file[PATH_MAX];	
-	char   inc_dir[PATH_MAX];	
-	char   ucfg_file[PATH_MAX];
-	char   src[2][PATH_MAX];
+	char      bin_file[PATH_MAX];	
+	char      ucfg_file[PATH_MAX];
+	cstrarr_t inc_dir               = {
+		strdup(to_basis(BUILD_INCLUDE_DIR)),
+		NULL
+    };
+	cstrarr_t pp_def                = {
+		"UNUM_BOOTSTRAP",
+		NULL
+    };
+	cstrarr_t src                   = {
+		strdup(to_basis("./src/main.c")),
+		strdup(to_basis("./src/main_pre_k.c")),
+		strdup(to_basis("./src/deploy.c")),
+		NULL
+	};
+	const char **sp                 = src;
+
 	time_t bin_mod;	
-	int    rc;
+	int    build_pre_k = 0, rc;
 
 	strcpy(bin_file, to_basis(UKERN_FILE));
 	strcat(bin_file, bin_ext());
 
-	strcpy(inc_dir, to_basis(BUILD_INCLUDE_DIR));
-
 	strcpy(ucfg_file, to_basis(UCONFIG_FILE));
 
-	strcpy(src[0], to_basis("./src/main.c"));
-	strcpy(src[1], to_basis("./src/deploy.c"));
+	bin_mod     = file_info(bin_file).st_mtime;
+	build_pre_k = (bin_mod < file_info(ucfg_file).st_mtime); 
+	for (; !build_pre_k && *sp ; sp++) {
+		build_pre_k = (bin_mod < file_info(*sp).st_mtime); 
+	}
 
-	bin_mod = file_info(bin_file).st_mtime;
-
-	// - do not rebuild if fundamentals are unchanged because there
-	//   may be a full build sitting there that shouldn't be recreated
-	if (bin_mod >= file_info(ucfg_file).st_mtime && 
-	    bin_mod > file_info(src[0]).st_mtime &&
-	    bin_mod > file_info(src[1]).st_mtime) {
+	if (!build_pre_k) {
 		return;
 	}
 
-	rc = run_cc(bin_file, 
-	            (cstrarr_t) { inc_dir, NULL }, 
-	            (cstrarr_t) { "UNUM_BOOTSTRAP", NULL }, 
-	            (cstrarr_t) { src[0], src[1], NULL });
+	rc = run_cc(bin_file, inc_dir, pp_def, src);
 
 	if (rc != 0) {
 		abort_fail("failed to build pre-k, rc=%d", rc);
 	}
 
-	printf("uboot: unum is bootstrapped\n");
+	printf("uboot: unum pre-kernel is ready for deployment\n");
 }
 
 

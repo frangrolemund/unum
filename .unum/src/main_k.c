@@ -19,7 +19,20 @@
 
 #include <stdio.h>
 
-// - unum kernel
-int main(int argc, char *argv[]) {
-	printf("DEBUG: Hello unum.\n");
+/*
+ *  Kernel:  The binary build of `unum` that includes the entire systemic
+ *           programming toolchain and the native implementation of the latest
+ *           deployed main system.  All facilities of runtime, analytics,
+ *           tooling, networking, etc, etc. are built into a single 
+ *           executable that maintains the deployment and its dependencies in
+ *           the basis (physical resources).
+ */
+
+#ifdef UNUM_BOOTSTRAP
+#error "Kernel deployment only."
+#endif
+
+int UM_main(int argc, char *argv[]) {
+	printf("DEBUG: in kernel, hello unum.\n");
+	return 0;
 }
