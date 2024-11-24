@@ -1,0 +1,412 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A1975C552CF37F2B005F115E /* main_k.c in Sources */ = {isa = PBXBuildFile; fileRef = A1975C542CF37F2B005F115E /* main_k.c */; };
+		A1975C562CF37F2B005F115E /* deploy.c in Sources */ = {isa = PBXBuildFile; fileRef = A1975C522CF37F2B005F115E /* deploy.c */; };
+		A1975C572CF37F2B005F115E /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = A1975C532CF37F2B005F115E /* main.c */; };
+		A1975C5D2CF38838005F115E /* main_pre_k.c in Sources */ = {isa = PBXBuildFile; fileRef = A1975C5C2CF38838005F115E /* main_pre_k.c */; };
+		A1975C5E2CF38838005F115E /* deploy.c in Sources */ = {isa = PBXBuildFile; fileRef = A1975C5A2CF38838005F115E /* deploy.c */; };
+		A1975C5F2CF38838005F115E /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = A1975C5B2CF38838005F115E /* main.c */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		A1975C2A2CF37C1C005F115E /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		A1975C442CF37DDA005F115E /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		A1975C2C2CF37C1C005F115E /* unum */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = unum; sourceTree = BUILT_PRODUCTS_DIR; };
+		A1975C462CF37DDA005F115E /* unum-pre-k */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "unum-pre-k"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A1975C522CF37F2B005F115E /* deploy.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = deploy.c; path = /Users/fran/work/realproven/unum/.unum/src/deploy.c; sourceTree = "<absolute>"; };
+		A1975C532CF37F2B005F115E /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = main.c; path = /Users/fran/work/realproven/unum/.unum/src/main.c; sourceTree = "<absolute>"; };
+		A1975C542CF37F2B005F115E /* main_k.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = main_k.c; path = /Users/fran/work/realproven/unum/.unum/src/main_k.c; sourceTree = "<absolute>"; };
+		A1975C582CF38122005F115E /* uconfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = uconfig.h; path = /Users/fran/work/realproven/unum/.unum/build/include/uconfig.h; sourceTree = "<absolute>"; };
+		A1975C5A2CF38838005F115E /* deploy.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = deploy.c; path = /Users/fran/work/realproven/unum/.unum/src/deploy.c; sourceTree = "<absolute>"; };
+		A1975C5B2CF38838005F115E /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = main.c; path = /Users/fran/work/realproven/unum/.unum/src/main.c; sourceTree = "<absolute>"; };
+		A1975C5C2CF38838005F115E /* main_pre_k.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = main_pre_k.c; path = /Users/fran/work/realproven/unum/.unum/src/main_pre_k.c; sourceTree = "<absolute>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A1975C292CF37C1C005F115E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A1975C432CF37DDA005F115E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		A1975C232CF37C1C005F115E = {
+			isa = PBXGroup;
+			children = (
+				A1975C582CF38122005F115E /* uconfig.h */,
+				A1975C512CF37EDE005F115E /* unum */,
+				A1975C592CF387F2005F115E /* unum-pre-k */,
+				A1975C2D2CF37C1C005F115E /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		A1975C2D2CF37C1C005F115E /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A1975C2C2CF37C1C005F115E /* unum */,
+				A1975C462CF37DDA005F115E /* unum-pre-k */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		A1975C512CF37EDE005F115E /* unum */ = {
+			isa = PBXGroup;
+			children = (
+				A1975C532CF37F2B005F115E /* main.c */,
+				A1975C542CF37F2B005F115E /* main_k.c */,
+				A1975C522CF37F2B005F115E /* deploy.c */,
+			);
+			name = unum;
+			sourceTree = "<group>";
+		};
+		A1975C592CF387F2005F115E /* unum-pre-k */ = {
+			isa = PBXGroup;
+			children = (
+				A1975C5B2CF38838005F115E /* main.c */,
+				A1975C5C2CF38838005F115E /* main_pre_k.c */,
+				A1975C5A2CF38838005F115E /* deploy.c */,
+			);
+			name = "unum-pre-k";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A1975C2B2CF37C1C005F115E /* unum */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A1975C332CF37C1C005F115E /* Build configuration list for PBXNativeTarget "unum" */;
+			buildPhases = (
+				A1975C282CF37C1C005F115E /* Sources */,
+				A1975C292CF37C1C005F115E /* Frameworks */,
+				A1975C2A2CF37C1C005F115E /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = unum;
+			packageProductDependencies = (
+			);
+			productName = unum;
+			productReference = A1975C2C2CF37C1C005F115E /* unum */;
+			productType = "com.apple.product-type.tool";
+		};
+		A1975C452CF37DDA005F115E /* unum-pre-k */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A1975C4A2CF37DDA005F115E /* Build configuration list for PBXNativeTarget "unum-pre-k" */;
+			buildPhases = (
+				A1975C422CF37DDA005F115E /* Sources */,
+				A1975C432CF37DDA005F115E /* Frameworks */,
+				A1975C442CF37DDA005F115E /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "unum-pre-k";
+			packageProductDependencies = (
+			);
+			productName = "unum-pre-k";
+			productReference = A1975C462CF37DDA005F115E /* unum-pre-k */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A1975C242CF37C1C005F115E /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastUpgradeCheck = 1610;
+				TargetAttributes = {
+					A1975C2B2CF37C1C005F115E = {
+						CreatedOnToolsVersion = 16.1;
+					};
+					A1975C452CF37DDA005F115E = {
+						CreatedOnToolsVersion = 16.1;
+					};
+				};
+			};
+			buildConfigurationList = A1975C272CF37C1C005F115E /* Build configuration list for PBXProject "unum" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = A1975C232CF37C1C005F115E;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = A1975C2D2CF37C1C005F115E /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A1975C2B2CF37C1C005F115E /* unum */,
+				A1975C452CF37DDA005F115E /* unum-pre-k */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A1975C282CF37C1C005F115E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1975C552CF37F2B005F115E /* main_k.c in Sources */,
+				A1975C562CF37F2B005F115E /* deploy.c in Sources */,
+				A1975C572CF37F2B005F115E /* main.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A1975C422CF37DDA005F115E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1975C5D2CF38838005F115E /* main_pre_k.c in Sources */,
+				A1975C5E2CF38838005F115E /* deploy.c in Sources */,
+				A1975C5F2CF38838005F115E /* main.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		A1975C312CF37C1C005F115E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CONFIGURATION_BUILD_DIR = "${UNUM_BUILD_DIR}/macos-xcode/${CONFIGURATION}";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = "${UNUM_BUILD_DIR}/include/**";
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.7;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				UNUM_BASIS_DIR = "${PROJECT_DIR}/../..";
+				UNUM_BUILD_DIR = "${UNUM_BASIS_DIR}/build";
+			};
+			name = Debug;
+		};
+		A1975C322CF37C1C005F115E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CONFIGURATION_BUILD_DIR = "${UNUM_BUILD_DIR}/macos-xcode/${CONFIGURATION}";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = "${UNUM_BUILD_DIR}/include/**";
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.7;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+				UNUM_BASIS_DIR = "${PROJECT_DIR}/../..";
+				UNUM_BUILD_DIR = "${UNUM_BASIS_DIR}/build";
+			};
+			name = Release;
+		};
+		A1975C342CF37C1C005F115E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = Q9UQ5RW44T;
+				ENABLE_HARDENED_RUNTIME = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		A1975C352CF37C1C005F115E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = Q9UQ5RW44T;
+				ENABLE_HARDENED_RUNTIME = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		A1975C4B2CF37DDA005F115E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = Q9UQ5RW44T;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+					"UNUM_BOOTSTRAP=1",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		A1975C4C2CF37DDA005F115E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = Q9UQ5RW44T;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = "UNUM_BOOTSTRAP=1";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A1975C272CF37C1C005F115E /* Build configuration list for PBXProject "unum" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A1975C312CF37C1C005F115E /* Debug */,
+				A1975C322CF37C1C005F115E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A1975C332CF37C1C005F115E /* Build configuration list for PBXNativeTarget "unum" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A1975C342CF37C1C005F115E /* Debug */,
+				A1975C352CF37C1C005F115E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A1975C4A2CF37DDA005F115E /* Build configuration list for PBXNativeTarget "unum-pre-k" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A1975C4B2CF37DDA005F115E /* Debug */,
+				A1975C4C2CF37DDA005F115E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = A1975C242CF37C1C005F115E /* Project object */;
+}

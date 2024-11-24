@@ -18,14 +18,15 @@
 | ---------------------------------------------------------------*/
 
 #include <stdio.h>
+#include "uconfig.h"
 
 /*
  *  Kernel:  The binary build of `unum` that includes the entire systemic
  *           programming toolchain and the native implementation of the latest
  *           deployed main system.  All facilities of runtime, analytics,
- *           tooling, networking, etc, etc. are built into a single 
- *           executable that maintains the deployment and its dependencies in
- *           the basis (physical resources).
+ *           tooling, networking, etc, are built into a single executable that
+ *           maintains the deployment and its dependencies on physical
+ *           system resources.
  */
 
 #ifdef UNUM_BOOTSTRAP
@@ -33,6 +34,6 @@
 #endif
 
 int UM_main(int argc, char *argv[]) {
-	printf("DEBUG: in kernel, hello unum.\n");
+	printf("DEBUG: in kernel, hello unum --> %s.\n", UNUM_TOOL_CC);
 	return 0;
 }

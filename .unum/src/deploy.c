@@ -19,6 +19,6 @@
 
 #include <stdio.h>
 
-void UD_deploy() {
+void UD_deploy(void) {
 	printf("TODO: deploy...\n");
 }

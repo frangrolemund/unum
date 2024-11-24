@@ -58,3 +58,11 @@ dkms.conf
 .unum/boot/uboot
 .unum/build/
 .unum/bin/
+
+# macOS
+.DS_Store
+
+# Xcode
+xcuserdata/
+xcshareddata/
+project.xcworkspace/
