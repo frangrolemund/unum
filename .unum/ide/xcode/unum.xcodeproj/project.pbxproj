@@ -37,6 +37,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		A18D27C02CF4BA1700105D33 /* deploy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = deploy.h; path = /Users/fran/work/realproven/unum/.unum/src/deploy.h; sourceTree = "<absolute>"; };
+		A18D27C12CF4BD8F00105D33 /* common.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = common.h; path = /Users/fran/work/realproven/unum/.unum/src/common.h; sourceTree = "<absolute>"; };
 		A1975C2C2CF37C1C005F115E /* unum */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = unum; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1975C462CF37DDA005F115E /* unum-pre-k */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "unum-pre-k"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1975C522CF37F2B005F115E /* deploy.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = deploy.c; path = /Users/fran/work/realproven/unum/.unum/src/deploy.c; sourceTree = "<absolute>"; };
@@ -98,8 +100,10 @@
 		A1975C592CF387F2005F115E /* unum-pre-k */ = {
 			isa = PBXGroup;
 			children = (
+				A18D27C12CF4BD8F00105D33 /* common.h */,
 				A1975C5B2CF38838005F115E /* main.c */,
 				A1975C5C2CF38838005F115E /* main_pre_k.c */,
+				A18D27C02CF4BA1700105D33 /* deploy.h */,
 				A1975C5A2CF38838005F115E /* deploy.c */,
 			);
 			name = "unum-pre-k";
@@ -240,7 +244,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CONFIGURATION_BUILD_DIR = "${UNUM_BUILD_DIR}/macos-xcode/${CONFIGURATION}";
+				CONFIGURATION_BUILD_DIR = "${UNUM_BUILD_DIR}/xcode-macos/${CONFIGURATION}";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -260,7 +264,10 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = "${UNUM_BUILD_DIR}/include/**";
+				HEADER_SEARCH_PATHS = (
+					"${UNUM_BUILD_DIR}/include/**",
+					"${UNUM_BASIS_DIR)/src/",
+				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MACOSX_DEPLOYMENT_TARGET = 14.7;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
@@ -305,7 +312,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CONFIGURATION_BUILD_DIR = "${UNUM_BUILD_DIR}/macos-xcode/${CONFIGURATION}";
+				CONFIGURATION_BUILD_DIR = "${UNUM_BUILD_DIR}/xcode-macos/${CONFIGURATION}";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
@@ -319,7 +326,10 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = "${UNUM_BUILD_DIR}/include/**";
+				HEADER_SEARCH_PATHS = (
+					"${UNUM_BUILD_DIR}/include/**",
+					"${UNUM_BASIS_DIR)/src/",
+				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MACOSX_DEPLOYMENT_TARGET = 14.7;
 				MTL_ENABLE_DEBUG_INFO = NO;

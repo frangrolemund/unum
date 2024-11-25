@@ -18,11 +18,16 @@
 | ---------------------------------------------------------------*/
 
 #include <stdio.h>
-#include "uconfig.h"
+#include <string.h>
+
+#include "common.h"
+#include "deploy.h"
 
 #ifndef UNUM_BOOTSTRAP
 #error "Bootstrapping only."
 #endif
+
+static void print_usage(void);
 
 /*
  *  Pre-kernel: The binary build of `unum` created when preparing a repo
@@ -36,15 +41,31 @@
  *              deployment, which includes more precise error reporting.
  */
 
-extern void UD_deploy(void);
-
 int UM_main(int argc, char *argv[]) {
-	printf("DEBUG: In pre-kernel.\n");
-	#if UNUM_OS_MACOS
-	printf("DEBUG: --> RUNNING ON MACOS\n");
-	#endif
-	UD_deploy();
+	if (argc != 2) {
+		print_usage();
+		return 1;
+	}
 	
-	printf("unum is bootstrapped\n");
+	if (!strcmp(argv[1], "deploy")) {
+		printf("TODO: deploy\n");
+		UD_deploy(UDT_CLEAN);
+		printf("unum is bootstrapped\n");
+		
+	} else if (!strcmp(argv[1], "--version")) {
+		printf("unum pre-k version %s\n", UNUM_VERSION.as_string);
+		
+	} else if (!strcmp(argv[1], "--help")) {
+		print_usage();
+		
+	}
+	
 	return 0;
+}
+
+
+static void print_usage(void) {
+	printf("usage: unum deploy\n");
+	printf("       unum --version\n");
+	printf("       unum --help\n");
 }
