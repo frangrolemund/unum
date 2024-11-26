@@ -81,11 +81,12 @@ static const char *to_basis(const char *path);
 static void write_config();
 
 
-#define BUILD_DIR          "./build"
-#define BUILD_INCLUDE_DIR  "./build/include"
-#define BIN_DIR            "./bin"
-#define UCONFIG_FILE       "./build/include/uconfig.h"
-#define UKERN_FILE         "./bin/unum"
+#define DEPLOYED_DIR       "./deployed"
+#define BUILD_DIR          "./deployed/build"
+#define BUILD_INCLUDE_DIR  "./deployed/build/include"
+#define BIN_DIR            "./deployed/bin"
+#define UCONFIG_FILE       "./deployed/build/include/uconfig.h"
+#define UKERN_FILE         "./deployed/bin/unum"
 #define is_file(p)         (file_info((p)).st_mode & S_IFREG)
 #define is_dir(p)          (file_info((p)).st_mode & S_IFDIR)
 #define path_sep_s         ((char [2]) { path_sep, '\0' })
@@ -353,7 +354,8 @@ static void set_basis() {
 	char        cwd[PATH_MAX];
 	char        *pos;
 	const char  *bd;
-	const char  *build_dirs[] = { BUILD_DIR, BUILD_INCLUDE_DIR, BIN_DIR };
+	const char  *build_dirs[] = { DEPLOYED_DIR, BUILD_DIR, BUILD_INCLUDE_DIR, 
+	                              BIN_DIR };
 	int         i;
 
 	if (!getcwd(cwd, PATH_MAX)) {

@@ -37,6 +37,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		A16FBAE32CF613C800B000EA /* uconfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = uconfig.h; path = /Users/fran/work/realproven/unum/.unum/deployed/build/include/uconfig.h; sourceTree = "<absolute>"; };
 		A18D27C02CF4BA1700105D33 /* deploy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = deploy.h; path = /Users/fran/work/realproven/unum/.unum/src/deploy.h; sourceTree = "<absolute>"; };
 		A18D27C12CF4BD8F00105D33 /* common.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = common.h; path = /Users/fran/work/realproven/unum/.unum/src/common.h; sourceTree = "<absolute>"; };
 		A1975C2C2CF37C1C005F115E /* unum */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = unum; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -44,7 +45,6 @@
 		A1975C522CF37F2B005F115E /* deploy.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = deploy.c; path = /Users/fran/work/realproven/unum/.unum/src/deploy.c; sourceTree = "<absolute>"; };
 		A1975C532CF37F2B005F115E /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = main.c; path = /Users/fran/work/realproven/unum/.unum/src/main.c; sourceTree = "<absolute>"; };
 		A1975C542CF37F2B005F115E /* main_k.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = main_k.c; path = /Users/fran/work/realproven/unum/.unum/src/main_k.c; sourceTree = "<absolute>"; };
-		A1975C582CF38122005F115E /* uconfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = uconfig.h; path = /Users/fran/work/realproven/unum/.unum/build/include/uconfig.h; sourceTree = "<absolute>"; };
 		A1975C5A2CF38838005F115E /* deploy.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = deploy.c; path = /Users/fran/work/realproven/unum/.unum/src/deploy.c; sourceTree = "<absolute>"; };
 		A1975C5B2CF38838005F115E /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = main.c; path = /Users/fran/work/realproven/unum/.unum/src/main.c; sourceTree = "<absolute>"; };
 		A1975C5C2CF38838005F115E /* main_pre_k.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = main_pre_k.c; path = /Users/fran/work/realproven/unum/.unum/src/main_pre_k.c; sourceTree = "<absolute>"; };
@@ -71,7 +71,7 @@
 		A1975C232CF37C1C005F115E = {
 			isa = PBXGroup;
 			children = (
-				A1975C582CF38122005F115E /* uconfig.h */,
+				A16FBAE32CF613C800B000EA /* uconfig.h */,
 				A1975C512CF37EDE005F115E /* unum */,
 				A1975C592CF387F2005F115E /* unum-pre-k */,
 				A1975C2D2CF37C1C005F115E /* Products */,
@@ -372,6 +372,8 @@
 					"UNUM_BOOTSTRAP=1",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				UNUM_BUILD_DIR = "${UNUM_DEPLOYED_DIR}/build";
+				UNUM_DEPLOYED_DIR = "${UNUM_BASIS_DIR}/deployed";
 			};
 			name = Debug;
 		};
@@ -383,6 +385,8 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = "UNUM_BOOTSTRAP=1";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				UNUM_BUILD_DIR = "${UNUM_DEPLOYED_DIR}/build";
+				UNUM_DEPLOYED_DIR = "${UNUM_BASIS_DIR}/deployed";
 			};
 			name = Release;
 		};

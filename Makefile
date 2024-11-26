@@ -24,12 +24,11 @@ RMDIR := rm -rf
 
 all : $(BOOT)/uboot
 	@$(BOOT)/uboot --cc=$(CC) --ld=$(LD) 
-	@$(BASIS)/bin/unum deploy
+	@$(BASIS)/deployed/bin/unum deploy
 
 clean :
 	$(RM) $(BOOT)/uboot
-	$(RMDIR) $(BASIS)/build
-	$(RMDIR) $(BASIS)/bin
+	$(RMDIR) $(BASIS)/deployed
 
 $(BOOT)/uboot: $(BOOT)/main.c
 	$(CC) -o $@ $^
