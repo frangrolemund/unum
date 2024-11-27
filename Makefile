@@ -18,19 +18,20 @@
 # --------------------------------------------------------------
 .PHONY : all clean
 
-BASIS := ./.unum
-BOOT  := $(BASIS)/boot
-RMDIR := rm -rf
+BASIS  := ./.unum
+UBOOT  := $(BASIS)/deployed/bin/uboot
+MKDIR  := mkdir -p
+RMDIR  := rm -rf
 
-all : $(BOOT)/uboot
-	@$(BOOT)/uboot --cc=$(CC) --ld=$(LD) 
+all : $(UBOOT)
+	@$(UBOOT) --cc=$(CC) --ld=$(LD) 
 	@$(BASIS)/deployed/bin/unum deploy
 
 clean :
-	$(RM) $(BOOT)/uboot
 	$(RMDIR) $(BASIS)/deployed
 
-$(BOOT)/uboot: $(BOOT)/main.c
+$(UBOOT): $(BASIS)/boot/main.c
+	$(MKDIR) $(BASIS)/deployed/bin
 	$(CC) -o $@ $^
 
 
