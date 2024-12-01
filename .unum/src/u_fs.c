@@ -17,15 +17,27 @@
 | PERFORMANCE OF THIS SOFTWARE.
 | ---------------------------------------------------------------*/
 
-#include "u_test.h"
+#include "common.h"
+#include "u_fs.h"
 
-static int unittest_csv(int argc, char *argv[]);
-
-int main(int argc, char *argv[]) {
-	return UT_run(argc, argv, unittest_csv);
-}
-
-static int unittest_csv(int argc, char *argv[]) {
-	printf("TODO: inside unittest_csv\n");
+int UU_basename(char *dst, const char *src, size_t len) {
+	int blen = 0;
+	
+	while (src && *src) {
+		src++;
+	}
+	
+	while (src && *--src != UNUM_PATH_SEP) {
+		blen++;
+	}
+	
+	if (!blen || len < blen) {
+		return 1;
+	}
+	
+	do {
+		*dst++ = *++src;
+	} while (*src);
+	
 	return 0;
 }

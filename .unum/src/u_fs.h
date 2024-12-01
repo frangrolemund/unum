@@ -17,15 +17,13 @@
 | PERFORMANCE OF THIS SOFTWARE.
 | ---------------------------------------------------------------*/
 
-#include "u_test.h"
+#ifndef UNUM_FS_H
+#define UNUM_FS_H
 
-static int unittest_csv(int argc, char *argv[]);
+#include "common.h"
 
-int main(int argc, char *argv[]) {
-	return UT_run(argc, argv, unittest_csv);
-}
+#define U_PATH_MAX       2048
 
-static int unittest_csv(int argc, char *argv[]) {
-	printf("TODO: inside unittest_csv\n");
-	return 0;
-}
+extern int UU_basename(char *dst, const char *src, size_t len);
+
+#endif /* UNUM_FS_H */

@@ -20,6 +20,9 @@
 #ifndef UNUM_COMMON_H
 #define UNUM_COMMON_H
 
+#include <limits.h>
+#include <stdlib.h>
+
 #include "uconfig.h"
 
 struct unum_version_info {

@@ -27,4 +27,16 @@
 #error "Unit testing only."
 #endif
 
+typedef int (*UT_test_entry_t)(int argc, char *argv[]);
+
+#define UT_run(c, v, f)    _UT_run(__FILE__, (c), (v), (f))
+extern int  _UT_run(const char *file, int argc, char *argv[],
+					UT_test_entry_t entry_fn);
+					
+#define UT_assert(t, m)    if (!(t)) {\
+	                           _UT_assert_failed(#t, __FILE__, __LINE__, (m));\
+	                       }
+extern void _UT_assert_failed(const char *expr, const char *file, int line,
+                              const char *msg);
+
 #endif /* UNUM_TEST_H */
