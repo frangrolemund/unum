@@ -27,16 +27,25 @@
 #error "Unit testing only."
 #endif
 
-typedef int (*UT_test_entry_t)(int argc, char *argv[]);
-
-#define UT_run(c, v, f)    _UT_run(__FILE__, (c), (v), (f))
-extern int  _UT_run(const char *file, int argc, char *argv[],
-					UT_test_entry_t entry_fn);
-					
+/*
+ * UT_assert()
+ * - verify a test assertion and abort if it failed.
+ */
 #define UT_assert(t, m)    if (!(t)) {\
 	                           _UT_assert_failed(#t, __FILE__, __LINE__, (m));\
 	                       }
 extern void _UT_assert_failed(const char *expr, const char *file, int line,
                               const char *msg);
+
+
+/*
+ * UT_run()
+ * - execute test in sandbox and cleanup after
+ */
+#define UT_run(c, v, f)    _UT_run(__FILE__, (c), (v), (f))
+typedef int (*UT_test_entry_t)(int argc, char *argv[]);
+extern int  _UT_run(const char *file, int argc, char *argv[],
+					UT_test_entry_t entry_fn);
+
 
 #endif /* UNUM_TEST_H */

@@ -31,6 +31,16 @@
  
 static char prog[U_PATH_MAX];
 
+
+void _UT_assert_failed(const char *expr, const char *file, int line,
+	                   const char *msg) {
+	fprintf(stderr, "%s: !! test failure !!\n", prog);
+	fprintf(stderr, "%s: %s <-- '%s'\n", prog, msg, expr);
+	fprintf(stderr, "%s: %s@%d\n", prog, file, line);
+	exit(1);
+}
+
+
 int _UT_run(const char *file, int argc, char *argv[],
 	        UT_test_entry_t entry_fn) {
 	int ret;
@@ -45,10 +55,3 @@ int _UT_run(const char *file, int argc, char *argv[],
 	return ret;
 }
 
-void _UT_assert_failed(const char *expr, const char *file, int line,
-	                   const char *msg) {
-	fprintf(stderr, "%s: !! test failure !!\n", prog);
-	fprintf(stderr, "%s: %s <-- '%s'\n", prog, msg, expr);
-	fprintf(stderr, "%s: %s@%d\n", prog, file, line);
-	exit(1);
-}

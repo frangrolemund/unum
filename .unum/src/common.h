@@ -32,6 +32,6 @@ struct unum_version_info {
 	char  *as_string;
 };
 
-#define UNUM_VERSION       ((struct unum_version_info) { 0, 1, 0, "0.1.0" })
+#define UNUM_VERSION ((struct unum_version_info) { 0, 1, 0, "0.1.0" })
 
 #endif /* UNUM_COMMON_H */

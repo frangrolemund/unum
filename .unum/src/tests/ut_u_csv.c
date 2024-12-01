@@ -26,6 +26,6 @@ int main(int argc, char *argv[]) {
 }
 
 static int unittest_csv(int argc, char *argv[]) {
-	printf("TODO: inside unittest_csv\n");
+	printf("TODO: inside unittest_csv %s\n", argv[0]);
 	return 0;
 }
