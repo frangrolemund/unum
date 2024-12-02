@@ -20,12 +20,25 @@
 #include "u_test.h"
 
 static int unittest_csv(int argc, char *argv[]);
+static void csv_test_basic_parse(void);
+
 
 int main(int argc, char *argv[]) {
 	return UT_run(argc, argv, unittest_csv);
 }
 
+
 static int unittest_csv(int argc, char *argv[]) {
-	printf("TODO: inside unittest_csv %s\n", argv[0]);
+	csv_test_basic_parse();
+	// - test-2: generate csv
 	return 0;
+}
+
+
+static void csv_test_basic_parse(void) {
+	UT_set_test_name("basic parsing");
+	UT_printf("reading test data...");
+	// - test-1: get full filename of test file
+	// - parse test file
+	// - assert contents.
 }

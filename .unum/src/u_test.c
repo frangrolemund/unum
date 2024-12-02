@@ -17,7 +17,9 @@
 | PERFORMANCE OF THIS SOFTWARE.
 | ---------------------------------------------------------------*/
 
+#include <stdarg.h>
 #include <stdlib.h>
+
 #include "u_fs.h"
 #include "u_test.h"
 
@@ -30,10 +32,11 @@
  */
  
 static char prog[U_PATH_MAX];
+static const char *test_name  = NULL;
 
 
-void _UT_assert_failed(const char *expr, const char *file, int line,
-	                   const char *msg) {
+void _UT_test_failed(const char *expr, const char *file, int line,
+				     const char *msg) {
 	fprintf(stderr, "%s: !! test failure !!\n", prog);
 	fprintf(stderr, "%s: %s <-- '%s'\n", prog, msg, expr);
 	fprintf(stderr, "%s: %s@%d\n", prog, file, line);
@@ -41,12 +44,29 @@ void _UT_assert_failed(const char *expr, const char *file, int line,
 }
 
 
+void UT_printf(const char *fmt, ...) {
+	char     buf[2048];
+	va_list  val;
+
+	va_start(val, fmt);
+	vsnprintf(buf, sizeof(buf), fmt, val);
+	va_end(val);
+	
+	if (test_name) {
+		fprintf(stdout, "%s (%s): %s\n", prog, test_name, buf);
+	} else {
+		fprintf(stdout, "%s: %s\n", prog, buf);
+	}
+}
+
+
 int _UT_run(const char *file, int argc, char *argv[],
 	        UT_test_entry_t entry_fn) {
 	int ret;
 	
-	UT_assert(argc > 0 && argv[0], "command-line not provided");
+	UT_test(argc > 0 && argv[0], "command-line not provided");
 	ret = UU_basename(prog, argv[0], U_PATH_MAX);
+	UT_test(ret == 0, "invalid program");
 		
 	printf("TODO: INSIDE UT_TEST from %s\n", file);
 	ret = entry_fn(argc, argv);
@@ -55,3 +75,7 @@ int _UT_run(const char *file, int argc, char *argv[],
 	return ret;
 }
 
+
+void UT_set_test_name(const char *name) {
+	test_name = name;
+}
