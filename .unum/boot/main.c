@@ -85,7 +85,7 @@ static void write_config();
 #define BUILD_DIR          "./deployed/build"
 #define BUILD_INCLUDE_DIR  "./deployed/build/include"
 #define BIN_DIR            "./deployed/bin"
-#define UCONFIG_FILE       "./deployed/build/include/uconfig.h"
+#define UCONFIG_FILE       "./deployed/build/include/u_config.h"
 #define UKERN_FILE         "./deployed/bin/unum"
 #define is_file(p)         (file_info((p)).st_mode & S_IFREG)
 #define is_dir(p)          (file_info((p)).st_mode & S_IFDIR)

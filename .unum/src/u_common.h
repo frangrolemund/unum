@@ -23,7 +23,7 @@
 #include <limits.h>
 #include <stdlib.h>
 
-#include "uconfig.h"
+#include "u_config.h"
 
 struct unum_version_info {
 	int   major;

@@ -18,7 +18,7 @@
 | ---------------------------------------------------------------*/
 
 #include <stdio.h>
-#include "uconfig.h"
+#include "u_common.h"
 
 /*
  *  Kernel:  The binary build of `unum` that includes the entire systemic
