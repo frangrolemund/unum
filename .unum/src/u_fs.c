@@ -17,7 +17,7 @@
 | PERFORMANCE OF THIS SOFTWARE.
 | ---------------------------------------------------------------*/
 
-#include "common.h"
+#include "u_common.h"
 #include "u_fs.h"
 
 int UU_basename(char *dst, const char *src, size_t len) {

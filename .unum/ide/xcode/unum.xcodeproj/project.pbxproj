@@ -56,8 +56,8 @@
 		A15CC5212CFCB8F0003E8F4D /* u_fs.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = u_fs.c; path = /Users/fran/work/realproven/unum/.unum/src/u_fs.c; sourceTree = "<absolute>"; };
 		A15CC5232CFCCC13003E8F4D /* ut_u_csv_test_1.csv */ = {isa = PBXFileReference; lastKnownFileType = text; name = ut_u_csv_test_1.csv; path = /Users/fran/work/realproven/unum/.unum/src/tests/ut_u_csv_test_1.csv; sourceTree = "<absolute>"; };
 		A16FBAE32CF613C800B000EA /* uconfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = uconfig.h; path = /Users/fran/work/realproven/unum/.unum/deployed/build/include/uconfig.h; sourceTree = "<absolute>"; };
+		A1725F8D2CFDF82700734BC1 /* u_common.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = u_common.h; path = /Users/fran/work/realproven/unum/.unum/src/u_common.h; sourceTree = "<absolute>"; };
 		A18D27C02CF4BA1700105D33 /* deploy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = deploy.h; path = /Users/fran/work/realproven/unum/.unum/src/deploy.h; sourceTree = "<absolute>"; };
-		A18D27C12CF4BD8F00105D33 /* common.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = common.h; path = /Users/fran/work/realproven/unum/.unum/src/common.h; sourceTree = "<absolute>"; };
 		A1975C2C2CF37C1C005F115E /* unum */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = unum; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1975C462CF37DDA005F115E /* unum_pk */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = unum_pk; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1975C522CF37F2B005F115E /* deploy.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = deploy.c; path = /Users/fran/work/realproven/unum/.unum/src/deploy.c; sourceTree = "<absolute>"; };
@@ -109,7 +109,7 @@
 			isa = PBXGroup;
 			children = (
 				A16FBAE32CF613C800B000EA /* uconfig.h */,
-				A18D27C12CF4BD8F00105D33 /* common.h */,
+				A1725F8D2CFDF82700734BC1 /* u_common.h */,
 				A103CEBA2CF765DF0057C7A3 /* u_test.h */,
 				A15CC5202CFCB8F0003E8F4D /* u_fs.h */,
 				A1975C512CF37EDE005F115E /* unum */,

@@ -20,7 +20,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "common.h"
+#include "u_common.h"
 #include "deploy.h"
 
 #ifndef UNUM_BOOTSTRAP

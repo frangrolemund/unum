@@ -21,7 +21,7 @@
 #define UNUM_TEST_H
 
 #include <stdio.h>
-#include "common.h"
+#include "u_common.h"
 
 #ifndef UNUM_UNIT_TEST
 #error "Unit testing only."

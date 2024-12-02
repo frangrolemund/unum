@@ -20,7 +20,7 @@
 #ifndef UNUM_FS_H
 #define UNUM_FS_H
 
-#include "common.h"
+#include "u_common.h"
 
 #define U_PATH_MAX       2048
 
