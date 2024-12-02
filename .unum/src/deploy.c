@@ -23,6 +23,6 @@
 /*
  *  TBD
  */
-void UD_deploy(udeploy_type_e deploy_type) {
+void UD_deploy( udeploy_type_e deploy_type ) {
 	printf("TODO: deploy...%d\n", deploy_type);
 }

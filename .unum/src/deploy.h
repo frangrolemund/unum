@@ -25,6 +25,6 @@ typedef enum {
 	UDT_CLEAN
 } udeploy_type_e;
 
-extern void UD_deploy(udeploy_type_e deploy_type);
+extern void UD_deploy( udeploy_type_e deploy_type );
 
 #endif /* UNUM_DEPLOY_H */

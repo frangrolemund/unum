@@ -28,6 +28,6 @@
  *  UU_basename()
  *  - copy the file name portion of a path from `src` into `dst`.
  */
-extern int UU_basename(char *dst, const char *src, size_t len);
+extern int UU_basename( char *dst, const char *src, size_t len );
 
 #endif /* UNUM_FS_H */

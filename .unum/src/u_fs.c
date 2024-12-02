@@ -20,7 +20,7 @@
 #include "u_common.h"
 #include "u_fs.h"
 
-int UU_basename(char *dst, const char *src, size_t len) {
+int UU_basename( char *dst, const char *src, size_t len ) {
 	int blen = 0;
 	
 	while (src && *src) {

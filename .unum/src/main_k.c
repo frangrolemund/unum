@@ -33,7 +33,7 @@
 #error "Kernel deployment only."
 #endif
 
-int UM_main(int argc, char *argv[]) {
+int UM_main( int argc, char *argv[] ) {
 	printf("DEBUG: in kernel, hello unum --> %s.\n", UNUM_TOOL_CC);
 	return 0;
 }

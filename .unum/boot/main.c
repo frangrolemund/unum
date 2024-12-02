@@ -62,23 +62,23 @@ typedef enum {
 typedef const char * cstrarr_t[];
 
 
-static void abort_fail(const char *fmt, ...);
-static const char *bin_ext();
-static void build_pre_k();
-static void detect_path_style();
-static void detect_platform();
-static struct stat file_info(const char *path);
-static char *find_in_path(const char *cmd);
-static int run_cc(const char *bin_file, const char *inc_dir, 
-                  const char *pp_defs, cstrarr_t src_files);
-static int run_cc_with_source(const char *source); 
-static const char *parse_option(const char *optName, const char *from);
-static void parse_cmd_line(int argc, char *argv[]);
-static void printf_config(const char *fmt, ...);
-static const char *resolve_cmd(const char *cmd);
-static void set_basis();
-static const char *to_basis(const char *path);
-static void write_config();
+static void abort_fail( const char *fmt, ... );
+static const char *bin_ext( void );
+static void build_pre_k( void );
+static void detect_path_style( void );
+static void detect_platform( void );
+static struct stat file_info( const char *path );
+static char *find_in_path( const char *cmd );
+static int run_cc( const char *bin_file, const char *inc_dir, 
+                   const char *pp_defs, cstrarr_t src_files );
+static int run_cc_with_source( const char *source ); 
+static const char *parse_option( const char *optName, const char *from );
+static void parse_cmd_line( int argc, char *argv[] );
+static void printf_config( const char *fmt, ... );
+static const char *resolve_cmd( const char *cmd );
+static void set_basis( void );
+static const char *to_basis( const char *path );
+static void write_config( void );
 
 
 #define DEPLOYED_DIR       "./deployed"
@@ -102,7 +102,7 @@ static char        config[CFG_SIZE];
 static char        *cfg_offset        = config;
 
 
-int main(int argc, char *argv[]) {
+int main( int argc, char *argv[] ) {
 	// - don't spam stderr with system()
 	uberr = fdopen(dup(fileno(stderr)), "w");
 	fclose(stderr);
@@ -122,7 +122,7 @@ int main(int argc, char *argv[]) {
 }
 
 
-static void detect_path_style() {
+static void detect_path_style( void ) {
 	const char  *path = getenv("PATH");
 	char        c;
 
@@ -137,7 +137,7 @@ static void detect_path_style() {
 }
 
 
-static void abort_fail(const char *fmt, ...) {
+static void abort_fail( const char *fmt, ... ) {
 	va_list ap;
 	char    buf[2048];
 
@@ -150,7 +150,7 @@ static void abort_fail(const char *fmt, ...) {
 }
 
 
-static void parse_cmd_line(int argc, char *argv[]) {
+static void parse_cmd_line( int argc, char *argv[] ) {
 	const char  *opt = NULL;
 	int         i;
 
@@ -178,7 +178,7 @@ static void parse_cmd_line(int argc, char *argv[]) {
 }
 
 
-static const char *parse_option(const char *opt_name, const char *from) {
+static const char *parse_option( const char *opt_name, const char *from ) {
 	char       prefix[64] = "\0";
 	const char *p         = prefix;
 
@@ -194,7 +194,7 @@ static const char *parse_option(const char *opt_name, const char *from) {
 }
 
 
-static const char *resolve_cmd(const char *cmd) {
+static const char *resolve_cmd( const char *cmd ) {
 	char tmp[PATH_MAX];
 	const char *rc     = NULL;
 
@@ -228,7 +228,7 @@ static const char *resolve_cmd(const char *cmd) {
 }
 
 
-static char *find_in_path(const char *cmd) {
+static char *find_in_path( const char *cmd ) {
 	const char   *path = getenv("PATH");
 	static char  buf[PATH_MAX];
 	char         *ppos = buf;
@@ -253,7 +253,7 @@ static char *find_in_path(const char *cmd) {
 }
 
 
-static struct stat file_info(const char *path) {
+static struct stat file_info( const char *path ) {
 	struct stat sinfo;
 
 	if (path && stat(path, &sinfo) == 0) {
@@ -265,7 +265,7 @@ static struct stat file_info(const char *path) {
 }
 
 
-static void detect_platform() {
+static void detect_platform( void ) {
 	if (run_cc_with_source(
 	           "#include <Carbon/Carbon.h>\n"	
 	           "#include <stdio.h>\n\n"
@@ -281,7 +281,7 @@ static void detect_platform() {
 }
 
 
-static int run_cc_with_source(const char *source) {
+static int run_cc_with_source( const char *source ) {
 	const char *tmp_env[]         = { "TMPDIR", "TMP", "TEMP", "TEMPDIR", 
 	                                  NULL };
 	const char **tp               = tmp_env;
@@ -322,8 +322,8 @@ static int run_cc_with_source(const char *source) {
 
 
 // - source_files must be terminated with NULL
-static int run_cc(const char *bin_file, const char *inc_dir, 
-                  const char *pp_defs, cstrarr_t src_files) {
+static int run_cc( const char *bin_file, const char *inc_dir, 
+                   const char *pp_defs, cstrarr_t src_files ) {
 	char cmd[16384];
 
 	strcpy(cmd, tools[T_CC]);	
@@ -350,7 +350,7 @@ static int run_cc(const char *bin_file, const char *inc_dir,
 }
 
 
-static void set_basis() {
+static void set_basis( void ) {
 	char        cwd[PATH_MAX];
 	char        *pos;
 	const char  *bd;
@@ -392,7 +392,7 @@ static void set_basis() {
 }
 
 
-static const char *to_basis(const char *path) {
+static const char *to_basis( const char *path ) {
 	static char  buf[PATH_MAX];
 	char         *bp = buf, *tmp;
 
@@ -410,7 +410,7 @@ static const char *to_basis(const char *path) {
 }
 
 
-static void write_config() {
+static void write_config( void ) {
 	FILE        *fp;
 	char        buf[CFG_SIZE];
 	const char  *cfg_file;
@@ -472,7 +472,7 @@ static void write_config() {
 }
 
 
-static void printf_config(const char *fmt, ...) {
+static void printf_config( const char *fmt, ... ) {
 	va_list ap;
 	va_start(ap, fmt);
 	cfg_offset += vsnprintf(cfg_offset, sizeof(config) - (cfg_offset - config),
@@ -482,7 +482,7 @@ static void printf_config(const char *fmt, ...) {
 }
 
 
-static void build_pre_k() {
+static void build_pre_k( void ) {
 	char      bin_file[PATH_MAX];	
 	char      ucfg_file[PATH_MAX];
 	cstrarr_t src                   = {
@@ -522,7 +522,7 @@ static void build_pre_k() {
 }
 
 
-static const char *bin_ext() {
+static const char *bin_ext( void ) {
 	const char *ptr = NULL;
 
 	ptr = tools[T_CC] + strlen(tools[T_CC]);

@@ -35,8 +35,8 @@ static char prog[U_PATH_MAX];
 static const char *test_name  = NULL;
 
 
-void _UT_test_failed(const char *expr, const char *file, int line,
-				     const char *msg) {
+void _UT_test_failed( const char *expr, const char *file, int line,
+				      const char *msg ) {
 	fprintf(stderr, "%s: !! test failure !!\n", prog);
 	fprintf(stderr, "%s: %s <-- '%s'\n", prog, msg, expr);
 	fprintf(stderr, "%s: %s@%d\n", prog, file, line);
@@ -44,7 +44,7 @@ void _UT_test_failed(const char *expr, const char *file, int line,
 }
 
 
-void UT_printf(const char *fmt, ...) {
+void UT_printf( const char *fmt, ... ) {
 	char     buf[2048];
 	va_list  val;
 
@@ -60,8 +60,8 @@ void UT_printf(const char *fmt, ...) {
 }
 
 
-int _UT_run(const char *file, int argc, char *argv[],
-	        UT_test_entry_t entry_fn) {
+int _UT_run( const char *file, int argc, char *argv[],
+	         UT_test_entry_t entry_fn ) {
 	int ret;
 	
 	UT_test(argc > 0 && argv[0], "command-line not provided");
@@ -76,6 +76,6 @@ int _UT_run(const char *file, int argc, char *argv[],
 }
 
 
-void UT_set_test_name(const char *name) {
+void UT_set_test_name( const char *name ) {
 	test_name = name;
 }

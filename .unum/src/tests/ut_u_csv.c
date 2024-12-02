@@ -19,23 +19,23 @@
 
 #include "u_test.h"
 
-static int unittest_csv(int argc, char *argv[]);
-static void csv_test_basic_parse(void);
+static int unittest_csv( int argc, char *argv[] );
+static void csv_test_basic_parse( void );
 
 
-int main(int argc, char *argv[]) {
+int main( int argc, char *argv[] ) {
 	return UT_run(argc, argv, unittest_csv);
 }
 
 
-static int unittest_csv(int argc, char *argv[]) {
+static int unittest_csv( int argc, char *argv[] ) {
 	csv_test_basic_parse();
 	// - test-2: generate csv
 	return 0;
 }
 
 
-static void csv_test_basic_parse(void) {
+static void csv_test_basic_parse( void ) {
 	UT_set_test_name("basic parsing");
 	UT_printf("reading test data...");
 	// - test-1: get full filename of test file

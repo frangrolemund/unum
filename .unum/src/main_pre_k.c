@@ -27,7 +27,7 @@
 #error "Bootstrapping only."
 #endif
 
-static void print_usage(void);
+static void print_usage( void );
 
 /*
  *  Pre-kernel: The binary build of `unum` created when preparing a repo
@@ -41,7 +41,7 @@ static void print_usage(void);
  *              deployment, which includes more precise error reporting.
  */
 
-int UM_main(int argc, char *argv[]) {
+int UM_main( int argc, char *argv[] ) {
 	if (argc != 2) {
 		print_usage();
 		return 1;
@@ -64,7 +64,7 @@ int UM_main(int argc, char *argv[]) {
 }
 
 
-static void print_usage(void) {
+static void print_usage( void ) {
 	printf("usage: unum deploy\n");
 	printf("       unum --version\n");
 	printf("       unum --help\n");
