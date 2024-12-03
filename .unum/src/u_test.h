@@ -27,16 +27,6 @@
 #error "Unit testing only."
 #endif
 
-/*
- * UT_test()
- * - verify a test assertion and abort if it failed.
- */
-#define UT_test( t, m )    if (!(t)) {\
-	                           _UT_test_failed(#t, __FILE__, __LINE__, (m));\
-	                       }
-extern void _UT_test_failed( const char *expr, const char *file, int line,
-							 const char *msg);
-
 
 /*
  * UT_printf()
@@ -46,14 +36,25 @@ extern void UT_printf( const char *fmt, ... );
 
 
 /*
- * UT_run()
+ * UT_test()
  * - execute test in sandbox and cleanup after
  */
-#define UT_run( c, v, f )    _UT_run(__FILE__, (c), (v), (f))
+#define UT_test( c, v, f )     _UT_test(__FILE__, (c), (v), (f))
 typedef int (*UT_test_entry_t)( int argc, char *argv[] );
-extern int  _UT_run( const char *file, int argc, char *argv[],
+extern int  _UT_test( const char *file, int argc, char *argv[],
 					 UT_test_entry_t entry_fn );
-					
+
+
+/*
+ * UT_test_assert()
+ * - verify a test assertion and abort if it failed.
+ */
+#define UT_test_assert( t, m ) if (!(t)) {\
+	                              _UT_test_failed(#t, __FILE__, __LINE__, (m));\
+							   }
+extern void _UT_test_failed( const char *expr, const char *file, int line,
+							 const char *msg);
+
 
 /*
  * UT_set_test_name()

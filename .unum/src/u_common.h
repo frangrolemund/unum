@@ -24,14 +24,23 @@
 #include <stdlib.h>
 
 #include "u_config.h"
+#include "u_mem.h"
 
-struct unum_version_info {
+typedef struct {
 	int   major;
 	int   minor;
 	int   patch;
 	char  *as_string;
-};
+} uu_version_t;
 
-#define UNUM_VERSION ((struct unum_version_info) { 0, 1, 0, "0.1.0" })
+#define UNUM_VERSION ((uu_version_t) { 0, 1, 0, "0.1.0" })
+
+
+typedef enum {
+	UU_OK        = 0,
+	UU_ERR_NOMEM = 1,
+	UU_ERR_FILE  = 2
+} uu_error_e;
+
 
 #endif /* UNUM_COMMON_H */

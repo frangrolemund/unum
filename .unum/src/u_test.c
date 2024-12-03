@@ -60,13 +60,13 @@ void UT_printf( const char *fmt, ... ) {
 }
 
 
-int _UT_run( const char *file, int argc, char *argv[],
+int _UT_test( const char *file, int argc, char *argv[],
 	         UT_test_entry_t entry_fn ) {
 	int ret;
 	
-	UT_test(argc > 0 && argv[0], "command-line not provided");
+	UT_test_assert(argc > 0 && argv[0], "command-line not provided");
 	ret = UU_basename(prog, argv[0], U_PATH_MAX);
-	UT_test(ret == 0, "invalid program");
+	UT_test_assert(ret == 0, "invalid program");
 		
 	printf("TODO: INSIDE UT_TEST from %s\n", file);
 	ret = entry_fn(argc, argv);

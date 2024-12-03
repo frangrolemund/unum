@@ -17,4 +17,38 @@
 | PERFORMANCE OF THIS SOFTWARE.
 | ---------------------------------------------------------------*/
 
+#include <stdio.h>
 #include "u_csv.h"
+
+uu_csv_t *UU_csv_open( const char *path, uu_error_e *err ) {
+	FILE      *fp  = NULL;
+	uu_csv_t  *ret = NULL;
+	unsigned  cols = 0;
+	
+	fp = fopen(path, "r");
+	if (!fp) {
+		if (err) {
+			*err = UU_ERR_FILE;
+		}
+		return NULL;
+	}
+	
+	ret = UU_csv_new(1);
+		
+	return ret;
+}
+
+
+uu_csv_t *UU_csv_new( unsigned cols ) {
+	uu_csv_t *ret = NULL;
+	
+	ret = UU_malloc(sizeof(uu_csv_t));
+	if (!ret) {
+		return NULL;
+	}
+	
+	UU_memset(ret, 0, sizeof(uu_csv_t));
+	ret->num_cols = cols;
+
+	return ret;
+}

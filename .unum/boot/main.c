@@ -229,9 +229,9 @@ static const char *resolve_cmd( const char *cmd ) {
 
 
 static char *find_in_path( const char *cmd ) {
-	const char   *path = getenv("PATH");
+	const char   *path         = getenv("PATH");
 	static char  buf[PATH_MAX];
-	char         *ppos = buf;
+	char         *ppos         = buf;
 	char         c;
 
 	while ((c = *path++)) {

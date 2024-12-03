@@ -21,16 +21,26 @@
 #define UNUM_CSV_H
 
 #include "u_common.h"
+#include "u_fs.h"
 
+typedef char ** uu_csv_row_t;
 typedef struct {
-
+	unsigned     num_cols;   // const
+	unsigned     num_rows;
+	
+	uu_csv_row_t *rows;
+	unsigned     max_rows;
+	
+	char         path[U_PATH_MAX];
+	char         reserved;
+	char         buf[];
 } uu_csv_t;
 
 /*
  * UU_csv_new()
  * - create a new in-memory CSV instance to be later freed with UU_csv_delete().
  */
-extern uu_csv_t  *UU_csv_new( void );
+extern uu_csv_t   *UU_csv_new( unsigned cols );
 
 
 /*
@@ -38,14 +48,57 @@ extern uu_csv_t  *UU_csv_new( void );
  * - open an existing CSV file from the provided path to be later freed with
  *   UU_csv_delete().
  */
-extern uu_csv_t  *UU_csv_open( const char *path );
+extern uu_csv_t   *UU_csv_open( const char *path, uu_error_e *err );
 
 
 /*
- *  UU_csv_delete()
+ * UU_csv_write()
+ * - write the CSV file to the path or NULL to use the same path as input.
+ */
+extern int        UU_csv_write( const char *path );
+
+
+/*
+ * UU_csv_delete()
  * - free resources for CSV instance.
  */
-extern void      UU_csv_delete( uu_csv_t *csv );
+extern void       UU_csv_delete( uu_csv_t *csv );
+
+/*
+ * UU_csv_add_row()
+ * - add a new row to the table.
+ */
+extern int        UU_csv_add_row( uu_csv_t *csv );
+
+
+/*
+ * UU_csv_get()
+ * - get the value from a specific cell in the CSV file.
+ */
+extern const char *UU_csv_get( uu_csv_t *csv, unsigned row, unsigned col,
+							   int *errc );
+
+
+/*
+ * UU_csv_set()
+ * - assign the value of a specific cell in the CSV file.
+ */
+extern int        UU_csv_set( uu_csv_t *csv, unsigned row, unsigned col,
+							  const char *value );
+
+
+/*
+ * UU_csv_cols()
+ * - get the number of columns in the CSV file.
+ */
+extern unsigned   UU_csv_cols( uu_csv_t *csv );
+
+
+/*
+ * UU_csv_rows()
+ * - get the number of rows in the CSV file.
+ */
+extern unsigned   UU_csv_rows( uu_csv_t *csv );
 
 
 #endif /* UNUM_CSV_H */

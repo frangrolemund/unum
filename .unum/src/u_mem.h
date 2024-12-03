@@ -17,28 +17,16 @@
 | PERFORMANCE OF THIS SOFTWARE.
 | ---------------------------------------------------------------*/
 
-#include "u_test.h"
+#ifndef UNUM_MEM_H
+#define UNUM_MEM_H
 
-static int unittest_csv( int argc, char *argv[] );
-static void csv_test_basic_parse( void );
+#include <stdlib.h>
+#include <string.h>
 
-
-int main( int argc, char *argv[] ) {
-	return UT_test(argc, argv, unittest_csv);
-}
-
-
-static int unittest_csv( int argc, char *argv[] ) {
-	csv_test_basic_parse();
-	// - test-2: generate csv
-	return 0;
-}
+#define UU_malloc(n)         malloc(n)
+#define UU_free(p)           free(p)
+#define UU_realloc(p, n)     realloc((p), (n))
+#define UU_memset(p, v, n)   memset((p), (v), (n))
 
 
-static void csv_test_basic_parse( void ) {
-	UT_set_test_name("basic parsing");
-	UT_printf("reading test data...");
-	// - test-1: get full filename of test file
-	// - parse test file
-	// - assert contents.
-}
+#endif /* UNUM_MEM_H */

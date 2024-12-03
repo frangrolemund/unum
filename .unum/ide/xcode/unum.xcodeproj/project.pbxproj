@@ -53,6 +53,7 @@
 		A103CEB22CF7647D0057C7A3 /* ut_u_csv */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ut_u_csv; sourceTree = BUILT_PRODUCTS_DIR; };
 		A103CEBA2CF765DF0057C7A3 /* u_test.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = u_test.h; path = /Users/fran/work/realproven/unum/.unum/src/u_test.h; sourceTree = "<absolute>"; };
 		A103CEBB2CF765DF0057C7A3 /* u_test.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = u_test.c; path = /Users/fran/work/realproven/unum/.unum/src/u_test.c; sourceTree = "<absolute>"; };
+		A14E65972CFF3EEC00003116 /* u_mem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = u_mem.h; path = /Users/fran/work/realproven/unum/.unum/src/u_mem.h; sourceTree = "<absolute>"; };
 		A15CC5202CFCB8F0003E8F4D /* u_fs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = u_fs.h; path = /Users/fran/work/realproven/unum/.unum/src/u_fs.h; sourceTree = "<absolute>"; };
 		A15CC5212CFCB8F0003E8F4D /* u_fs.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = u_fs.c; path = /Users/fran/work/realproven/unum/.unum/src/u_fs.c; sourceTree = "<absolute>"; };
 		A15CC5232CFCCC13003E8F4D /* ut_u_csv_test_1.csv */ = {isa = PBXFileReference; lastKnownFileType = text; name = ut_u_csv_test_1.csv; path = /Users/fran/work/realproven/unum/.unum/src/tests/ut_u_csv_test_1.csv; sourceTree = "<absolute>"; };
@@ -114,9 +115,10 @@
 			children = (
 				A1725F8E2CFDF8A600734BC1 /* u_config.h */,
 				A1725F8D2CFDF82700734BC1 /* u_common.h */,
-				A103CEBA2CF765DF0057C7A3 /* u_test.h */,
-				A15CC5202CFCB8F0003E8F4D /* u_fs.h */,
 				A1725F8F2CFDF94500734BC1 /* u_csv.h */,
+				A15CC5202CFCB8F0003E8F4D /* u_fs.h */,
+				A14E65972CFF3EEC00003116 /* u_mem.h */,
+				A103CEBA2CF765DF0057C7A3 /* u_test.h */,
 				A1975C512CF37EDE005F115E /* unum */,
 				A1975C592CF387F2005F115E /* unum_pk */,
 				A103CEAD2CF763F50057C7A3 /* ut_u_csv */,
