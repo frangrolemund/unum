@@ -20,14 +20,31 @@
 #ifndef UNUM_FS_H
 #define UNUM_FS_H
 
+#include <sys/stat.h>
+
 #include "u_common.h"
 
 #define U_PATH_MAX       2048
 
 /*
- *  UU_basename()
- *  - copy the file name portion of a path from `src` into `dst`.
+ * UU_basename()
+ * - copy the file name portion of a path from `src` into `dst`.
  */
-extern int UU_basename( char *dst, const char *src, size_t len );
+extern uu_error_e UU_basename( char *dst, const char *src, size_t len );
+
+
+/*
+ * UU_dirname()
+ * - copy the directory name portion of a path from `src` into `dst`.
+ */
+extern uu_error_e UU_dirname( char *dst, const char *src, size_t len );
+
+
+/*
+ * UU_file_info
+ * - retrieve file information or `st_mode==0` if failed.
+ */
+extern struct stat UU_file_info( const char *path );
+
 
 #endif /* UNUM_FS_H */

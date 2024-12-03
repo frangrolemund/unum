@@ -36,6 +36,14 @@ extern void UT_printf( const char *fmt, ... );
 
 
 /*
+ * UT_read_filepath()
+ * - converts a relative filename co-located with the test into an absolute
+ *   file path.
+ */
+extern char *UT_read_filepath( const char *file );
+
+
+/*
  * UT_test()
  * - execute test in sandbox and cleanup after
  */

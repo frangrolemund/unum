@@ -20,7 +20,8 @@
 #include "u_common.h"
 #include "u_fs.h"
 
-int UU_basename( char *dst, const char *src, size_t len ) {
+
+uu_error_e UU_basename( char *dst, const char *src, size_t len ) {
 	int blen = 0;
 	
 	while (src && *src) {
@@ -32,12 +33,52 @@ int UU_basename( char *dst, const char *src, size_t len ) {
 	}
 	
 	if (!blen || len < blen) {
-		return 1;
+		return UU_ERR_ARGS;
 	}
 	
 	do {
 		*dst++ = *++src;
 	} while (*src);
 	
-	return 0;
+	return UU_OK;
+}
+
+
+uu_error_e UU_dirname( char *dst, const char *src, size_t len ) {
+	size_t i   = 0;
+	char *last = dst;
+	
+	if (!dst || !src || !*src) {
+		return UU_ERR_ARGS;
+	}
+	
+	for (; *src; src++, i++) {
+		if (i >= len) {
+			return UU_ERR_ARGS;
+		}
+
+		if ((dst[i] = *src) == UNUM_PATH_SEP) {
+			last = &dst[i];
+		}
+	}
+	
+	if (last == dst) {
+		*last   = '\0';
+	} else {
+		*++last = '\0';  // - include trailing path delim
+	}
+
+	return UU_OK;
+}
+
+
+struct stat UU_file_info( const char *path ) {
+	struct stat s;
+	
+	if (path && *path && stat(path, &s) == 0) {
+		return s;
+	}
+	
+	UU_memset(&s, 0, sizeof(s));
+	return s;	
 }

@@ -31,8 +31,9 @@
  *  - simple assert-like API.
  */
  
-static char prog[U_PATH_MAX];
-static const char *test_name  = NULL;
+static char prog[256];
+static char src_path[U_PATH_MAX];
+static const char *test_name      = NULL;
 
 
 void _UT_test_failed( const char *expr, const char *file, int line,
@@ -60,15 +61,28 @@ void UT_printf( const char *fmt, ... ) {
 }
 
 
+char *UT_read_filepath( const char *file ) {
+	static char ret[U_PATH_MAX];
+
+	UT_test_assert(file && *file, "File invalid.");
+		
+	return ret;
+}
+
+
 int _UT_test( const char *file, int argc, char *argv[],
 	         UT_test_entry_t entry_fn ) {
 	int ret;
 	
 	UT_test_assert(argc > 0 && argv[0], "command-line not provided");
-	ret = UU_basename(prog, argv[0], U_PATH_MAX);
-	UT_test_assert(ret == 0, "invalid program");
+
+	ret = UU_basename(prog, argv[0], sizeof(prog));
+	UT_test_assert(ret == UU_OK, "invalid program");
+	
+	ret = UU_dirname(src_path, file, sizeof(src_path));
+	UT_test_assert(ret == UU_OK, "invalid source file");
 		
-	printf("TODO: INSIDE UT_TEST from %s\n", file);
+	printf("TODO: INSIDE UT_TEST from %s\n", src_path);
 	ret = entry_fn(argc, argv);
 	printf("TODO: DEALLOCATING...\n");
 	

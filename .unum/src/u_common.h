@@ -38,8 +38,9 @@ typedef struct {
 
 typedef enum {
 	UU_OK        = 0,
-	UU_ERR_NOMEM = 1,
-	UU_ERR_FILE  = 2
+	UU_ERR_ARGS  = 1,
+	UU_ERR_NOMEM = 2,
+	UU_ERR_FILE  = 3
 } uu_error_e;
 
 
