@@ -41,10 +41,16 @@ extern uu_error_e UU_dirname( char *dst, const char *src, size_t len );
 
 
 /*
- * UU_file_info
+ * UU_file_info()
  * - retrieve file information or `st_mode==0` if failed.
  */
 extern struct stat UU_file_info( const char *path );
+
+/*
+ * UU_is_file()
+ * - identify if the provided path refers to a file.
+ */
+#define UU_is_file(p)   (UU_file_info(p).st_mode & S_IFREG)
 
 
 #endif /* UNUM_FS_H */

@@ -38,6 +38,7 @@ static int unittest_csv( int argc, char *argv[] ) {
 static void csv_test_basic_parse( void ) {
 	UT_set_test_name("basic parsing");
 	UT_printf("reading test data...");
+	UT_printf("...from file %s", UT_read_rel_path("ut_u_csv_1.csv"));
 	// - test-1: get full filename of test file
 	// - parse test file
 	// - assert contents.

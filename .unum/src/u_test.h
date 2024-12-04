@@ -36,11 +36,11 @@ extern void UT_printf( const char *fmt, ... );
 
 
 /*
- * UT_read_filepath()
+ * UT_read_rel_path()
  * - converts a relative filename co-located with the test into an absolute
  *   file path.
  */
-extern char *UT_read_filepath( const char *file );
+extern char *UT_read_rel_path( const char *file );
 
 
 /*

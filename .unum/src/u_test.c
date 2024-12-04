@@ -19,6 +19,7 @@
 
 #include <stdarg.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "u_fs.h"
 #include "u_test.h"
@@ -61,10 +62,15 @@ void UT_printf( const char *fmt, ... ) {
 }
 
 
-char *UT_read_filepath( const char *file ) {
+char *UT_read_rel_path( const char *file ) {
 	static char ret[U_PATH_MAX];
 
 	UT_test_assert(file && *file, "File invalid.");
+	
+	strcpy(ret, src_path);
+	strcat(ret, file);
+	
+	UT_test_assert(UU_is_file(ret), "File not found.");
 		
 	return ret;
 }
