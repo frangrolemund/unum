@@ -18,6 +18,7 @@
 | ---------------------------------------------------------------*/
 
 #include "u_test.h"
+#include "u_csv.h"
 
 static int unittest_csv( int argc, char *argv[] );
 static void csv_test_basic_parse( void );
@@ -36,8 +37,14 @@ static int unittest_csv( int argc, char *argv[] ) {
 
 
 static void csv_test_basic_parse( void ) {
+	uu_csv_t *cf;
+
 	UT_set_test_name("basic parsing");
+	
 	UT_printf("reading test data...");
+	cf = UU_csv_open(UT_read_rel_path("ut_u_csv_1.csv"), NULL);
+	UT_test_assert(cf, "Failed to open CSV");
+	
 	UT_printf("...from file %s", UT_read_rel_path("ut_u_csv_1.csv"));
 	// - test-1: get full filename of test file
 	// - parse test file

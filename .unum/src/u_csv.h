@@ -31,7 +31,7 @@ typedef struct {
 	uu_csv_row_t *rows;
 	unsigned     max_rows;
 	
-	char         path[U_PATH_MAX];
+	char         *path;
 	char         reserved;
 	char         buf[];
 } uu_csv_t;
