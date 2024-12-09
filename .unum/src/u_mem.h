@@ -27,6 +27,7 @@
 #define UU_free(p)           free(p)
 #define UU_realloc(p, n)     realloc((p), (n))
 #define UU_memset(p, v, n)   memset((p), (v), (n))
+#define UU_memcpy(d, s, n)   memcpy((d), (s), (n))
 
 
 #endif /* UNUM_MEM_H */

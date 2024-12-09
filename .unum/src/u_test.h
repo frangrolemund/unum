@@ -32,7 +32,7 @@
  * UT_printf()
  * - display a unit test message using printf syntax.
  */
-extern void UT_printf( const char *fmt, ... );
+extern void UT_printf( uu_cstring_t fmt, ... );
 
 
 /*
@@ -40,7 +40,7 @@ extern void UT_printf( const char *fmt, ... );
  * - converts a relative filename co-located with the test into an absolute
  *   file path.
  */
-extern char *UT_read_rel_path( const char *file );
+extern char *UT_read_rel_path( uu_cstring_t file );
 
 
 /*
@@ -48,9 +48,9 @@ extern char *UT_read_rel_path( const char *file );
  * - execute test in sandbox and cleanup after
  */
 #define UT_test( c, v, f )     _UT_test(__FILE__, (c), (v), (f))
-typedef int (*UT_test_entry_t)( int argc, char *argv[] );
-extern int  _UT_test( const char *file, int argc, char *argv[],
-					 UT_test_entry_t entry_fn );
+typedef int (*UT_test_entry_t)( int argc, uu_string_t argv[] );
+extern int  _UT_test( uu_cstring_t file, int argc, uu_string_t argv[],
+					  UT_test_entry_t entry_fn );
 
 
 /*
@@ -60,15 +60,15 @@ extern int  _UT_test( const char *file, int argc, char *argv[],
 #define UT_test_assert( t, m ) if (!(t)) {\
 	                              _UT_test_failed(#t, __FILE__, __LINE__, (m));\
 							   }
-extern void _UT_test_failed( const char *expr, const char *file, int line,
-							 const char *msg);
+extern void _UT_test_failed( uu_cstring_t expr, uu_cstring_t file, int line,
+							 uu_cstring_t msg);
 
 
 /*
  * UT_set_test_name()
  * - assign a name to the current test.
  */
-extern void UT_set_test_name( const char *name );
+extern void UT_set_test_name( uu_cstring_t name );
 
 
 #endif /* UNUM_TEST_H */

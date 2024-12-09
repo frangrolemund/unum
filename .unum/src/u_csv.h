@@ -31,8 +31,7 @@ typedef struct {
 	uu_csv_row_t *rows;
 	unsigned     max_rows;
 	
-	char         *path;
-	char         reserved;
+	uu_string_t  path;
 	char         buf[];
 } uu_csv_t;
 
@@ -48,14 +47,22 @@ extern uu_csv_t   *UU_csv_new( unsigned cols );
  * - open an existing CSV file from the provided path to be later freed with
  *   UU_csv_delete().
  */
-extern uu_csv_t   *UU_csv_open( const char *path, uu_error_e *err );
+extern uu_csv_t   *UU_csv_open( uu_cstring_t path, uu_error_e *err );
+
+
+/*
+ * UU_csv_memory()
+ * - open an existing CSV file from the provided buffer to be later freed with
+ *   UU_csv_delete().
+ */
+extern uu_csv_t   *UU_csv_memory( uu_cstring_t buf, uu_error_e *err );
 
 
 /*
  * UU_csv_write()
  * - write the CSV file to the path or NULL to use the same path as input.
  */
-extern int        UU_csv_write( const char *path );
+extern int        UU_csv_write( uu_cstring_t path );
 
 
 /*
@@ -76,7 +83,7 @@ extern int        UU_csv_add_row( uu_csv_t *csv );
  * - get the value from a specific cell in the CSV file.
  */
 extern const char *UU_csv_get( uu_csv_t *csv, unsigned row, unsigned col,
-							   int *errc );
+                               int *errc );
 
 
 /*
@@ -84,7 +91,7 @@ extern const char *UU_csv_get( uu_csv_t *csv, unsigned row, unsigned col,
  * - assign the value of a specific cell in the CSV file.
  */
 extern int        UU_csv_set( uu_csv_t *csv, unsigned row, unsigned col,
-							  const char *value );
+                              uu_string_t *value );
 
 
 /*

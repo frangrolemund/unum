@@ -20,11 +20,17 @@
 #ifndef UNUM_COMMON_H
 #define UNUM_COMMON_H
 
+#include <assert.h>
 #include <limits.h>
+#include <stdbool.h>
 #include <stdlib.h>
 
 #include "u_config.h"
 #include "u_mem.h"
+
+typedef char *               uu_string_t;
+typedef const char *         uu_cstring_t;
+typedef bool                 uu_bool_t;
 
 typedef struct {
 	int   major;
@@ -33,7 +39,7 @@ typedef struct {
 	char  *as_string;
 } uu_version_t;
 
-#define UNUM_VERSION ((uu_version_t) { 0, 1, 0, "0.1.0" })
+#define UNUM_VERSION        ((uu_version_t) { 0, 1, 0, "0.1.0" })
 
 
 typedef enum {
@@ -44,5 +50,9 @@ typedef enum {
 	UU_ERR_FMT   = 4
 } uu_error_e;
 
+#define UU_set_errorp(ep, v)  if (ep) { *ep = v; }
+
+
+#define UU_assert(e)          assert(e)
 
 #endif /* UNUM_COMMON_H */

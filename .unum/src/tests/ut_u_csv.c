@@ -21,7 +21,7 @@
 #include "u_csv.h"
 
 static int unittest_csv( int argc, char *argv[] );
-static void csv_test_basic_parse( void );
+static void csv_test_simple( void );
 
 
 int main( int argc, char *argv[] ) {
@@ -30,23 +30,21 @@ int main( int argc, char *argv[] ) {
 
 
 static int unittest_csv( int argc, char *argv[] ) {
-	csv_test_basic_parse();
-	// - test-2: generate csv
+	csv_test_simple();
+	
 	return 0;
 }
 
 
-static void csv_test_basic_parse( void ) {
+static void csv_test_simple( void ) {
 	uu_csv_t *cf;
 
-	UT_set_test_name("basic parsing");
+	UT_set_test_name("simple, contrived parsing");
 	
-	UT_printf("reading test data...");
-	cf = UU_csv_open(UT_read_rel_path("ut_u_csv_1.csv"), NULL);
-	UT_test_assert(cf, "Failed to open CSV");
-	
-	UT_printf("...from file %s", UT_read_rel_path("ut_u_csv_1.csv"));
-	// - test-1: get full filename of test file
-	// - parse test file
-	// - assert contents.
+	UT_printf("parsing simple #1...");
+	cf = UU_csv_memory("aaa,bbb,ccc\r\n"
+	                   "ddd,,fff\n",     NULL);
+	UT_test_assert(cf != NULL, "failed to parse memory buffer.")
+	UT_test_assert(cf->num_cols == 3, "Failed to identify columns.");
+	UT_test_assert(cf->num_rows == 2, "Failed to identify rows.");
 }

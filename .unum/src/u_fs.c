@@ -20,8 +20,9 @@
 #include "u_common.h"
 #include "u_fs.h"
 
+typedef char * uu_string_t;
 
-uu_error_e UU_basename( char *dst, const char *src, size_t len ) {
+uu_error_e UU_basename( uu_string_t dst, uu_cstring_t src, size_t len ) {
 	int blen = 0;
 	
 	while (src && *src) {
@@ -44,7 +45,7 @@ uu_error_e UU_basename( char *dst, const char *src, size_t len ) {
 }
 
 
-uu_error_e UU_dirname( char *dst, const char *src, size_t len ) {
+uu_error_e UU_dirname( uu_string_t dst, uu_cstring_t src, size_t len ) {
 	size_t i   = 0;
 	char *last = dst;
 	
@@ -72,7 +73,7 @@ uu_error_e UU_dirname( char *dst, const char *src, size_t len ) {
 }
 
 
-struct stat UU_file_info( const char *path ) {
+struct stat UU_file_info( uu_cstring_t path ) {
 	struct stat s;
 	
 	if (path && *path && stat(path, &s) == 0) {

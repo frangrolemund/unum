@@ -37,16 +37,24 @@ static char src_path[U_PATH_MAX];
 static const char *test_name      = NULL;
 
 
-void _UT_test_failed( const char *expr, const char *file, int line,
-				      const char *msg ) {
-	fprintf(stderr, "%s: !! test failure !!\n", prog);
-	fprintf(stderr, "%s: %s <-- '%s'\n", prog, msg, expr);
-	fprintf(stderr, "%s: %s@%d\n", prog, file, line);
+void _UT_test_failed( uu_cstring_t expr, uu_cstring_t file, int line,
+                      uu_cstring_t msg ) {
+	char  prefix[256] = {"\0"};
+	
+	if (test_name) {
+		sprintf(prefix, "%s (%s)", prog, test_name);
+	} else {
+		strcpy(prefix, prog);
+	}
+                      
+	fprintf(stderr, "%s: !! TEST FAILURE !!\n", prefix);
+	fprintf(stderr, "%s: %s <-- '%s'\n", prefix, msg, expr);
+	fprintf(stderr, "%s: %s@%d\n", prefix, file, line);
 	exit(1);
 }
 
 
-void UT_printf( const char *fmt, ... ) {
+void UT_printf( uu_cstring_t fmt, ... ) {
 	char     buf[2048];
 	va_list  val;
 
@@ -62,7 +70,7 @@ void UT_printf( const char *fmt, ... ) {
 }
 
 
-char *UT_read_rel_path( const char *file ) {
+char *UT_read_rel_path( uu_cstring_t file ) {
 	static char ret[U_PATH_MAX];
 
 	UT_test_assert(file && *file, "File invalid.");
@@ -76,7 +84,7 @@ char *UT_read_rel_path( const char *file ) {
 }
 
 
-int _UT_test( const char *file, int argc, char *argv[],
+int _UT_test( uu_cstring_t file, int argc, uu_string_t argv[],
 	         UT_test_entry_t entry_fn ) {
 	int ret;
 	
@@ -96,6 +104,6 @@ int _UT_test( const char *file, int argc, char *argv[],
 }
 
 
-void UT_set_test_name( const char *name ) {
+void UT_set_test_name( uu_cstring_t name ) {
 	test_name = name;
 }
