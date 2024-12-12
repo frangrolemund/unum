@@ -357,3 +357,32 @@ static uu_bool_t csv_bnf_EOL( uu_string_t cur, uu_string_t *next) {
 
 	return false;
 }
+
+
+unsigned UU_csv_rows( uu_csv_t *csv ) {
+	if (csv) {
+		return csv->num_rows;
+	}
+	
+	return 0;
+}
+
+
+unsigned UU_csv_cols( uu_csv_t *csv ) {
+	if (csv) {
+		return csv->num_cols;
+	}
+	
+	return 0;
+}
+
+
+const char *UU_csv_get( uu_csv_t *csv, unsigned row, unsigned col,
+                               uu_error_e *err) {
+	if (!csv || row >= csv->num_rows || col >= csv->num_cols) {
+		UU_set_errorp(err, UU_ERR_ARGS);
+		return NULL;
+	}
+                            
+	return *(csv->rows + ((csv->num_cols * row) + col));
+}

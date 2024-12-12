@@ -36,18 +36,39 @@ static int unittest_csv( int argc, char *argv[] ) {
 }
 
 
+static void csv_assert_value(uu_csv_t *csv, unsigned row, unsigned col,
+							 const char *value) {
+	const char *tmp = NULL;
+	uu_error_e err  = UU_OK;
+	
+	UU_assert(csv);
+	
+	tmp = UU_csv_get(csv, row, col, &err);
+	UU_assert(err == UU_OK);
+	
+	UU_assert((tmp && value && !strcmp(tmp, value)) || (!tmp && !value));
+}
+
+
 static void csv_test_simple( void ) {
 	uu_csv_t *cf;
 
 	UT_set_test_name("simple, contrived parsing");
 	
-	// - separator variations
+	// - eol variations
 	UT_printf("parsing simple #1...");
 	cf = UU_csv_memory("aaa,bbb,ccc\r\n"
 	                   "ddd,eee,fff\n"
 	                   "ggg,hhh,iii\r\n"
 	                   "jjj,kkk,lll",     NULL);
-	UT_test_assert(cf != NULL, "failed to parse memory buffer.")
-	UT_test_assert(cf->num_cols == 3, "Failed to identify columns.");
-	UT_test_assert(cf->num_rows == 4, "Failed to identify rows.");
+	UT_test_assert(cf != NULL, "failed to parse memory buffer.");
+	
+	UT_test_assert(UU_csv_cols(cf) == 3, "Failed to identify columns.");
+	UT_test_assert(UU_csv_rows(cf) == 4, "Failed to identify rows.");
+	csv_assert_value(cf, 0, 1, "bbb");
+	csv_assert_value(cf, 1, 2, "fff");
+	csv_assert_value(cf, 2, 0, "ggg");
+	csv_assert_value(cf, 3, 2, "lll");
+	
+	UU_csv_delete(cf);
 }

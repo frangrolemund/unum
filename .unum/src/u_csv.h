@@ -82,7 +82,7 @@ extern int        UU_csv_add_row( uu_csv_t *csv );
  * - get the value from a specific cell in the CSV file.
  */
 extern const char *UU_csv_get( uu_csv_t *csv, unsigned row, unsigned col,
-                               int *errc );
+							   uu_error_e *err );
 
 
 /*
@@ -94,17 +94,19 @@ extern int        UU_csv_set( uu_csv_t *csv, unsigned row, unsigned col,
 
 
 /*
+ * UU_csv_rows()
+ * - get the number of rows in the CSV file.
+ */
+extern unsigned   UU_csv_rows( uu_csv_t *csv );
+
+
+/*
  * UU_csv_cols()
  * - get the number of columns in the CSV file.
  */
 extern unsigned   UU_csv_cols( uu_csv_t *csv );
 
 
-/*
- * UU_csv_rows()
- * - get the number of rows in the CSV file.
- */
-extern unsigned   UU_csv_rows( uu_csv_t *csv );
 
 
 #endif /* UNUM_CSV_H */
