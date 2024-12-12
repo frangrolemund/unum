@@ -254,7 +254,6 @@ static uu_bool_t csv_bnf_FIELD( uu_string_t cur, uu_string_t *start_field,
                                 uu_string_t *end_field, uu_string_t *next,
                                 uu_bool_t *is_eol ) {
 	int is_quoted   = 0;
-	uu_string_t tnx = NULL;
 	                                
 	UU_assert(cur && start_field && end_field && next && is_eol);
 	

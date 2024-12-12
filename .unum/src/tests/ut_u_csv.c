@@ -56,7 +56,7 @@ static void csv_test_simple( void ) {
 	UT_set_test_name("simple, contrived parsing");
 	
 	// - eol variations
-	UT_printf("parsing simple #1...");
+	UT_printf("eol testing...");
 	cf = UU_csv_memory("aaa,bbb,ccc\r\n"
 	                   "ddd,eee,fff\n"
 	                   "ggg,hhh,iii\r\n"
@@ -71,4 +71,22 @@ static void csv_test_simple( void ) {
 	csv_assert_value(cf, 3, 2, "lll");
 	
 	UU_csv_delete(cf);
+	
+	// - field presence
+	UT_printf("field presence testing...");
+	cf = UU_csv_memory("000,,111\n"
+	                   ",222,333\n"
+	                   "444,555,\n", NULL);
+	UT_test_assert(cf != NULL, "failed to parse memory buffer.");
+	UT_test_assert(UU_csv_cols(cf) == 3, "Failed to identify columns.");
+	UT_test_assert(UU_csv_rows(cf) == 3, "Failed to identify rows.");
+	csv_assert_value(cf, 0, 0, "000");
+	csv_assert_value(cf, 0, 1, NULL);
+	csv_assert_value(cf, 0, 2, "111");
+	csv_assert_value(cf, 1, 0, NULL);
+	csv_assert_value(cf, 1, 1, "222");
+	csv_assert_value(cf, 1, 2, "333");
+	csv_assert_value(cf, 2, 0, "444");
+	csv_assert_value(cf, 2, 1, "555");
+	csv_assert_value(cf, 2, 2, NULL);
 }
