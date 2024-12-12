@@ -23,17 +23,23 @@
 
 // REF: https://datatracker.ietf.org/doc/html/rfc4180
 
-static uu_csv_t   *csv_new( unsigned cols, size_t buf_len, uu_cstring_t path );
+static uu_csv_t   *csv_new( unsigned cols, size_t buf_len, uu_cstring_t path,
+							uu_error_e *err );
 static uu_error_e csv_update_path( uu_csv_t *csv, uu_cstring_t path );
-static uu_bool_t csv_bnf_FILE( uu_csv_t *csv );
+static uu_bool_t csv_bnf_FILE( uu_csv_t *csv, uu_error_e *err );
 static uu_bool_t csv_bnf_RECORD( uu_csv_t *csv, uu_string_t cur,
-                                 uu_string_t *next );
+                                 uu_string_t *next, uu_error_e *err );
 static uu_bool_t csv_bnf_FIELD( uu_string_t cur, uu_string_t *start_field,
-                                uu_string_t *end_field, uu_string_t *next );
+                                uu_string_t *end_field, uu_string_t *next,
+							    uu_bool_t *is_eol );
 static uu_bool_t csv_bnf_COMMA( uu_string_t cur, uu_string_t *next );
 static uu_bool_t csv_bnf_CRLF( uu_string_t cur, uu_string_t *next );
 static uu_bool_t csv_bnf_CR( uu_string_t cur, uu_string_t *next );
 static uu_bool_t csv_bnf_LF( uu_string_t cur, uu_string_t *next );
+static uu_bool_t csv_bnf_EOL( uu_string_t cur, uu_string_t *next);
+
+#define MAX_COLS        256
+#define ROW_GROUP_SIZE  32
 
 uu_csv_t *UU_csv_open( uu_cstring_t path, uu_error_e *err ) {
 	FILE      *fp  = NULL;
@@ -47,10 +53,9 @@ uu_csv_t *UU_csv_open( uu_cstring_t path, uu_error_e *err ) {
 		return NULL;
 	}
 	
-	if (!(ret = csv_new(0, len + 1, path)) ||
+	if (!(ret = csv_new(0, len + 1, path, err)) ||
 	    fread(ret->buf, 1, len, fp) != len ||
-		!csv_bnf_FILE(ret)) {
-		UU_set_errorp(err, ret ? UU_ERR_FILE : UU_ERR_MEM);
+        !csv_bnf_FILE(ret, err)) {
 		fclose(fp);
 		UU_csv_delete(ret);
 		return NULL;
@@ -61,7 +66,7 @@ uu_csv_t *UU_csv_open( uu_cstring_t path, uu_error_e *err ) {
 
 
 uu_csv_t *UU_csv_new( unsigned cols ) {
-	return csv_new(cols, 0, NULL);
+	return csv_new(cols, 0, NULL, NULL);
 }
 
 
@@ -71,10 +76,9 @@ extern uu_csv_t *UU_csv_memory( uu_cstring_t buf, uu_error_e *err ) {
 	UU_set_errorp(err, UU_OK);
 	
 	if (!buf || !*buf ||
-		!(ret = csv_new(0, strlen(buf) + 1, NULL)) ||
+		!(ret = csv_new(0, strlen(buf) + 1, NULL, err)) ||
 		!strcpy(ret->buf, buf) ||
-		!csv_bnf_FILE(ret)) {
-		UU_set_errorp(err, ret ? UU_ERR_ARGS : UU_ERR_MEM);
+        !csv_bnf_FILE(ret, err)) {
 		UU_csv_delete(ret);
 		return NULL;
 	}
@@ -83,12 +87,14 @@ extern uu_csv_t *UU_csv_memory( uu_cstring_t buf, uu_error_e *err ) {
 }
 
 
-static uu_csv_t *csv_new( unsigned cols, size_t buf_len, uu_cstring_t path ) {
+static uu_csv_t *csv_new( unsigned cols, size_t buf_len, uu_cstring_t path,
+                          uu_error_e *err ) {
 	uu_csv_t     *ret      = NULL;
 	const size_t total_len = sizeof(uu_csv_t) + sizeof(char [buf_len]);
 	
 	ret = UU_malloc(total_len);
 	if (!ret) {
+		UU_set_errorp(err, UU_ERR_MEM);
 		return NULL;
 	}
 	
@@ -97,6 +103,7 @@ static uu_csv_t *csv_new( unsigned cols, size_t buf_len, uu_cstring_t path ) {
 	
 	if (csv_update_path(ret, path) != UU_OK) {
 		UU_csv_delete(ret);
+		UU_set_errorp(err, UU_ERR_MEM);
 		return NULL;
 	}
 
@@ -107,6 +114,10 @@ static uu_csv_t *csv_new( unsigned cols, size_t buf_len, uu_cstring_t path ) {
 void UU_csv_delete( uu_csv_t *csv ) {
 	if (!csv) {
 		return;
+	}
+	
+	if (csv->rows) {
+		UU_free(csv->rows);
 	}
 	
 	if (csv->path) {
@@ -138,14 +149,15 @@ static uu_error_e csv_update_path( uu_csv_t *csv, uu_cstring_t path ) {
 }
 
 
-static uu_bool_t csv_bnf_FILE( uu_csv_t *csv ) {
+static uu_bool_t csv_bnf_FILE( uu_csv_t *csv, uu_error_e *err ) {
 	uu_string_t cur  = csv->buf;
 	uu_string_t next = NULL;
 	
-	while (csv_bnf_RECORD(csv, cur, &next) && *next)
-		{}
+	while (csv_bnf_RECORD(csv, cur, &next, err) && next) {
+			cur = next;
+	}
 	
-	if (csv->num_cols == 0 || csv->num_rows == 0 || !next) {
+	if ((err && *err != UU_OK) || csv->num_rows == 0) {
 		return false;
 	}
 	
@@ -161,14 +173,77 @@ static uu_bool_t csv_bnf_FILE( uu_csv_t *csv ) {
 #define is_bnf_LF(c)         (c == 0x0A)
 #define is_bnf_DQUOTE(c)     (c == 0x22)
 #define is_bnf_EOF(c)        (c == 0x00)
-#define is_bnf_sep(c)        (is_bnf_EOF(c) || is_bnf_COMMA(c) || \
-                             is_bnf_CR(c) || is_bnf_LF(c))
+#define is_bnf_EOL(c)        (is_bnf_EOF(c) || is_bnf_CR(c) || is_bnf_LF(c))
+#define is_bnf_sep(c)        (is_bnf_COMMA(c) || is_bnf_EOL(c))
 
 
 static uu_bool_t csv_bnf_RECORD( uu_csv_t *csv, uu_string_t cur,
-                                 uu_string_t *next ) {
+                                 uu_string_t *next, uu_error_e *err ) {
+	uu_string_t  cols[MAX_COLS];
+	int          i, count        = 0;
+	uu_string_t  start, end;
+	uu_bool_t    is_eol          = false;
+	size_t       row_buf_len     = 0;
+	uu_string_t  *row_col;
 
-	return false;
+	while (csv_bnf_FIELD(cur, &start, &end, next, &is_eol)) {
+		UU_assert(count < MAX_COLS);
+		if (count >= MAX_COLS) {
+			UU_set_errorp(err, UU_ERR_FMT);
+			return false;
+		}
+		
+		if (start && end) {
+			*++end     = '\0';
+			cols[count] = start;
+
+		} else {
+			cols[count] = NULL;
+		}
+		
+		count++;
+		cur = *next;
+		
+		if (is_eol) {
+			break;
+		}
+	}
+	
+	if (csv->num_cols == 0 && count == 0) {
+		UU_set_errorp(err, UU_ERR_FMT);
+		return false;
+		
+	} else if (is_eol && count == 0) {
+		return *next ? true : false;	// - allow empty lines
+	}
+	
+	csv->num_cols = count;
+	
+	if (csv->max_rows <= csv->num_rows) {
+		csv->max_rows += ROW_GROUP_SIZE;
+		row_buf_len    = sizeof(uu_string_t *) * csv->max_rows * csv->num_cols;
+		csv->rows      = (uu_string_t *) UU_realloc(csv->rows, row_buf_len);
+		
+		if (csv->rows == NULL) {
+			UU_set_errorp(err, UU_ERR_MEM);
+			return false;
+		}
+	}
+
+	row_col = csv->rows + (csv->num_rows * csv->num_cols);
+	for (i = 0; i < count; i++) {
+		*row_col++ = cols[i];
+	}
+	
+	csv->num_rows++;
+	
+	return true;
+}
+
+void arr_alloc (size_t x, size_t y, int(**aptr)[x][y])
+{
+  *aptr = malloc( sizeof(int[x][y]) ); // allocate a true 2D array
+  assert(*aptr != NULL);
 }
 
 
@@ -176,22 +251,24 @@ static uu_bool_t csv_bnf_RECORD( uu_csv_t *csv, uu_string_t cur,
 //   the next in the following invocation:
 //   --> aaa,,"ccc""cc",dddddd
 static uu_bool_t csv_bnf_FIELD( uu_string_t cur, uu_string_t *start_field,
-                                uu_string_t *end_field, uu_string_t *next ) {
-	int is_quoted = 0;
+                                uu_string_t *end_field, uu_string_t *next,
+                                uu_bool_t *is_eol ) {
+	int is_quoted   = 0;
+	uu_string_t tnx = NULL;
 	                                
-	UU_assert(cur && start_field && end_field && next);
+	UU_assert(cur && start_field && end_field && next && is_eol);
 	
 	*start_field = *end_field = *next = NULL;
+	*is_eol      = false;
 		
 	if ((is_quoted = is_bnf_DQUOTE(*cur)))  {
 		cur++;
 	}
 	
-	for (; !is_bnf_EOF(*cur) ;) {
+	for (; !(*is_eol = csv_bnf_EOL(cur, next)) ;) {
 		if (is_quoted && is_bnf_DQUOTE(*cur)) {
 			cur++;
-				
-			// ...only two options after finding a second quote
+
 			if (!is_bnf_DQUOTE(*cur) && !is_bnf_sep(*cur)) {
 				return false;
 			}
@@ -206,9 +283,14 @@ static uu_bool_t csv_bnf_FIELD( uu_string_t cur, uu_string_t *start_field,
 		*start_field = *start_field ? *start_field : cur;
 		*end_field   = cur++;
 	}
+	
+	if (*is_eol && start_field == NULL) {
+		return false;
 
-	*next = is_bnf_EOF(*cur) ? NULL : ++cur;
-                                
+	} else if (!*is_eol) {
+		*next = ++cur;
+	}
+
 	return !is_quoted && (*start_field || *next);
 }
 
@@ -258,5 +340,20 @@ static uu_bool_t csv_bnf_LF( uu_string_t cur, uu_string_t *next ) {
 		return true;
 	}
 	
+	return false;
+}
+
+static uu_bool_t csv_bnf_EOL( uu_string_t cur, uu_string_t *next) {
+	if (!cur || is_bnf_EOF(*cur)) {
+		*next = NULL;
+		return true;
+	
+	}else if (csv_bnf_LF(cur, next)) {
+		return true;
+		
+	} else if (csv_bnf_CRLF(cur, next)) {
+		return true;
+	}
+
 	return false;
 }

@@ -41,10 +41,13 @@ static void csv_test_simple( void ) {
 
 	UT_set_test_name("simple, contrived parsing");
 	
+	// - separator variations
 	UT_printf("parsing simple #1...");
 	cf = UU_csv_memory("aaa,bbb,ccc\r\n"
-	                   "ddd,,fff\n",     NULL);
+	                   "ddd,eee,fff\n"
+	                   "ggg,hhh,iii\r\n"
+	                   "jjj,kkk,lll",     NULL);
 	UT_test_assert(cf != NULL, "failed to parse memory buffer.")
 	UT_test_assert(cf->num_cols == 3, "Failed to identify columns.");
-	UT_test_assert(cf->num_rows == 2, "Failed to identify rows.");
+	UT_test_assert(cf->num_rows == 4, "Failed to identify rows.");
 }

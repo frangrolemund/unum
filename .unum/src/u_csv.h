@@ -23,12 +23,11 @@
 #include "u_common.h"
 #include "u_fs.h"
 
-typedef char ** uu_csv_row_t;
 typedef struct {
 	unsigned     num_cols;   // const
 	unsigned     num_rows;
 	
-	uu_csv_row_t *rows;
+	uu_string_t  *rows;
 	unsigned     max_rows;
 	
 	uu_string_t  path;
