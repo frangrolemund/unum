@@ -243,12 +243,6 @@ static uu_bool_t csv_bnf_RECORD( uu_csv_t *csv, uu_string_t cur,
 	return true;
 }
 
-void arr_alloc (size_t x, size_t y, int(**aptr)[x][y])
-{
-  *aptr = malloc( sizeof(int[x][y]) ); // allocate a true 2D array
-  assert(*aptr != NULL);
-}
-
 
 // - the litmus test is being able to identify `ccc"cc` below and move to
 //   the next in the following invocation:
