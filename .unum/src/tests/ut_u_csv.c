@@ -95,7 +95,7 @@ static void csv_test_simple( void ) {
 	// - quotes
 	UT_printf("quote testing...");
 	cf = UU_csv_memory("aaa,bbb,ccc,111\n"
-	                   "\"ddd\",\"eee\",\"fff\",2222\n"
+	                   "\"ddd\",\"eee\",\"ff,f\",2222\n"
 	                   "ggg,\"hhh\r\nhh\",iii,33333\n", NULL);
 	UT_test_assert(cf != NULL, "failed to parse memory buffer.");
 	UT_test_assert(UU_csv_cols(cf) == 4, "Failed to identify columns.");
@@ -103,7 +103,7 @@ static void csv_test_simple( void ) {
 	csv_assert_value(cf, 0, 0, "aaa");
 	csv_assert_value(cf, 1, 0, "ddd");
 	csv_assert_value(cf, 1, 1, "eee");
-	csv_assert_value(cf, 1, 2, "fff");
+	csv_assert_value(cf, 1, 2, "ff,f");
 	csv_assert_value(cf, 1, 3, "2222");
 	csv_assert_value(cf, 2, 0, "ggg");
 	csv_assert_value(cf, 2, 1, "hhh\r\nhh");
@@ -111,4 +111,20 @@ static void csv_test_simple( void ) {
 	csv_assert_value(cf, 2, 3, "33333");
 	
 	UU_csv_delete(cf);
+	
+	UT_printf("quote escaping testing...");
+	cf = UU_csv_memory("aaa,bb\"b,ccc\n"
+	                   "\"ddd\",\"eee\"\",ee\"\"ee\",\"fff\"", NULL);
+	UT_test_assert(cf != NULL, "failed to parse memory buffer.");
+	UT_test_assert(UU_csv_cols(cf) == 3, "Failed to identify columns.");
+	UT_test_assert(UU_csv_rows(cf) == 2, "Failed to identify rows.");
+	csv_assert_value(cf, 0, 0, "aaa");
+	csv_assert_value(cf, 0, 1, "bb\"b");
+	csv_assert_value(cf, 0, 2, "ccc");
+	csv_assert_value(cf, 1, 0, "ddd");
+	csv_assert_value(cf, 1, 1, "eee\",ee\"ee");
+	csv_assert_value(cf, 1, 2, "fff");
+	
+	UU_csv_delete(cf);
+
 }
