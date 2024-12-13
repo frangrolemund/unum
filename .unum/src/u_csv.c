@@ -152,12 +152,14 @@ static uu_error_e csv_update_path( uu_csv_t *csv, uu_cstring_t path ) {
 static uu_bool_t csv_bnf_FILE( uu_csv_t *csv, uu_error_e *err ) {
 	uu_string_t cur  = csv->buf;
 	uu_string_t next = NULL;
+	uu_error_e  uerr = UU_OK;
 	
-	while (csv_bnf_RECORD(csv, cur, &next, err) && next) {
+	while (csv_bnf_RECORD(csv, cur, &next, &uerr) && next) {
 			cur = next;
 	}
 	
-	if ((err && *err != UU_OK) || csv->num_rows == 0) {
+	if ((uerr != UU_OK) || csv->num_rows == 0) {
+		UU_set_errorp(err, uerr == UU_OK ? UU_ERR_FMT : uerr);
 		return false;
 	}
 	
@@ -209,7 +211,8 @@ static uu_bool_t csv_bnf_RECORD( uu_csv_t *csv, uu_string_t cur,
 		}
 	}
 	
-	if (csv->num_cols == 0 && count == 0) {
+	if ((csv->num_cols == 0 && count == 0) ||
+	    (csv->num_cols > 0 && count > 0 && csv->num_cols != count)) {
 		UU_set_errorp(err, UU_ERR_FMT);
 		return false;
 		
@@ -264,19 +267,30 @@ static uu_bool_t csv_bnf_FIELD( uu_string_t cur, uu_string_t *start_field,
 		cur++;
 	}
 	
-	for (; !(*is_eol = csv_bnf_EOL(cur, next)) ;) {
-		if (is_quoted && is_bnf_DQUOTE(*cur)) {
-			cur++;
+	for (; !(*is_eol = is_bnf_EOF(*cur)) ;) {
+		if (is_quoted) {
+			if (is_bnf_DQUOTE(*cur)) {
+				cur++;
 
-			if (!is_bnf_DQUOTE(*cur) && !is_bnf_sep(*cur)) {
-				return false;
+				// ...when not an escaped innner quote coming next.
+				if (!is_bnf_DQUOTE(*cur)) {
+					if (!is_bnf_sep(*cur)) {
+						return false;
+					}
+					
+					is_quoted = 0;
+					continue;
+				}
 			}
-				
-			is_quoted = 0;
-		}
-		
-		if (!is_quoted && is_bnf_sep(*cur)) {
-			break;
+
+		} else {					
+			if (csv_bnf_COMMA(cur, next)) {
+				break;
+			}
+
+			if ((*is_eol = csv_bnf_EOL(cur, next))) {
+				break;
+			}
 		}
 	
 		*start_field = *start_field ? *start_field : cur;
@@ -285,9 +299,6 @@ static uu_bool_t csv_bnf_FIELD( uu_string_t cur, uu_string_t *start_field,
 	
 	if (*is_eol && start_field == NULL) {
 		return false;
-
-	} else if (!*is_eol) {
-		*next = ++cur;
 	}
 
 	return !is_quoted && (*start_field || *next);

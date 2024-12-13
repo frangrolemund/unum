@@ -89,4 +89,26 @@ static void csv_test_simple( void ) {
 	csv_assert_value(cf, 2, 0, "444");
 	csv_assert_value(cf, 2, 1, "555");
 	csv_assert_value(cf, 2, 2, NULL);
+	
+	UU_csv_delete(cf);
+	
+	// - quotes
+	UT_printf("quote testing...");
+	cf = UU_csv_memory("aaa,bbb,ccc,111\n"
+	                   "\"ddd\",\"eee\",\"fff\",2222\n"
+	                   "ggg,\"hhh\r\nhh\",iii,33333\n", NULL);
+	UT_test_assert(cf != NULL, "failed to parse memory buffer.");
+	UT_test_assert(UU_csv_cols(cf) == 4, "Failed to identify columns.");
+	UT_test_assert(UU_csv_rows(cf) == 3, "Failed to identify rows.");
+	csv_assert_value(cf, 0, 0, "aaa");
+	csv_assert_value(cf, 1, 0, "ddd");
+	csv_assert_value(cf, 1, 1, "eee");
+	csv_assert_value(cf, 1, 2, "fff");
+	csv_assert_value(cf, 1, 3, "2222");
+	csv_assert_value(cf, 2, 0, "ggg");
+	csv_assert_value(cf, 2, 1, "hhh\r\nhh");
+	csv_assert_value(cf, 2, 2, "iii");
+	csv_assert_value(cf, 2, 3, "33333");
+	
+	UU_csv_delete(cf);
 }
