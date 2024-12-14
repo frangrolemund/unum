@@ -411,3 +411,12 @@ const char *UU_csv_get( uu_csv_t *csv, unsigned row, unsigned col,
                             
 	return *(csv->rows + ((csv->num_cols * row) + col));
 }
+
+
+uu_cstring_t UU_csv_file_path( uu_csv_t *csv ) {
+	if (csv && csv->num_rows > 0 && csv->num_cols > 0) {
+		return csv->path;
+	}
+
+	return NULL;
+}

@@ -22,6 +22,7 @@
 
 static int unittest_csv( int argc, char *argv[] );
 static void csv_test_simple( void );
+static void csv_test_simple_file_1( void );
 
 
 int main( int argc, char *argv[] ) {
@@ -31,6 +32,7 @@ int main( int argc, char *argv[] ) {
 
 static int unittest_csv( int argc, char *argv[] ) {
 	csv_test_simple();
+	csv_test_simple_file_1();
 	
 	return 0;
 }
@@ -53,7 +55,7 @@ static void csv_assert_value(uu_csv_t *csv, unsigned row, unsigned col,
 static void csv_test_simple( void ) {
 	uu_csv_t *cf;
 
-	UT_set_test_name("simple, contrived parsing");
+	UT_set_test_name("contrived parsing");
 	
 	// - eol variations
 	UT_printf("eol testing...");
@@ -61,7 +63,7 @@ static void csv_test_simple( void ) {
 	                   "ddd,eee,fff\n"
 	                   "ggg,hhh,iii\r\n"
 	                   "jjj,kkk,lll",     NULL);
-	UT_test_assert(cf != NULL, "failed to parse memory buffer.");
+	UT_test_assert(cf, "failed to parse memory buffer.");
 	
 	UT_test_assert(UU_csv_cols(cf) == 3, "Failed to identify columns.");
 	UT_test_assert(UU_csv_rows(cf) == 4, "Failed to identify rows.");
@@ -70,6 +72,8 @@ static void csv_test_simple( void ) {
 	csv_assert_value(cf, 2, 0, "ggg");
 	csv_assert_value(cf, 3, 2, "lll");
 	
+	UU_assert(!UU_csv_file_path(cf));
+	
 	UU_csv_delete(cf);
 	
 	// - field presence
@@ -77,7 +81,7 @@ static void csv_test_simple( void ) {
 	cf = UU_csv_memory("000,,111\n"
 	                   ",222,333\n"
 	                   "444,555,\n", NULL);
-	UT_test_assert(cf != NULL, "failed to parse memory buffer.");
+	UT_test_assert(cf, "failed to parse memory buffer.");
 	UT_test_assert(UU_csv_cols(cf) == 3, "Failed to identify columns.");
 	UT_test_assert(UU_csv_rows(cf) == 3, "Failed to identify rows.");
 	csv_assert_value(cf, 0, 0, "000");
@@ -97,7 +101,7 @@ static void csv_test_simple( void ) {
 	cf = UU_csv_memory("aaa,bbb,ccc,111\n"
 	                   "\"ddd\",\"eee\",\"ff,f\",2222\n"
 	                   "ggg,\"hhh\r\nhh\",iii,33333\n", NULL);
-	UT_test_assert(cf != NULL, "failed to parse memory buffer.");
+	UT_test_assert(cf, "failed to parse memory buffer.");
 	UT_test_assert(UU_csv_cols(cf) == 4, "Failed to identify columns.");
 	UT_test_assert(UU_csv_rows(cf) == 3, "Failed to identify rows.");
 	csv_assert_value(cf, 0, 0, "aaa");
@@ -115,7 +119,7 @@ static void csv_test_simple( void ) {
 	UT_printf("quote escaping testing...");
 	cf = UU_csv_memory("aaa,bb\"b,ccc\n"
 	                   "\"ddd\",\"eee\"\",ee\"\"ee\",\"fff\"", NULL);
-	UT_test_assert(cf != NULL, "failed to parse memory buffer.");
+	UT_test_assert(cf, "failed to parse memory buffer.");
 	UT_test_assert(UU_csv_cols(cf) == 3, "Failed to identify columns.");
 	UT_test_assert(UU_csv_rows(cf) == 2, "Failed to identify rows.");
 	csv_assert_value(cf, 0, 0, "aaa");
@@ -127,4 +131,67 @@ static void csv_test_simple( void ) {
 	
 	UU_csv_delete(cf);
 
+}
+
+
+static void csv_test_simple_file_1( void ) {
+	uu_csv_t *cf;
+
+	UT_set_test_name("file parsing #1");
+
+	UT_printf("sample ut_u_csv_1.csv");
+	cf = UU_csv_open(UT_read_rel_path("ut_u_csv_1.csv"), NULL);
+	UT_test_assert(cf, "failed to read source file.");
+	
+	UT_test_assert(UU_csv_cols(cf) == 5, "Failed to identify columns.");
+	UT_test_assert(UU_csv_rows(cf) == 5, "Failed to identify columns.");
+	
+	csv_assert_value(cf, 0, 0, "u_bool");
+	csv_assert_value(cf, 0, 1, "u_path");
+	csv_assert_value(cf, 0, 2, "u_desc");
+	csv_assert_value(cf, 0, 3, "u_text_ml");
+	csv_assert_value(cf, 0, 4, "u_num");
+	
+	csv_assert_value(cf, 1, 0, "FALSE");
+	csv_assert_value(cf, 1, 1, "/usr/bin/pgrep");
+	csv_assert_value(cf, 1, 2, "search process table");
+	csv_assert_value(cf, 1, 3, "The \"pgrep\" command searches "
+							   "the process table \n\non the running system "
+	                           "and prints the process \n\nIDs of all "
+	                           "processes that match the criteria \n\n"
+	                           "given on the command line.");
+	csv_assert_value(cf, 1, 4, NULL);
+
+	csv_assert_value(cf, 2, 0, "TRUE");
+	csv_assert_value(cf, 2, 1, "/usr/sbin/chroot");
+	csv_assert_value(cf, 2, 2, "change root directory");
+	csv_assert_value(cf, 2, 3, NULL);
+	csv_assert_value(cf, 2, 4, "-4");
+	
+	csv_assert_value(cf, 3, 0, "TRUE");
+	csv_assert_value(cf, 3, 1, "/etc/passwd");
+	csv_assert_value(cf, 3, 2, NULL);
+	csv_assert_value(cf, 3, 3, "User Database\n\n"
+	                           "Note that this file is consulted directly "
+	                           "only when the system is running\n\n"
+	                           "in single-user mode.  At other times this "
+	                           "information is provided by\n\nOpen Directory.");
+	csv_assert_value(cf, 3, 4, "100.2");
+	
+	csv_assert_value(cf, 4, 0, NULL);
+	csv_assert_value(cf, 4, 1, "/bin/sleep");
+	csv_assert_value(cf, 4, 2, "delay");
+	csv_assert_value(cf, 4, 3, "The \"sleep\" command suspends execution for "
+							   "a minimum of seconds.\n\n"
+	                           "If the sleep command receives a signal, it "
+							   "takes the standard action.\n\n"
+	                           "When the SIGINFO signal is received, the "
+	                           "estimate of the amount of\n\n"
+	                           "seconds left to sleep is printed on the "
+	                           "standard output.");
+	csv_assert_value(cf, 4, 4, "8");
+	
+	UU_assert(UU_csv_file_path(cf));
+	
+	UU_csv_delete(cf);
 }
