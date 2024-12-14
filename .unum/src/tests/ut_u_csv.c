@@ -23,6 +23,7 @@
 static int unittest_csv( int argc, char *argv[] );
 static void csv_test_simple( void );
 static void csv_test_simple_file_1( void );
+static void csv_test_simple_file_2( void );
 
 
 int main( int argc, char *argv[] ) {
@@ -33,6 +34,7 @@ int main( int argc, char *argv[] ) {
 static int unittest_csv( int argc, char *argv[] ) {
 	csv_test_simple();
 	csv_test_simple_file_1();
+	csv_test_simple_file_2();
 	
 	return 0;
 }
@@ -144,7 +146,7 @@ static void csv_test_simple_file_1( void ) {
 	UT_test_assert(cf, "failed to read source file.");
 	
 	UT_test_assert(UU_csv_cols(cf) == 5, "Failed to identify columns.");
-	UT_test_assert(UU_csv_rows(cf) == 5, "Failed to identify columns.");
+	UT_test_assert(UU_csv_rows(cf) == 5, "Failed to identify rows.");
 	
 	csv_assert_value(cf, 0, 0, "u_bool");
 	csv_assert_value(cf, 0, 1, "u_path");
@@ -193,5 +195,28 @@ static void csv_test_simple_file_1( void ) {
 	
 	UU_assert(UU_csv_file_path(cf));
 	
+	UU_csv_delete(cf);
+}
+
+
+static void csv_test_simple_file_2( void ) {
+	uu_csv_t *cf;
+	int      i, j;
+
+	UT_set_test_name("file parsing #2");
+
+	UT_printf("sample ut_u_csv_2.csv");
+	cf = UU_csv_open(UT_read_rel_path("ut_u_csv_2.csv"), NULL);
+	UT_test_assert(cf, "failed to read source file.");
+	
+	UT_test_assert(UU_csv_cols(cf) == 12, "Failed to identify columns.");
+	UT_test_assert(UU_csv_rows(cf) == 10001, "Failed to identify rows.");
+	
+	for (i = 0; i < UU_csv_rows(cf); i++) {
+		for (j = 0; j < UU_csv_cols(cf); j++) {
+			UT_test_assert(UU_csv_get(cf, i, j, NULL), "Failed to find data.");
+		}
+	}
+
 	UU_csv_delete(cf);
 }
