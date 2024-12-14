@@ -23,6 +23,7 @@
 
 #include "u_fs.h"
 #include "u_test.h"
+#include "u_mem.h"
 
 /*
  *  Unit-testing facilities:
@@ -97,6 +98,11 @@ int _UT_test( uu_cstring_t file, int argc, uu_string_t argv[],
 	UT_test_assert(ret == UU_OK, "invalid source file");
 		
 	ret = entry_fn(argc, argv);
+	
+	if (UU_memcheck_total_bytes()) {
+		UU_memcheck_dump();
+		UT_test_assert(0, "memory leak(s) detected")
+	}
 	
 	return ret;
 }
