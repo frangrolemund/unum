@@ -96,9 +96,7 @@ int _UT_test( uu_cstring_t file, int argc, uu_string_t argv[],
 	ret = UU_dirname(src_path, file, sizeof(src_path));
 	UT_test_assert(ret == UU_OK, "invalid source file");
 		
-	printf("TODO: INSIDE UT_TEST from %s\n", src_path);
 	ret = entry_fn(argc, argv);
-	printf("TODO: DEALLOCATING...\n");
 	
 	return ret;
 }
