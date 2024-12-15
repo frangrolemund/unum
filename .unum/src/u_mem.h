@@ -28,38 +28,46 @@
 #endif
 
 #ifdef UNUM_MEM_CHECKING
-	extern void     *_UU_memcheck_malloc( size_t size, const char *file,
-	                                      int line );
-	extern void     _UU__memcheck_free( void *ptr );
-	extern void     *_UU_memcheck_realloc( void *ptr, size_t size,
-                                           const char *file, int line );
-	extern void     _UU_memcheck_tare( void *ptr );
-	extern unsigned _UU_memcheck_total_bytes( void );
-	extern void     _UU_memcheck_dump ( void );
+	extern void      *_UU_memc_malloc( size_t size, const char *file,
+									   int line );
+	extern void      _UU_memc_free( void *ptr );
+	extern void      *_UU_memc_realloc( void *ptr, size_t size,
+									    const char *file, int line );
+	extern void      _UU_memc_tare( void *ptr );
+	extern unsigned  _UU_memc_total_bytes( void );
+	extern unsigned  _UU_memc_total_allocs( void );
+	extern unsigned  _UU_memc_dump( void );
 
-	#define UU_malloc(n)              _UU_memcheck_malloc((n), __FILE__, \
-	                                                      __LINE__)
-	#define UU_free(p)                _UU__memcheck_free(p)
-	#define UU_realloc(p, n)          _UU_memcheck_realloc((p), (n), __FILE__, \
-                                                           __LINE__)
-	#define UU_tare(p)                _UU_memcheck_tare((p))
-	#define UU_memcheck_total_bytes() _UU_memcheck_total_bytes()
-	#define UU_memcheck_dump()        _UU_memcheck_dump()
+	#define UU_malloc(n)              _UU_memc_malloc((n), __FILE__, \
+													  __LINE__)
+	#define UU_free(p)                _UU_memc_free(p)
+	#define UU_realloc(p, n)          _UU_memc_realloc((p), (n), __FILE__, \
+													   __LINE__)
+	#define UU_mem_tare(p)            _UU_memc_tare((p))
+	#define UU_memdbg_total_bytes()   _UU_memc_total_bytes()
+	#define UU_memdbg_total_allocs()  _UU_memc_total_allocs()
+	#define UU_memdbg_dump()          _UU_memc_dump()
+	
+	#define UU_strdup(s)              ((char *) strcpy((char *) \
+									       UU_malloc(strlen(s) + 1), s))
   
 #else
 
 	#define UU_malloc(n)              malloc(n)
 	#define UU_free(p)                free(p)
 	#define UU_realloc(p, n)          realloc((p), (n))
+	#define UU_strdup(s)              strdup((s))
   
-	#define UU_tare(p)                assert(p != NULL)
-	#define UU_memcheck_total_bytes() ((unsigned) 0)
-	#define UU_memcheck_dump()        assert(0)
+	#define UU_mem_tare(p)            assert(p != NULL)
+	#define UU_memdbg_total_bytes()   ((unsigned) 0)
+	#define UU_memdbg_total_allocs()  ((unsigned) 0)
+	#define UU_memdbg_dump()          assert(0)
   
 #endif /* UNUM_MEM_CHECKING */
 
 
-#define UU_memset(p, v, n)   memset((p), (v), (n))
-#define UU_memcpy(d, s, n)   memcpy((d), (s), (n))
+#define UU_memset(p, v, n)            memset((p), (v), (n))
+#define UU_memcpy(d, s, n)            memcpy((d), (s), (n))
+
 
 #endif /* UNUM_MEM_H */

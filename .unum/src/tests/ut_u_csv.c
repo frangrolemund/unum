@@ -65,10 +65,10 @@ static void csv_test_simple( void ) {
 	                   "ddd,eee,fff\n"
 	                   "ggg,hhh,iii\r\n"
 	                   "jjj,kkk,lll",     NULL);
-	UT_test_assert(cf, "failed to parse memory buffer.");
+	UT_assert(cf, "failed to parse memory buffer.");
 	
-	UT_test_assert(UU_csv_cols(cf) == 3, "Failed to identify columns.");
-	UT_test_assert(UU_csv_rows(cf) == 4, "Failed to identify rows.");
+	UT_assert(UU_csv_cols(cf) == 3, "Failed to identify columns.");
+	UT_assert(UU_csv_rows(cf) == 4, "Failed to identify rows.");
 	csv_assert_value(cf, 0, 1, "bbb");
 	csv_assert_value(cf, 1, 2, "fff");
 	csv_assert_value(cf, 2, 0, "ggg");
@@ -83,9 +83,9 @@ static void csv_test_simple( void ) {
 	cf = UU_csv_memory("000,,111\n"
 	                   ",222,333\n"
 	                   "444,555,\n", NULL);
-	UT_test_assert(cf, "failed to parse memory buffer.");
-	UT_test_assert(UU_csv_cols(cf) == 3, "Failed to identify columns.");
-	UT_test_assert(UU_csv_rows(cf) == 3, "Failed to identify rows.");
+	UT_assert(cf, "failed to parse memory buffer.");
+	UT_assert(UU_csv_cols(cf) == 3, "Failed to identify columns.");
+	UT_assert(UU_csv_rows(cf) == 3, "Failed to identify rows.");
 	csv_assert_value(cf, 0, 0, "000");
 	csv_assert_value(cf, 0, 1, NULL);
 	csv_assert_value(cf, 0, 2, "111");
@@ -103,9 +103,9 @@ static void csv_test_simple( void ) {
 	cf = UU_csv_memory("aaa,bbb,ccc,111\n"
 	                   "\"ddd\",\"eee\",\"ff,f\",2222\n"
 	                   "ggg,\"hhh\r\nhh\",iii,33333\n", NULL);
-	UT_test_assert(cf, "failed to parse memory buffer.");
-	UT_test_assert(UU_csv_cols(cf) == 4, "Failed to identify columns.");
-	UT_test_assert(UU_csv_rows(cf) == 3, "Failed to identify rows.");
+	UT_assert(cf, "failed to parse memory buffer.");
+	UT_assert(UU_csv_cols(cf) == 4, "Failed to identify columns.");
+	UT_assert(UU_csv_rows(cf) == 3, "Failed to identify rows.");
 	csv_assert_value(cf, 0, 0, "aaa");
 	csv_assert_value(cf, 1, 0, "ddd");
 	csv_assert_value(cf, 1, 1, "eee");
@@ -121,9 +121,9 @@ static void csv_test_simple( void ) {
 	UT_printf("quote escaping testing...");
 	cf = UU_csv_memory("aaa,bb\"b,ccc\n"
 	                   "\"ddd\",\"eee\"\",ee\"\"ee\",\"fff\"", NULL);
-	UT_test_assert(cf, "failed to parse memory buffer.");
-	UT_test_assert(UU_csv_cols(cf) == 3, "Failed to identify columns.");
-	UT_test_assert(UU_csv_rows(cf) == 2, "Failed to identify rows.");
+	UT_assert(cf, "failed to parse memory buffer.");
+	UT_assert(UU_csv_cols(cf) == 3, "Failed to identify columns.");
+	UT_assert(UU_csv_rows(cf) == 2, "Failed to identify rows.");
 	csv_assert_value(cf, 0, 0, "aaa");
 	csv_assert_value(cf, 0, 1, "bb\"b");
 	csv_assert_value(cf, 0, 2, "ccc");
@@ -143,10 +143,10 @@ static void csv_test_simple_file_1( void ) {
 
 	UT_printf("sample ut_u_csv_1.csv");
 	cf = UU_csv_open(UT_read_rel_path("ut_u_csv_1.csv"), NULL);
-	UT_test_assert(cf, "failed to read source file.");
+	UT_assert(cf, "failed to read source file.");
 	
-	UT_test_assert(UU_csv_cols(cf) == 5, "Failed to identify columns.");
-	UT_test_assert(UU_csv_rows(cf) == 5, "Failed to identify rows.");
+	UT_assert(UU_csv_cols(cf) == 5, "Failed to identify columns.");
+	UT_assert(UU_csv_rows(cf) == 5, "Failed to identify rows.");
 	
 	csv_assert_value(cf, 0, 0, "u_bool");
 	csv_assert_value(cf, 0, 1, "u_path");
@@ -207,14 +207,14 @@ static void csv_test_simple_file_2( void ) {
 
 	UT_printf("sample ut_u_csv_2.csv");
 	cf = UU_csv_open(UT_read_rel_path("ut_u_csv_2.csv"), NULL);
-	UT_test_assert(cf, "failed to read source file.");
+	UT_assert(cf, "failed to read source file.");
 	
-	UT_test_assert(UU_csv_cols(cf) == 12, "Failed to identify columns.");
-	UT_test_assert(UU_csv_rows(cf) == 10001, "Failed to identify rows.");
+	UT_assert(UU_csv_cols(cf) == 12, "Failed to identify columns.");
+	UT_assert(UU_csv_rows(cf) == 10001, "Failed to identify rows.");
 	
 	for (i = 0; i < UU_csv_rows(cf); i++) {
 		for (j = 0; j < UU_csv_cols(cf); j++) {
-			UT_test_assert(UU_csv_get(cf, i, j, NULL), "Failed to find data.");
+			UT_assert(UU_csv_get(cf, i, j, NULL), "Failed to find data.");
 		}
 	}
 

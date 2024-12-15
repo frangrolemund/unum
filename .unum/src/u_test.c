@@ -74,12 +74,12 @@ void UT_printf( uu_cstring_t fmt, ... ) {
 char *UT_read_rel_path( uu_cstring_t file ) {
 	static char ret[U_PATH_MAX];
 
-	UT_test_assert(file && *file, "File invalid.");
+	UT_assert(file && *file, "File invalid.");
 	
 	strcpy(ret, src_path);
 	strcat(ret, file);
 	
-	UT_test_assert(UU_is_file(ret), "File not found.");
+	UT_assert(UU_is_file(ret), "File not found.");
 		
 	return ret;
 }
@@ -89,19 +89,19 @@ int _UT_test( uu_cstring_t file, int argc, uu_string_t argv[],
 	         UT_test_entry_t entry_fn ) {
 	int ret;
 	
-	UT_test_assert(argc > 0 && argv[0], "command-line not provided");
+	UT_assert(argc > 0 && argv[0], "command-line not provided");
 
 	ret = UU_basename(prog, argv[0], sizeof(prog));
-	UT_test_assert(ret == UU_OK, "invalid program");
+	UT_assert(ret == UU_OK, "invalid program");
 	
 	ret = UU_dirname(src_path, file, sizeof(src_path));
-	UT_test_assert(ret == UU_OK, "invalid source file");
+	UT_assert(ret == UU_OK, "invalid source file");
 		
 	ret = entry_fn(argc, argv);
 	
-	if (UU_memcheck_total_bytes()) {
-		UU_memcheck_dump();
-		UT_test_assert(0, "memory leak(s) detected")
+	if (UU_memdbg_total_bytes()) {
+		UU_memdbg_dump();
+		UT_assert(0, "memory leak(s) detected")
 	}
 	
 	return ret;

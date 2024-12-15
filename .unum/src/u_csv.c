@@ -38,8 +38,10 @@ static uu_bool_t csv_bnf_CR( uu_string_t cur, uu_string_t *next );
 static uu_bool_t csv_bnf_LF( uu_string_t cur, uu_string_t *next );
 static uu_bool_t csv_bnf_EOL( uu_string_t cur, uu_string_t *next);
 
+
 #define MAX_COLS        256
 #define ROW_GROUP_SIZE  32
+
 
 uu_csv_t *UU_csv_open( uu_cstring_t path, uu_error_e *err ) {
 	FILE      *fp  = NULL;

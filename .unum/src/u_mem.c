@@ -17,36 +17,146 @@
 | PERFORMANCE OF THIS SOFTWARE.
 | ---------------------------------------------------------------*/
 
-#include "u_mem.h"
+#include <stdio.h>
+
+#include "u_common.h"
+
+typedef struct _uu_mem {
+	short           marker;
+	size_t          size;
+	uu_cstring_t    file;
+	int             line;
+	struct _uu_mem  *prev;
+	struct _uu_mem  *next;
+	char            buf[];
+} uu_mem_t;
 
 
-void *_UU_memcheck_malloc( size_t size, const char *file, int line ) {
-	return malloc(size);
+static uu_mem_t *_mem_item( void *ptr );
+static void mem_unlink( uu_mem_t *item );
+
+
+static unsigned total_bytes  = 0;
+static unsigned total_allocs = 0;
+static uu_mem_t *memls       = NULL;
+
+
+#define UU_MEM_MARK  ((short) 0x756e)
+#define UU_MEM_TARE  ((short) 0x7574)
+
+
+void *_UU_memc_malloc( size_t size, const char *file, int line ) {
+	uu_mem_t *item = NULL;
+
+	assert(size > 0);
+	
+	item = malloc(sizeof(uu_mem_t) + size);
+	if (!item) {
+		return NULL;
+	}
+	
+	item->marker = UU_MEM_MARK;
+	item->size   = size;
+	item->file   = file;
+	item->line   = line;
+	item->prev   = memls;
+	item->next   = NULL;
+	
+	total_bytes  += size;
+	total_allocs++;
+	
+	if (memls) {
+		memls->next = item;
+	}
+	memls = item;
+
+	return item->buf;
 }
 
 
-void _UU__memcheck_free( void *ptr ) {
-	free(ptr);
+static uu_mem_t *_mem_item( void *ptr ) {
+	uu_mem_t *ret = NULL;
+	
+	assert(ptr);
+	
+	ret = (uu_mem_t *) (((char *) ptr) - sizeof(uu_mem_t));
+	assert(ret->marker == UU_MEM_MARK || ret->marker == UU_MEM_TARE);
+
+	return ret;
 }
 
 
-void *_UU_memcheck_realloc( void *ptr, size_t size, const char *file,
+void _UU_memc_free( void *ptr ) {
+	uu_mem_t *item  = _mem_item(ptr);
+
+	if (item->marker == UU_MEM_TARE) {
+		return;
+	}
+	
+	total_bytes -= item->size;
+	total_allocs--;
+	
+	mem_unlink(item);
+	free(item);
+}
+
+
+static void mem_unlink( uu_mem_t *item ) {
+	uu_mem_t **to_next = item->prev ? &(item->prev->next) : &memls;
+	uu_mem_t **to_prev = item->next ? &(item->next->prev) : &memls;
+
+	*to_next = item->next;
+	*to_prev = item->prev;
+}
+
+
+void *_UU_memc_realloc( void *ptr, size_t size, const char *file,
                             int line ) {
 	return realloc(ptr, size);
 }
 
 
-void _UU_memcheck_tare( void *ptr ) {
-
+void _UU_memc_tare( void *ptr ) {
+	uu_mem_t *item = _mem_item(ptr);
+	
+	if (item->marker == UU_MEM_MARK) {
+		item->marker = UU_MEM_TARE;
+		total_bytes -= item->size;
+		total_allocs--;
+		mem_unlink(item);
+	}
 }
 
 
-unsigned _UU_memcheck_total_bytes( void ) {
-	return 0;
+unsigned _UU_memc_total_bytes( void ) {
+	return total_bytes;
 }
 
 
-void _UU_memcheck_dump ( void ) {
+unsigned _UU_memc_total_allocs( void ) {
+	return total_allocs;
+}
 
 
+unsigned _UU_memc_dump ( void ) {
+	uu_mem_t *cur   = memls;
+	unsigned remain = 0;
+	
+	printf("|------ UNUM MEMORY ALLOCATIONS ------\n");
+	if (!cur) {
+		assert(total_bytes == 0 && total_allocs == 0);
+		printf("|- no allocations.");
+		return 0;
+	}
+
+	while (cur) {
+		remain++;
+		printf("| %lu bytes, %s:%d\n", cur->size, cur->file, cur->line);
+		cur = cur->prev;
+	}
+	
+	printf("| >> %u total bytes in %u allocations\n", total_bytes, total_allocs);
+	
+	printf("|------ UNUM MEMORY ALLOCATIONS ------\n");
+	return remain;
 }

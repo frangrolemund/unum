@@ -54,12 +54,12 @@ extern int  _UT_test( uu_cstring_t file, int argc, uu_string_t argv[],
 
 
 /*
- * UT_test_assert()
+ * UT_assert()
  * - verify a test assertion and abort if it failed.
  */
-#define UT_test_assert( t, m ) if (!(t)) {\
-	                              _UT_test_failed(#t, __FILE__, __LINE__, (m));\
-							   }
+#define UT_assert( t, m ) if (!(t)) {\
+	                          _UT_test_failed(#t, __FILE__, __LINE__, (m));\
+						  }
 extern void _UT_test_failed( uu_cstring_t expr, uu_cstring_t file, int line,
 							 uu_cstring_t msg);
 
