@@ -28,7 +28,7 @@ typedef struct _uu_mem {
 	int             line;
 	struct _uu_mem  *prev;
 	struct _uu_mem  *next;
-	char            buf[];
+	unsigned char   buf[];
 } uu_mem_t;
 
 
@@ -96,17 +96,20 @@ void _UU_memc_free( void *ptr ) {
 	total_bytes -= item->size;
 	total_allocs--;
 	
+	item->marker = -1;
 	mem_unlink(item);
 	free(item);
 }
 
 
 static void mem_unlink( uu_mem_t *item ) {
-	uu_mem_t **to_next = item->prev ? &(item->prev->next) : &memls;
 	uu_mem_t **to_prev = item->next ? &(item->next->prev) : &memls;
+	uu_mem_t **to_next = item->prev ? &(item->prev->next) : &memls;
 
-	*to_next = item->next;
 	*to_prev = item->prev;
+	if (item->prev || memls == item) {
+		*to_next = item->next;
+	}	
 }
 
 
@@ -145,8 +148,6 @@ unsigned _UU_memc_dump ( void ) {
 	printf("|------ UNUM MEMORY ALLOCATIONS ------\n");
 	if (!cur) {
 		assert(total_bytes == 0 && total_allocs == 0);
-		printf("|- no allocations.");
-		return 0;
 	}
 
 	while (cur) {
@@ -155,8 +156,15 @@ unsigned _UU_memc_dump ( void ) {
 		cur = cur->prev;
 	}
 	
-	printf("| >> %u total bytes in %u allocations\n", total_bytes, total_allocs);
+	if (remain) {
+		if (total_allocs > 1) {
+			printf("| >> %u %s in %u allocations\n", total_bytes,
+			       total_bytes != 1 ? "total bytes" : "byte", total_allocs);
+		}
+	} else {
+		printf("| >> no allocations\n");
+	}
 	
-	printf("|------ UNUM MEMORY ALLOCATIONS ------\n");
+	printf("|------ UNUM MEMORY ALLOCATIONS ------\n\n");
 	return remain;
 }

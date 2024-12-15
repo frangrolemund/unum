@@ -51,6 +51,7 @@ void _UT_test_failed( uu_cstring_t expr, uu_cstring_t file, int line,
 	fprintf(stderr, "%s: !! TEST FAILURE !!\n", prefix);
 	fprintf(stderr, "%s: %s <-- '%s'\n", prefix, msg, expr);
 	fprintf(stderr, "%s: %s@%d\n", prefix, file, line);
+	assert(0);
 	exit(1);
 }
 
@@ -99,9 +100,17 @@ int _UT_test( uu_cstring_t file, int argc, uu_string_t argv[],
 		
 	ret = entry_fn(argc, argv);
 	
+	UT_set_test_name("RESULT");
+	
 	if (UU_memdbg_total_bytes()) {
-		UU_memdbg_dump();
-		UT_assert(0, "memory leak(s) detected")
+		UT_printf("memory leaks detected");
+		UT_assert(0 == UU_memdbg_dump(), "memory leak(s) detected")
+	}
+	
+	if (ret) {
+		UT_printf("test failed with return code %d", ret);
+	} else {
+		UT_printf("test OK");
 	}
 	
 	return ret;
