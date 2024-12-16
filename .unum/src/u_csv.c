@@ -141,7 +141,7 @@ static uu_error_e csv_update_path( uu_csv_t *csv, uu_cstring_t path ) {
 	}
 	
 	if (path) {
-		csv->path = strdup(path);
+		csv->path = UU_strdup(path);
 		if (!csv->path) {
 			return UU_ERR_MEM;
 		}

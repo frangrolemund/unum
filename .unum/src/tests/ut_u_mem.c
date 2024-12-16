@@ -126,21 +126,23 @@ static void mem_test_list( void ) {
 
 
 static void mem_test_realloc( void ) {
-	uu_string_t s0, s1, first_buf, buf;
+	uu_string_t s0, s1, first_buf, buf, b2;
 	size_t last_count, count, other;
 	char c                             = 'a';
 	
 	UT_set_test_name("realloc checks");
 	
 	last_count      = 256;
-	s0              = UU_strdup("abc");			// ...not first
+	s0              = UU_strdup("abc");             // ...not first
 	first_buf = buf = UU_malloc(last_count);
-	s1              = UU_strdup("xyz");			// ...not last
-	UT_assert(buf, "out of memory");
+	s1              = UU_strdup("xyz");             // ...not last
+	b2              = UU_realloc(NULL, last_count);	// ...alternate alloc
+	UT_assert(s0 && buf && s1 && b2, "out of memory");
 	UU_memset(buf, c, last_count);
+	UU_memset(b2, c, last_count);
 	
 	UT_printf("expanding buffer");
-	other = strlen(s0) + 1 + strlen(s1) + 1;
+	other = strlen(s0) + 1 + strlen(s1) + 1 + last_count;
 	for (count = 1024; count < 0x8FFFF; count += 0x0FFF) {
 		buf = UU_realloc(buf, count);
 		UT_assert(buf, "out of memory");
@@ -180,4 +182,5 @@ static void mem_test_realloc( void ) {
 	
 	UU_realloc(s0, 0);
 	UU_realloc(s1, 0);
+	UU_realloc(b2, 0);
 }

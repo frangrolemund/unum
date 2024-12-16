@@ -33,6 +33,7 @@ typedef struct _uu_mem {
 
 
 static uu_mem_t *_mem_item( void *ptr );
+static void mem_link( uu_mem_t *item );
 static void mem_unlink( uu_mem_t *item );
 
 
@@ -60,18 +61,24 @@ void *_UU_memc_malloc( size_t size, const char *file, int line ) {
 	item->size   = size;
 	item->file   = file;
 	item->line   = line;
-	item->prev   = memls;
-	item->next   = NULL;
 	
 	total_bytes  += size;
 	total_allocs++;
+
+	mem_link(item);
+
+	return item->buf;
+}
+
+
+static void mem_link( uu_mem_t *item ) {
+	item->prev = memls;
+	item->next = NULL;
 	
 	if (memls) {
 		memls->next = item;
 	}
 	memls = item;
-
-	return item->buf;
 }
 
 
@@ -88,6 +95,10 @@ static uu_mem_t *_mem_item( void *ptr ) {
 
 
 void _UU_memc_free( void *ptr ) {
+	if (!ptr) {
+		return;
+	}
+
 	uu_mem_t *item = _mem_item(ptr);
 
 	if (item->marker == UU_MEM_TARE) {
@@ -115,8 +126,8 @@ static void mem_unlink( uu_mem_t *item ) {
 
 
 void *_UU_memc_realloc( void *ptr, size_t size, const char *file, int line ) {
-	uu_mem_t *item    = _mem_item(ptr);
-	size_t 	 old_size = item->size;
+	uu_mem_t *item    = ptr ? _mem_item(ptr) : NULL;
+	size_t 	 old_size = ptr ? item->size : 0;
 	
 	if (size == 0) {
 		UU_free(ptr);
@@ -126,6 +137,11 @@ void *_UU_memc_realloc( void *ptr, size_t size, const char *file, int line ) {
 	item = realloc(item, sizeof(uu_mem_t) + size);
 	if (!item) {
 		return NULL;
+	}
+	
+	if (!ptr) {
+		item->marker = UU_MEM_MARK;
+		mem_link(item);
 	}
 	
 	item->size = size;
