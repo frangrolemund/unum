@@ -41,8 +41,9 @@ static unsigned total_allocs = 0;
 static uu_mem_t *memls       = NULL;
 
 
-#define UU_MEM_MARK  ((short) 0x756e)
-#define UU_MEM_TARE  ((short) 0x7574)
+#define UU_MEM_MARK    ((short) 0x756e)
+#define UU_MEM_TARE    ((short) 0x7574)
+#define UU_MEM_DEALLOC ((short) -1)
 
 
 void *_UU_memc_malloc( size_t size, const char *file, int line ) {
@@ -87,7 +88,7 @@ static uu_mem_t *_mem_item( void *ptr ) {
 
 
 void _UU_memc_free( void *ptr ) {
-	uu_mem_t *item  = _mem_item(ptr);
+	uu_mem_t *item = _mem_item(ptr);
 
 	if (item->marker == UU_MEM_TARE) {
 		return;
@@ -96,7 +97,7 @@ void _UU_memc_free( void *ptr ) {
 	total_bytes -= item->size;
 	total_allocs--;
 	
-	item->marker = -1;
+	item->marker = UU_MEM_DEALLOC;
 	mem_unlink(item);
 	free(item);
 }
@@ -113,9 +114,30 @@ static void mem_unlink( uu_mem_t *item ) {
 }
 
 
-void *_UU_memc_realloc( void *ptr, size_t size, const char *file,
-                            int line ) {
-	return realloc(ptr, size);
+void *_UU_memc_realloc( void *ptr, size_t size, const char *file, int line ) {
+	uu_mem_t *item    = _mem_item(ptr);
+	size_t 	 old_size = item->size;
+	
+	if (size == 0) {
+		UU_free(ptr);
+		return NULL;
+	}
+	
+	item = realloc(item, sizeof(uu_mem_t) + size);
+	if (!item) {
+		return NULL;
+	}
+	
+	item->size = size;
+	item->file = file;
+	item->line = line;
+	
+	if (item->marker == UU_MEM_MARK) {
+		total_bytes -= old_size;
+		total_bytes += size;
+	}
+                            
+	return item->buf;
 }
 
 
@@ -131,12 +153,12 @@ void _UU_memc_tare( void *ptr ) {
 }
 
 
-unsigned _UU_memc_total_bytes( void ) {
+unsigned _UU_memc_num_bytes( void ) {
 	return total_bytes;
 }
 
 
-unsigned _UU_memc_total_allocs( void ) {
+unsigned _UU_memc_num_allocs( void ) {
 	return total_allocs;
 }
 

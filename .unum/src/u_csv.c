@@ -184,7 +184,7 @@ static uu_bool_t csv_bnf_FILE( uu_csv_t *csv, uu_error_e *err ) {
 static uu_bool_t csv_bnf_RECORD( uu_csv_t *csv, uu_string_t cur,
                                  uu_string_t *next, uu_error_e *err ) {
 	uu_string_t  cols[MAX_COLS];
-	int          i, count        = 0;
+	int          count           = 0;
 	uu_string_t  start, end;
 	uu_bool_t    is_eol          = false;
 	size_t       row_buf_len     = 0;
@@ -236,7 +236,7 @@ static uu_bool_t csv_bnf_RECORD( uu_csv_t *csv, uu_string_t cur,
 	}
 
 	row_col = csv->rows + (csv->num_rows * csv->num_cols);
-	for (i = 0; i < count; i++) {
+	for (int i = 0; i < count; i++) {
 		*row_col++ = cols[i];
 	}
 	

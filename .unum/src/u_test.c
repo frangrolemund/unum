@@ -102,15 +102,15 @@ int _UT_test( uu_cstring_t file, int argc, uu_string_t argv[],
 	
 	UT_set_test_name("RESULT");
 	
-	if (UU_memdbg_total_bytes()) {
+	if (UU_memc_num_bytes()) {
 		UT_printf("memory leaks detected");
-		UT_assert(0 == UU_memdbg_dump(), "memory leak(s) detected")
+		UT_assert(0 == UU_memc_dump(), "memory leak(s) detected")
 	}
 	
 	if (ret) {
-		UT_printf("test failed with return code %d", ret);
+		UT_printf("unit test failed with return code %d", ret);
 	} else {
-		UT_printf("test OK");
+		UT_printf("unit test OK");
 	}
 	
 	return ret;
@@ -118,5 +118,8 @@ int _UT_test( uu_cstring_t file, int argc, uu_string_t argv[],
 
 
 void UT_set_test_name( uu_cstring_t name ) {
+	if (test_name != NULL) {
+		UT_printf("OK");
+	}
 	test_name = name;
 }

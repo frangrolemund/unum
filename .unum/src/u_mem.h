@@ -34,8 +34,8 @@
 	extern void      *_UU_memc_realloc( void *ptr, size_t size,
 									    const char *file, int line );
 	extern void      _UU_memc_tare( void *ptr );
-	extern unsigned  _UU_memc_total_bytes( void );
-	extern unsigned  _UU_memc_total_allocs( void );
+	extern unsigned  _UU_memc_num_bytes( void );
+	extern unsigned  _UU_memc_num_allocs( void );
 	extern unsigned  _UU_memc_dump( void );
 
 	#define UU_malloc(n)              _UU_memc_malloc((n), __FILE__, \
@@ -44,9 +44,9 @@
 	#define UU_realloc(p, n)          _UU_memc_realloc((p), (n), __FILE__, \
 													   __LINE__)
 	#define UU_mem_tare(p)            _UU_memc_tare((p))
-	#define UU_memdbg_total_bytes()   _UU_memc_total_bytes()
-	#define UU_memdbg_total_allocs()  _UU_memc_total_allocs()
-	#define UU_memdbg_dump()          _UU_memc_dump()
+	#define UU_memc_num_bytes()       _UU_memc_num_bytes()
+	#define UU_memc_num_allocs()      _UU_memc_num_allocs()
+	#define UU_memc_dump()            _UU_memc_dump()
 	
 	#define UU_strdup(s)              ((char *) strcpy((char *) \
 									       UU_malloc(strlen(s) + 1), s))
@@ -59,9 +59,9 @@
 	#define UU_strdup(s)              strdup((s))
   
 	#define UU_mem_tare(p)            assert(p != NULL)
-	#define UU_memdbg_total_bytes()   ((unsigned) 0)
-	#define UU_memdbg_total_allocs()  ((unsigned) 0)
-	#define UU_memdbg_dump()          assert(0)
+	#define UU_memc_num_bytes()       ((unsigned) 0)
+	#define UU_memc_num_allocs()      ((unsigned) 0)
+	#define UU_memc_dump()            assert(0)
   
 #endif /* UNUM_MEM_CHECKING */
 
