@@ -53,4 +53,11 @@ extern struct stat UU_file_info( uu_cstring_t path );
 #define UU_is_file(p)   ((UU_file_info(p).st_mode & S_IFREG) ? true : false)
 
 
+/*
+ * UU_realpath()
+ * - resolves all symlinks and extra path characters, returning the result.
+ */
+extern uu_cstring_t UU_realpath( uu_cstring_t path, uu_error_e *err );
+
+
 #endif /* UNUM_FS_H */

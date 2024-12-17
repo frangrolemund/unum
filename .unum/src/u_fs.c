@@ -83,3 +83,21 @@ struct stat UU_file_info( uu_cstring_t path ) {
 	UU_memset(&s, 0, sizeof(s));
 	return s;	
 }
+
+
+extern uu_cstring_t UU_realpath( uu_cstring_t path, uu_error_e *err ) {
+	static char ret[U_PATH_MAX];
+	
+#if UNUM_OS_MACOS
+	if (!realpath(path, ret)) {
+		UU_set_errorp(err, UU_ERR_FILE);
+		return NULL;
+	}
+	
+	return ret;
+	
+#else
+	#error "Not supported."
+
+#endif
+}

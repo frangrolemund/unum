@@ -195,8 +195,8 @@ static const char *parse_option( const char *opt_name, const char *from ) {
 
 
 static const char *resolve_cmd( const char *cmd ) {
-	char tmp[PATH_MAX];
-	const char *rc     = NULL;
+	static char tmp[PATH_MAX];
+	const char *rc            = NULL;
 
 	if (!cmd || !cmd[0]) {
 		return NULL;
