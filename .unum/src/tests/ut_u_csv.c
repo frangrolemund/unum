@@ -240,7 +240,8 @@ static void csv_test_simple_mod_1( void ) {
 	UT_set_test_name("file modification #1");
 	
 	cf = read_test_file("ut_u_csv_1.csv");
-	
+
+	UT_printf("modifying and verifying");
 	UT_assert(UU_csv_set(cf, 0, 2, "stars") == UU_OK, "failed to assign value");
 	UT_assert(UU_csv_set(cf, 2, 3, "launch") == UU_OK,
 	          "failed to assign value");
