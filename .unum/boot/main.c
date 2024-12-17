@@ -442,7 +442,13 @@ static void write_config( void ) {
 	// - the anchor of any deployment and by putting this here it ensures
 	//   that copying the deployment somewhere else will be detected by
 	//   simply running `make` again.
-	printf_config("#define UNUM_BASIS_DIR       \"%s\"", basis_dir);
+	printf_config("#define UNUM_DIR_BASIS       \"%s\"", basis_dir);
+	printf_config("#define UNUM_DIR_DEPLOY      \"%s\"", 
+                  to_basis(DEPLOYED_DIR));
+	printf_config("#define UNUM_DIR_BUILD       \"%s\"", to_basis(BUILD_DIR));
+	printf_config("#define UNUM_DIR_INCLUDE     \"%s\"", 
+                  to_basis(BUILD_INCLUDE_DIR));
+	printf_config("#define UNUM_DIR_BIN         \"%s\"", to_basis(BIN_DIR));
 	printf_config("");
 
 

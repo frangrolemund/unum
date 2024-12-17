@@ -97,7 +97,7 @@ extern uu_cstring_t UU_realpath( uu_cstring_t path, uu_error_e *err ) {
 	return ret;
 	
 #else
-	#error "Not supported."
+	#error "Not implemented."
 
 #endif
 }
