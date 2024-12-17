@@ -23,7 +23,9 @@
 static int unittest_csv( int argc, char *argv[] );
 static void csv_test_simple( void );
 static void csv_test_simple_file_1( void );
+static uu_csv_t *read_test_file( uu_cstring_t file );
 static void csv_test_simple_file_2( void );
+static void csv_test_simple_mod_1( void );
 
 
 int main( int argc, char *argv[] ) {
@@ -35,6 +37,7 @@ static int unittest_csv( int argc, char *argv[] ) {
 	csv_test_simple();
 	csv_test_simple_file_1();
 	csv_test_simple_file_2();
+	csv_test_simple_mod_1();
 	
 	return 0;
 }
@@ -141,13 +144,12 @@ static void csv_test_simple_file_1( void ) {
 
 	UT_set_test_name("file parsing #1");
 
-	UT_printf("sample ut_u_csv_1.csv");
-	cf = UU_csv_open(UT_read_rel_path("ut_u_csv_1.csv"), NULL);
-	UT_assert(cf, "failed to read source file.");
+	cf = read_test_file("ut_u_csv_1.csv");
 	
+	UT_printf("verifying file structure");
 	UT_assert(UU_csv_cols(cf) == 5, "Failed to identify columns.");
 	UT_assert(UU_csv_rows(cf) == 5, "Failed to identify rows.");
-	
+
 	csv_assert_value(cf, 0, 0, "u_bool");
 	csv_assert_value(cf, 0, 1, "u_path");
 	csv_assert_value(cf, 0, 2, "u_desc");
@@ -199,16 +201,26 @@ static void csv_test_simple_file_1( void ) {
 }
 
 
+static uu_csv_t *read_test_file( uu_cstring_t file ) {
+	uu_csv_t *cf;
+	
+	UT_printf("reading %s", file);
+	cf = UU_csv_open(UT_read_rel_path(file), NULL);
+	UT_assert(cf, "failed to read test file.");
+	
+	return cf;
+}
+
+
 static void csv_test_simple_file_2( void ) {
 	uu_csv_t *cf;
 	int      i, j;
 
 	UT_set_test_name("file parsing #2");
 
-	UT_printf("sample ut_u_csv_2.csv");
-	cf = UU_csv_open(UT_read_rel_path("ut_u_csv_2.csv"), NULL);
-	UT_assert(cf, "failed to read source file.");
+	cf = read_test_file("ut_u_csv_2.csv");
 	
+	UT_printf("verifying file structure");
 	UT_assert(UU_csv_cols(cf) == 12, "Failed to identify columns.");
 	UT_assert(UU_csv_rows(cf) == 10001, "Failed to identify rows.");
 	
@@ -218,5 +230,39 @@ static void csv_test_simple_file_2( void ) {
 		}
 	}
 
+	UU_csv_delete(cf);
+}
+
+
+static void csv_test_simple_mod_1( void ) {
+	uu_csv_t *cf;
+
+	UT_set_test_name("file modification #1");
+	
+	cf = read_test_file("ut_u_csv_1.csv");
+	
+	UT_assert(UU_csv_set(cf, 0, 2, "stars") == UU_OK, "failed to assign value");
+	UT_assert(UU_csv_set(cf, 2, 3, "launch") == UU_OK,
+	          "failed to assign value");
+	UT_assert(UU_csv_set(cf, 4, 4, "orbit") == UU_OK, "failed to assign value");
+	
+	UT_assert(!strcmp(UU_csv_get(cf, 0, 2, NULL), "stars"),
+	                  "failed to find value");
+			  
+	UT_assert(!strcmp(UU_csv_get(cf, 2, 3, NULL), "launch"),
+			          "failed to find value");
+			  
+	UT_assert(!strcmp(UU_csv_get(cf, 4, 4, NULL), "orbit"),
+			          "failed to find value");
+			  
+	UT_assert(UU_csv_set(cf, -1, 4, "rover") == UU_ERR_ARGS,
+	                     "failed to detect error");
+	                     
+	UT_assert(UU_csv_set(cf, 6, 4, "chute") == UU_ERR_ARGS,
+	                     "failed to detect error");
+	                     
+	UT_assert(UU_csv_set(cf, 3, 6, "payload") == UU_ERR_ARGS,
+	                     "failed to detect error");
+			  
 	UU_csv_delete(cf);
 }

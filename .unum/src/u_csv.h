@@ -24,6 +24,7 @@
 #include "u_fs.h"
 
 typedef struct {
+	size_t 		 size;
 	unsigned     num_cols;   // const
 	unsigned     num_rows;
 	
@@ -81,16 +82,16 @@ extern int          UU_csv_add_row( uu_csv_t *csv );
  * UU_csv_get()
  * - get the value from a specific cell in the CSV file.
  */
-extern const char   *UU_csv_get( uu_csv_t *csv, unsigned row, unsigned col,
-							     uu_error_e *err );
+extern uu_cstring_t UU_csv_get( uu_csv_t *csv, unsigned row, unsigned col,
+								uu_error_e *err );
 
 
 /*
  * UU_csv_set()
  * - assign the value of a specific cell in the CSV file.
  */
-extern int          UU_csv_set( uu_csv_t *csv, unsigned row, unsigned col,
-                                uu_string_t *value );
+extern uu_error_e   UU_csv_set( uu_csv_t *csv, unsigned row, unsigned col,
+                                uu_string_t value );
 
 
 /*
