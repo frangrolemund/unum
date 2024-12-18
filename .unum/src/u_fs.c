@@ -39,7 +39,7 @@ uu_error_e UU_basename( uu_string_t dst, uu_cstring_t src, size_t len ) {
 	
 	do {
 		*dst++ = *++src;
-	} while (*src);
+	} while (blen--);
 	
 	return UU_OK;
 }

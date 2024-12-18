@@ -98,13 +98,13 @@ int _UT_test( uu_cstring_t file, int argc, uu_string_t argv[],
 	ret = UU_dirname(src_path, file, sizeof(src_path));
 	UT_assert(ret == UU_OK, "invalid source file");
 	
-	UT_set_test_name("BEGIN");
+	UT_set_test_name("--- BEGIN");
 	UT_printf("unit test starting");
 	test_name = NULL;
 	
 	ret = entry_fn(argc, argv);
 	
-	UT_set_test_name("RESULT");
+	UT_set_test_name("-- RESULT");
 	
 	if (UU_memc_num_bytes()) {
 		UT_printf("memory leaks detected");
