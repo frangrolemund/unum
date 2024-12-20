@@ -24,7 +24,7 @@
 
 #include "u_common.h"
 
-#define U_PATH_MAX       2048
+#define U_PATH_MAX       PATH_MAX
 typedef char uu_path_t[U_PATH_MAX];
 
 /*
