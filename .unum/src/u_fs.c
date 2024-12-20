@@ -116,18 +116,20 @@ extern uu_cstring_t UU_pop_seg( uu_cstring_t path, uu_string_t state,
 }
 
 
-extern uu_cstring_t UU_realpath( uu_cstring_t path, uu_error_e *err ) {
-	static char ret[U_PATH_MAX];
+uu_cstring_t UU_realpath( uu_cstring_t path, uu_string_t state,
+                          uu_error_e *err ) {
+	static uu_path_t ret;
+	char             *buf = state ? state : ret;
 	
 	UU_set_errorp(err, UU_OK);
 	
 #if UNUM_OS_MACOS
-	if (!realpath(path, ret)) {
+	if (!realpath(path, buf)) {
 		UU_set_errorp(err, UU_ERR_FILE);
 		return NULL;
 	}
 	
-	return ret;
+	return buf;
 	
 #else
 	#error "Not implemented."

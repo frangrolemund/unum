@@ -33,9 +33,9 @@
  *  - simple assert-like API.
  */
  
-static char prog[256];
-static char src_path[U_PATH_MAX];
-static const char *test_name      = NULL;
+static char       prog[256];
+static uu_path_t  src_path;
+static const char *test_name = NULL;
 
 
 void _UT_test_failed( uu_cstring_t expr, uu_cstring_t file, int line,
@@ -73,7 +73,7 @@ void UT_printf( uu_cstring_t fmt, ... ) {
 
 
 char *UT_read_rel_path( uu_cstring_t file ) {
-	static char ret[U_PATH_MAX];
+	static uu_path_t ret;
 
 	UT_assert(file && *file, "File invalid.");
 	

@@ -38,7 +38,7 @@ static int unittest_fs( int argc, char *argv[] ) {
 
 
 static void fs_test_paths( void ) {
-	char         path[U_PATH_MAX];
+	uu_path_t    path, state;
 	struct stat  s;
 	uu_string_t  src, dest, last;
 
@@ -71,8 +71,11 @@ static void fs_test_paths( void ) {
 	*dest = '\0';
 	
 	UT_printf("realpath: %s", path);
-	dest = (uu_string_t) UU_realpath(path, NULL);
+	dest = (uu_string_t) UU_realpath(path, NULL, NULL);
 	UT_assert(!strcmp(dest, __FILE__), "failed realpath");
+	dest = (uu_string_t) UU_realpath(path, state, NULL);
+	UT_assert(!strcmp(dest, __FILE__), "failed realpath");
+	UT_assert(dest == state, "unexpected unused state");
 	UT_printf("computed: %s", dest);
 	
 	while ((dest = (uu_string_t) UU_pop_seg(__FILE__, path, U_PATH_MAX, NULL))){

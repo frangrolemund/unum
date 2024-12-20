@@ -122,6 +122,7 @@ static uu_csv_t *csv_new( unsigned cols, size_t buf_len, uu_cstring_t path,
 static uu_error_e csv_update_path( uu_csv_t *csv, uu_cstring_t path ) {
 	uu_error_e err;
 	
+	
 	if (!csv) {
 		return UU_ERR_ARGS;
 	}

@@ -25,6 +25,7 @@
 #include "u_common.h"
 
 #define U_PATH_MAX       2048
+typedef char uu_path_t[U_PATH_MAX];
 
 /*
  * UU_basename()
@@ -47,6 +48,7 @@ extern uu_error_e   UU_dirname( uu_string_t dst, uu_cstring_t src, size_t len );
  */
 extern struct stat  UU_file_info( uu_cstring_t path );
 
+
 /*
  * UU_is_file()
  * - identify if the provided path refers to a file.
@@ -65,9 +67,11 @@ extern uu_cstring_t UU_pop_seg( uu_cstring_t path, uu_string_t state,
 
 /*
  * UU_realpath()
- * - resolves all symlinks and extra path characters, returning the result.
+ * - resolves all symlinks and extra path characters, returning the result
+ *   using static storage if `state` == NULL.
  */
-extern uu_cstring_t UU_realpath( uu_cstring_t path, uu_error_e *err );
+extern uu_cstring_t UU_realpath( uu_cstring_t path, uu_string_t state,
+								 uu_error_e *err );
 
 
 #endif /* UNUM_FS_H */
