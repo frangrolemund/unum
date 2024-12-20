@@ -40,7 +40,7 @@ static int unittest_fs( int argc, char *argv[] ) {
 static void fs_test_paths( void ) {
 	char         path[U_PATH_MAX];
 	struct stat  s;
-	uu_string_t  src, dest;
+	uu_string_t  src, dest, last;
 
 	UT_set_test_name("file paths");
 	
@@ -74,4 +74,10 @@ static void fs_test_paths( void ) {
 	dest = (uu_string_t) UU_realpath(path, NULL);
 	UT_assert(!strcmp(dest, __FILE__), "failed realpath");
 	UT_printf("computed: %s", dest);
+	
+	while ((dest = (uu_string_t) UU_pop_seg(__FILE__, path, U_PATH_MAX, NULL))){
+		UT_printf("pop seg: %s", dest);
+		last = dest;
+	}
+	UT_assert(!strcmp(last, __FILE__), "unexpected difference");
 }

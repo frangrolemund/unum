@@ -55,6 +55,15 @@ extern struct stat  UU_file_info( uu_cstring_t path );
 
 
 /*
+ * UU_pop_seg()
+ * - return the _next_ sub-directory segment from the path using the state
+ *   to store intermediate data between repeated invocations.
+ */
+extern uu_cstring_t UU_pop_seg( uu_cstring_t path, uu_string_t state,
+                                size_t len, uu_error_e *err );
+
+
+/*
  * UU_realpath()
  * - resolves all symlinks and extra path characters, returning the result.
  */

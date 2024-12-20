@@ -85,8 +85,41 @@ struct stat UU_file_info( uu_cstring_t path ) {
 }
 
 
+extern uu_cstring_t UU_pop_seg( uu_cstring_t path, uu_string_t state,
+                                size_t len, uu_error_e *err ) {
+	uu_cstring_t ret = state;
+	
+	UU_set_errorp(err, UU_OK);
+                                
+	while (*state == *path && len > 0 && *path) {
+		path++;
+		state++;
+		len--;
+	}
+		
+	do {
+		if (!len || !*path) {
+			UU_set_errorp(err, len ? UU_OK : UU_ERR_ARGS);
+			return NULL;
+		}
+	
+		*state++ = *path;
+		if (*path == UNUM_PATH_SEP) {
+			break;
+		}
+		
+		len--;
+	} while (*++path);
+	*state = '\0';
+	
+	return (ret != state) ? ret : NULL;
+}
+
+
 extern uu_cstring_t UU_realpath( uu_cstring_t path, uu_error_e *err ) {
 	static char ret[U_PATH_MAX];
+	
+	UU_set_errorp(err, UU_OK);
 	
 #if UNUM_OS_MACOS
 	if (!realpath(path, ret)) {
