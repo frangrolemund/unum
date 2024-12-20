@@ -121,6 +121,11 @@ uu_cstring_t UU_realpath( uu_cstring_t path, uu_string_t state,
 	static uu_path_t ret;
 	char             *buf = state ? state : ret;
 	
+	if (!state) {
+		UU_set_errorp(err, UU_ERR_ARGS);
+		return NULL;
+	}
+	
 	UU_set_errorp(err, UU_OK);
 	
 #if UNUM_OS_MACOS

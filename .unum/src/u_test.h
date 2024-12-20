@@ -36,11 +36,11 @@ extern void UT_printf( uu_cstring_t fmt, ... );
 
 
 /*
- * UT_read_rel_path()
+ * UT_test_rel_path()
  * - converts a relative filename co-located with the test into an absolute
  *   file path.
  */
-extern char *UT_read_rel_path( uu_cstring_t file );
+extern char *UT_test_rel_path( uu_cstring_t file );
 
 
 /*

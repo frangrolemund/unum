@@ -68,7 +68,7 @@ extern uu_cstring_t UU_pop_seg( uu_cstring_t path, uu_string_t state,
 /*
  * UU_realpath()
  * - resolves all symlinks and extra path characters, returning the result
- *   using static storage if `state` == NULL.
+ *   in `state`, which must be able to hold a path.
  */
 extern uu_cstring_t UU_realpath( uu_cstring_t path, uu_string_t state,
 								 uu_error_e *err );

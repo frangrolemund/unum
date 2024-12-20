@@ -72,7 +72,7 @@ static void fs_test_paths( void ) {
 	
 	UT_printf("realpath: %s", path);
 	dest = (uu_string_t) UU_realpath(path, NULL, NULL);
-	UT_assert(!strcmp(dest, __FILE__), "failed realpath");
+	UT_assert(!dest, "failed realpath");
 	dest = (uu_string_t) UU_realpath(path, state, NULL);
 	UT_assert(!strcmp(dest, __FILE__), "failed realpath");
 	UT_assert(dest == state, "unexpected unused state");
