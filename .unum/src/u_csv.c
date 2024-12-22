@@ -216,7 +216,7 @@ static uu_bool_t csv_bnf_RECORD( uu_csv_t *csv, uu_string_t cur,
 	size_t       row_buf_len     = 0;
 
 	while (csv_bnf_FIELD(cur, &start, &end, next, &is_eol)) {
-		UU_assert(count < MAX_COLS);
+		assert(count < MAX_COLS);
 		if (count >= MAX_COLS) {
 			UU_set_errorp(err, UU_ERR_FMT);
 			return false;
@@ -279,7 +279,7 @@ static uu_bool_t csv_bnf_FIELD( uu_string_t cur, uu_string_t *start_field,
 	int         is_quoted = 0;
 	uu_string_t pos_esc   = NULL;
 	                                
-	UU_assert(cur && start_field && end_field && next && is_eol);
+	assert(cur && start_field && end_field && next && is_eol);
 	
 	*start_field = *end_field = *next = NULL;
 	*is_eol      = false;
@@ -347,7 +347,7 @@ static uu_bool_t csv_bnf_FIELD( uu_string_t cur, uu_string_t *start_field,
 
 
 static uu_bool_t csv_bnf_COMMA( uu_string_t cur, uu_string_t *next ) {
-	UU_assert(cur && next);
+	assert(cur && next);
 	
 	if (is_bnf_COMMA(*cur)) {
 		*next = ++cur;
@@ -361,7 +361,7 @@ static uu_bool_t csv_bnf_COMMA( uu_string_t cur, uu_string_t *next ) {
 static uu_bool_t csv_bnf_CRLF( uu_string_t cur, uu_string_t *next ) {
 	uu_string_t tnx = NULL;
 	
-	UU_assert(cur && next);
+	assert(cur && next);
 	
 	if (csv_bnf_CR(cur, &tnx) && csv_bnf_LF(tnx, next)) {
 		return true;
@@ -372,7 +372,7 @@ static uu_bool_t csv_bnf_CRLF( uu_string_t cur, uu_string_t *next ) {
 
 
 static uu_bool_t csv_bnf_CR( uu_string_t cur, uu_string_t *next ) {
-	UU_assert(cur && next);
+	assert(cur && next);
 	
 	if (is_bnf_CR(*cur)) {
 		*next = ++cur;
@@ -384,7 +384,7 @@ static uu_bool_t csv_bnf_CR( uu_string_t cur, uu_string_t *next ) {
 
 
 static uu_bool_t csv_bnf_LF( uu_string_t cur, uu_string_t *next ) {
-	UU_assert(cur && next);
+	assert(cur && next);
 	
 	if (is_bnf_LF(*cur)) {
 		*next = ++cur;

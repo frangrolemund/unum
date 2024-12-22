@@ -48,12 +48,11 @@ static void csv_assert_value(uu_csv_t *csv, unsigned row, unsigned col,
 	const char *tmp = NULL;
 	uu_error_e err  = UU_OK;
 	
-	UU_assert(csv);
-	
 	tmp = UU_csv_get(csv, row, col, &err);
-	UU_assert(err == UU_OK);
+	UT_assert(err == UU_OK, "unexpected value");
 	
-	UU_assert((tmp && value && !strcmp(tmp, value)) || (!tmp && !value));
+	UT_assert((tmp && value && !strcmp(tmp, value)) || (!tmp && !value),
+			  "unexpected value");
 }
 
 
@@ -77,7 +76,7 @@ static void csv_test_simple( void ) {
 	csv_assert_value(cf, 2, 0, "ggg");
 	csv_assert_value(cf, 3, 2, "lll");
 	
-	UU_assert(!UU_csv_file_path(cf));
+	UT_assert(!UU_csv_file_path(cf), "invalid file path");
 	
 	UU_csv_delete(cf);
 	
@@ -195,7 +194,7 @@ static void csv_test_simple_file_1( void ) {
 	                           "standard output.");
 	csv_assert_value(cf, 4, 4, "8");
 	
-	UU_assert(UU_csv_file_path(cf));
+	UT_assert(UU_csv_file_path(cf), "invalid file path");
 	
 	UU_csv_delete(cf);
 }
@@ -247,15 +246,12 @@ static void csv_test_simple_mod_1( void ) {
 	          "failed to assign value");
 	UT_assert(UU_csv_set(cf, 4, 4, "orbit") == UU_OK, "failed to assign value");
 	
-	UT_assert(!strcmp(UU_csv_get(cf, 0, 2, NULL), "stars"),
-	                  "failed to find value");
-			  
-	UT_assert(!strcmp(UU_csv_get(cf, 2, 3, NULL), "launch"),
-			          "failed to find value");
-			  
-	UT_assert(!strcmp(UU_csv_get(cf, 4, 4, NULL), "orbit"),
-			          "failed to find value");
-			  
+	UT_assert_eq(UU_csv_get(cf, 0, 2, NULL), "stars", "failed to find value");
+
+	UT_assert_eq(UU_csv_get(cf, 2, 3, NULL), "launch", "failed to find value");
+
+	UT_assert_eq(UU_csv_get(cf, 4, 4, NULL), "orbit", "failed to find value");
+
 	UT_assert(UU_csv_set(cf, -1, 4, "rover") == UU_ERR_ARGS,
 	                     "failed to detect error");
 	                     

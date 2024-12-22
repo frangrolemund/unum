@@ -45,7 +45,7 @@ static void fs_test_paths( void ) {
 	UT_set_test_name("file paths");
 	
 	UT_assert(UU_basename(path, U_PATH_MAX, __FILE__) == UU_OK, "failed base");
-	UT_assert(!strcmp(path, "ut_u_fs.c"), "failed base");
+	UT_assert_eq(path, "ut_u_fs.c", "failed base");
 	UT_printf("file base: %s", path);
 	
 	UT_assert(UU_dirname(path, U_PATH_MAX, __FILE__) == UU_OK, "failed dir");
@@ -74,7 +74,7 @@ static void fs_test_paths( void ) {
 	dest = (uu_string_t) UU_realpath(path, NULL, NULL);
 	UT_assert(!dest, "failed realpath");
 	dest = (uu_string_t) UU_realpath(buf, path, NULL);
-	UT_assert(!strcmp(dest, __FILE__), "failed realpath");
+	UT_assert_eq(dest, __FILE__, "failed realpath");
 	UT_assert(dest == buf, "unexpected unused state");
 	UT_printf("computed: %s", dest);
 	
@@ -82,5 +82,7 @@ static void fs_test_paths( void ) {
 		UT_printf("pop seg: %s", dest);
 		last = dest;
 	}
-	UT_assert(!strcmp(last, __FILE__), "unexpected difference");
+	UT_assert_eq(last, __FILE__, "unexpected difference");
+	
+//	UU_path_join(<#uu_string_t dst#>, <#size_t len#>, <#uu_cstring_t *segs#>)
 }

@@ -37,6 +37,8 @@
 						  }
 extern void _UT_test_failed( uu_cstring_t expr, uu_cstring_t file, int line,
 							 uu_cstring_t msg);
+							 
+#define UT_assert_eq( s1, s2, d ) UT_assert(!strcmp((s1), (s2)), (d))
 
 
 /*

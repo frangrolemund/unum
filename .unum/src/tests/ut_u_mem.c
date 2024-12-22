@@ -65,10 +65,10 @@ static void mem_test_simple( void ) {
 	UT_assert(UU_memc_num_allocs() == num_tests, "invalid alloc count");
 	
 	for (int i = 0, count = 0; i < num_tests; i++) {
-		UT_assert(!strcmp(allocs[count++], tests[i]), "unexpected string");
+		UT_assert_eq(allocs[count++], tests[i], "unexpected string");
 		
 		if (i < sizeof(tares)/sizeof(tares[0])) {
-			UT_assert(!strcmp(allocs[count++], tares[i]), "unexpected string");
+			UT_assert_eq(allocs[count++], tares[i], "unexpected string");
 		}
 	}
 	

@@ -85,6 +85,36 @@ struct stat UU_file_info( uu_cstring_t path ) {
 }
 
 
+uu_cstring_t UU_path_join( uu_string_t dst, size_t len, uu_cstring_t segs[] ) {
+	uu_cstring_t *cur = segs;
+	uu_cstring_t src;
+	char         last = 0;
+
+	dst[0] = '\0';
+	
+	while ((src = *cur)) {
+		for (;;) {
+			if (!len) {
+				return NULL;
+			}
+
+			*dst = *src;
+			len--;
+
+			if (!*src) {
+				break;
+			
+			
+			}
+		}
+
+		cur++;
+	}
+	
+	return dst;
+}
+
+
 extern uu_cstring_t UU_path_pop( uu_string_t dst, size_t len,
                                  uu_cstring_t path ) {
 	uu_cstring_t ret = dst;

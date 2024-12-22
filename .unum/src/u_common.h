@@ -53,6 +53,4 @@ typedef enum {
 #define UU_set_errorp(ep, v)  if (ep) { *ep = v; }
 
 
-#define UU_assert(e)          assert(e)
-
 #endif /* UNUM_COMMON_H */
