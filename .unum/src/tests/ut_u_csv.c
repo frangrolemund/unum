@@ -205,7 +205,7 @@ static uu_csv_t *read_test_file( uu_cstring_t file ) {
 	uu_csv_t *cf;
 	
 	UT_printf("reading %s", file);
-	cf = UU_csv_open(UT_test_rel_path(file), NULL);
+	cf = UU_csv_open(UT_test_relpath(file), NULL);
 	UT_assert(cf, "failed to read test file.");
 	
 	return cf;

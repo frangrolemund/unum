@@ -33,10 +33,10 @@
  *  - simple assert-like API.
  */
  
-static char       prog[256];
-static uu_path_t  src_path;
-static const char *test_name = NULL;
-
+static char        prog[256];
+static uu_path_t   src_path;
+static const char  *test_name = NULL;
+static uu_string_t tmp_dir    = NULL;
 
 int _UT_test( uu_cstring_t file, int argc, uu_string_t argv[],
 	         UT_test_entry_t entry_fn ) {
@@ -115,7 +115,7 @@ void UT_printf( uu_cstring_t fmt, ... ) {
 }
 
 
-char *UT_test_rel_path( uu_cstring_t file ) {
+char *UT_test_relpath( uu_cstring_t file ) {
 	static uu_path_t ret;
 
 	UT_assert(file && *file, "File invalid.");
@@ -126,4 +126,18 @@ char *UT_test_rel_path( uu_cstring_t file ) {
 	UT_assert(UU_is_file(ret), "File not found.");
 		
 	return ret;
+}
+
+
+uu_cstring_t UT_test_tmpnam( uu_string_t state ) {
+	UT_assert(state, "unexpected state");
+	
+	if (!tmp_dir) {
+		
+	
+	
+	
+	}
+
+	return NULL;
 }

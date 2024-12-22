@@ -85,8 +85,8 @@ struct stat UU_file_info( uu_cstring_t path ) {
 }
 
 
-extern uu_cstring_t UU_pop_seg( uu_cstring_t path, uu_string_t state,
-                                size_t len, uu_error_e *err ) {
+extern uu_cstring_t UU_path_pop( uu_cstring_t path, uu_string_t state,
+                                 size_t len, uu_error_e *err ) {
 	uu_cstring_t ret = state;
 	
 	UU_set_errorp(err, UU_OK);
@@ -118,23 +118,15 @@ extern uu_cstring_t UU_pop_seg( uu_cstring_t path, uu_string_t state,
 
 uu_cstring_t UU_realpath( uu_cstring_t path, uu_string_t state,
                           uu_error_e *err ) {
-	static uu_path_t ret;
-	char             *buf = state ? state : ret;
-	
-	if (!state) {
-		UU_set_errorp(err, UU_ERR_ARGS);
-		return NULL;
-	}
-	
 	UU_set_errorp(err, UU_OK);
 	
 #if UNUM_OS_MACOS
-	if (!realpath(path, buf)) {
-		UU_set_errorp(err, UU_ERR_FILE);
+	if (!state || !realpath(path, state)) {
+		UU_set_errorp(err, state ? UU_ERR_FILE : UU_ERR_ARGS);
 		return NULL;
 	}
 	
-	return buf;
+	return state;
 	
 #else
 	#error "Not implemented."

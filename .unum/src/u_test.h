@@ -29,31 +29,6 @@
 
 
 /*
- * UT_printf()
- * - display a unit test message using printf syntax.
- */
-extern void UT_printf( uu_cstring_t fmt, ... );
-
-
-/*
- * UT_test_rel_path()
- * - converts a relative filename co-located with the test into an absolute
- *   file path.
- */
-extern char *UT_test_rel_path( uu_cstring_t file );
-
-
-/*
- * UT_test()
- * - execute test in sandbox and cleanup after
- */
-#define UT_test( c, v, f )     _UT_test(__FILE__, (c), (v), (f))
-typedef int (*UT_test_entry_t)( int argc, uu_string_t argv[] );
-extern int  _UT_test( uu_cstring_t file, int argc, uu_string_t argv[],
-					  UT_test_entry_t entry_fn );
-
-
-/*
  * UT_assert()
  * - verify a test assertion and abort if it failed.
  */
@@ -65,10 +40,43 @@ extern void _UT_test_failed( uu_cstring_t expr, uu_cstring_t file, int line,
 
 
 /*
+ * UT_printf()
+ * - display a unit test message using printf syntax.
+ */
+extern void UT_printf( uu_cstring_t fmt, ... );
+
+
+/*
  * UT_set_test_name()
  * - assign a name to the current test.
  */
 extern void UT_set_test_name( uu_cstring_t name );
+
+
+/*
+ * UT_test()
+ * - execute test in sandbox and cleanup after
+ */
+#define UT_test( c, v, f )     _UT_test(__FILE__, (c), (v), (f))
+typedef int (*UT_test_entry_t)( int argc, uu_string_t argv[] );
+extern int  _UT_test( uu_cstring_t file, int argc, uu_string_t argv[],
+					  UT_test_entry_t entry_fn );
+					  
+					  
+/*
+ * UT_test_relpath()
+ * - converts a relative filename co-located with the test into an absolute
+ *   file path.
+ */
+extern char *UT_test_relpath( uu_cstring_t file );
+
+
+/*
+ *  UT_test_tempnam()
+ * - returns a temporary filename in the test-specific directory, storing it
+ *   in `state`.
+ */
+extern uu_cstring_t UT_test_tmpnam( uu_string_t state );
 
 
 #endif /* UNUM_TEST_H */

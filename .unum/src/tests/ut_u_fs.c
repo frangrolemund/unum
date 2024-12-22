@@ -78,7 +78,8 @@ static void fs_test_paths( void ) {
 	UT_assert(dest == state, "unexpected unused state");
 	UT_printf("computed: %s", dest);
 	
-	while ((dest = (uu_string_t) UU_pop_seg(__FILE__, path, U_PATH_MAX, NULL))){
+	while ((dest = (uu_string_t) UU_path_pop(__FILE__, path, U_PATH_MAX,
+											 NULL))) {
 		UT_printf("pop seg: %s", dest);
 		last = dest;
 	}

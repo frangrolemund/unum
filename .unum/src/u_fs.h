@@ -57,12 +57,20 @@ extern struct stat  UU_file_info( uu_cstring_t path );
 
 
 /*
- * UU_pop_seg()
+ * UU_path_join()
+ * - join the path segments (NULL terminated) into a single path stored in
+ *   `state` and return the result.
+ */
+extern uu_cstring_t UU_path_join( uu_cstring_t segs[], uu_string_t state );
+
+
+/*
+ * UU_path_pop()
  * - return the _next_ sub-directory segment from the path using the state
  *   to store intermediate data between repeated invocations.
  */
-extern uu_cstring_t UU_pop_seg( uu_cstring_t path, uu_string_t state,
-                                size_t len, uu_error_e *err );
+extern uu_cstring_t UU_path_pop( uu_cstring_t path, uu_string_t state,
+                                 size_t len, uu_error_e *err );
 
 
 /*
@@ -71,7 +79,7 @@ extern uu_cstring_t UU_pop_seg( uu_cstring_t path, uu_string_t state,
  *   in `state`, which must be able to hold a path.
  */
 extern uu_cstring_t UU_realpath( uu_cstring_t path, uu_string_t state,
-								 uu_error_e *err );
+                                 uu_error_e *err );
 
 
 #endif /* UNUM_FS_H */
