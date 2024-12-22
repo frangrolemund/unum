@@ -44,10 +44,10 @@ int _UT_test( uu_cstring_t file, int argc, uu_string_t argv[],
 	
 	UT_assert(argc > 0 && argv[0], "command-line not provided");
 
-	ret = UU_basename(prog, argv[0], sizeof(prog));
+	ret = UU_basename(prog, sizeof(prog), argv[0]);
 	UT_assert(ret == UU_OK, "invalid program");
 	
-	ret = UU_dirname(src_path, file, sizeof(src_path));
+	ret = UU_dirname(src_path, sizeof(src_path), file);
 	UT_assert(ret == UU_OK, "invalid source file");
 	
 	UT_set_test_name("--- BEGIN");

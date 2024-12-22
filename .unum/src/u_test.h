@@ -74,9 +74,9 @@ extern char *UT_test_relpath( uu_cstring_t file );
 /*
  *  UT_test_tempnam()
  * - returns a temporary filename in the test-specific directory, storing it
- *   in `state`.
+ *   in `dst`.
  */
-extern uu_cstring_t UT_test_tmpnam( uu_string_t state );
+extern uu_cstring_t UT_test_tmpnam( uu_string_t dst );
 
 
 #endif /* UNUM_TEST_H */

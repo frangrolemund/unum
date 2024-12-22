@@ -22,7 +22,7 @@
 
 typedef char * uu_string_t;
 
-uu_error_e UU_basename( uu_string_t dst, uu_cstring_t src, size_t len ) {
+uu_error_e UU_basename( uu_string_t dst, size_t len, uu_cstring_t src ) {
 	int blen = 0;
 	
 	while (src && *src) {
@@ -45,7 +45,7 @@ uu_error_e UU_basename( uu_string_t dst, uu_cstring_t src, size_t len ) {
 }
 
 
-uu_error_e UU_dirname( uu_string_t dst, uu_cstring_t src, size_t len ) {
+uu_error_e UU_dirname( uu_string_t dst, size_t len, uu_cstring_t src ) {
 	size_t i   = 0;
 	char *last = dst;
 	
@@ -85,48 +85,45 @@ struct stat UU_file_info( uu_cstring_t path ) {
 }
 
 
-extern uu_cstring_t UU_path_pop( uu_cstring_t path, uu_string_t state,
-                                 size_t len, uu_error_e *err ) {
-	uu_cstring_t ret = state;
+extern uu_cstring_t UU_path_pop( uu_string_t dst, size_t len,
+                                 uu_cstring_t path ) {
+	uu_cstring_t ret = dst;
 	
-	UU_set_errorp(err, UU_OK);
-                                
-	while (*state == *path && len > 0 && *path) {
+	while (*dst == *path && len > 0 && *path) {
 		path++;
-		state++;
+		dst++;
 		len--;
 	}
 		
 	do {
 		if (!len || !*path) {
-			UU_set_errorp(err, len ? UU_OK : UU_ERR_ARGS);
 			return NULL;
 		}
 	
-		*state++ = *path;
+		*dst++ = *path;
 		if (*path == UNUM_PATH_SEP) {
 			break;
 		}
 		
 		len--;
 	} while (*++path);
-	*state = '\0';
+	*dst = '\0';
 	
-	return (ret != state) ? ret : NULL;
+	return (ret != dst) ? ret : NULL;
 }
 
 
-uu_cstring_t UU_realpath( uu_cstring_t path, uu_string_t state,
+uu_cstring_t UU_realpath( uu_string_t dst, uu_cstring_t path,
                           uu_error_e *err ) {
 	UU_set_errorp(err, UU_OK);
 	
 #if UNUM_OS_MACOS
-	if (!state || !realpath(path, state)) {
-		UU_set_errorp(err, state ? UU_ERR_FILE : UU_ERR_ARGS);
+	if (!dst || !realpath(path, dst)) {
+		UU_set_errorp(err, dst ? UU_ERR_FILE : UU_ERR_ARGS);
 		return NULL;
 	}
 	
-	return state;
+	return dst;
 	
 #else
 	#error "Not implemented."

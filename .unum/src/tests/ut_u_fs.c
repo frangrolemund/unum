@@ -38,17 +38,17 @@ static int unittest_fs( int argc, char *argv[] ) {
 
 
 static void fs_test_paths( void ) {
-	uu_path_t    path, state;
+	uu_path_t    path, buf;
 	struct stat  s;
 	uu_string_t  src, dest, last;
 
 	UT_set_test_name("file paths");
 	
-	UT_assert(UU_basename(path, __FILE__, U_PATH_MAX) == UU_OK, "failed base");
+	UT_assert(UU_basename(path, U_PATH_MAX, __FILE__) == UU_OK, "failed base");
 	UT_assert(!strcmp(path, "ut_u_fs.c"), "failed base");
 	UT_printf("file base: %s", path);
 	
-	UT_assert(UU_dirname(path, __FILE__, U_PATH_MAX) == UU_OK, "failed dir");
+	UT_assert(UU_dirname(path, U_PATH_MAX, __FILE__) == UU_OK, "failed dir");
 	UT_assert(path[strlen(path)-1] == UNUM_PATH_SEP, "failed dir");
 	UT_printf("file dir: %s", path);
 	
@@ -73,13 +73,12 @@ static void fs_test_paths( void ) {
 	UT_printf("realpath: %s", path);
 	dest = (uu_string_t) UU_realpath(path, NULL, NULL);
 	UT_assert(!dest, "failed realpath");
-	dest = (uu_string_t) UU_realpath(path, state, NULL);
+	dest = (uu_string_t) UU_realpath(buf, path, NULL);
 	UT_assert(!strcmp(dest, __FILE__), "failed realpath");
-	UT_assert(dest == state, "unexpected unused state");
+	UT_assert(dest == buf, "unexpected unused state");
 	UT_printf("computed: %s", dest);
 	
-	while ((dest = (uu_string_t) UU_path_pop(__FILE__, path, U_PATH_MAX,
-											 NULL))) {
+	while ((dest = (uu_string_t) UU_path_pop(path, U_PATH_MAX, __FILE__))) {
 		UT_printf("pop seg: %s", dest);
 		last = dest;
 	}

@@ -121,7 +121,7 @@ static uu_csv_t *csv_new( unsigned cols, size_t buf_len, uu_cstring_t path,
 
 static uu_error_e csv_update_path( uu_csv_t *csv, uu_cstring_t path ) {
 	uu_error_e err;
-	uu_path_t  state;
+	uu_path_t  dst;
 		
 	if (!csv) {
 		return UU_ERR_ARGS;
@@ -133,7 +133,7 @@ static uu_error_e csv_update_path( uu_csv_t *csv, uu_cstring_t path ) {
 	}
 	
 	if (path) {
-		if (!(path = UU_realpath(path, state, &err))) {
+		if (!(path = UU_realpath(dst, path, &err))) {
 			return err;
 		}
 	

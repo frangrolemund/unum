@@ -31,15 +31,15 @@ typedef char uu_path_t[U_PATH_MAX];
  * UU_basename()
  * - copy the file name portion of a path from `src` into `dst`.
  */
-extern uu_error_e   UU_basename( uu_string_t dst, uu_cstring_t src,
-                                 size_t len );
+extern uu_error_e   UU_basename( uu_string_t dst, size_t len,
+                                 uu_cstring_t src );
 
 
 /*
  * UU_dirname()
  * - copy the directory name portion of a path from `src` into `dst`.
  */
-extern uu_error_e   UU_dirname( uu_string_t dst, uu_cstring_t src, size_t len );
+extern uu_error_e   UU_dirname( uu_string_t dst, size_t len, uu_cstring_t src );
 
 
 /*
@@ -59,26 +59,27 @@ extern struct stat  UU_file_info( uu_cstring_t path );
 /*
  * UU_path_join()
  * - join the path segments (NULL terminated) into a single path stored in
- *   `state` and return the result.
+ *   `dst` and return the result.
  */
-extern uu_cstring_t UU_path_join( uu_cstring_t segs[], uu_string_t state );
+extern uu_cstring_t UU_path_join( uu_string_t dst, size_t len,
+                                  uu_cstring_t segs[] );
 
 
 /*
  * UU_path_pop()
- * - return the _next_ sub-directory segment from the path using the state
+ * - return the _next_ sub-directory segment from the path using the `dst`
  *   to store intermediate data between repeated invocations.
  */
-extern uu_cstring_t UU_path_pop( uu_cstring_t path, uu_string_t state,
-                                 size_t len, uu_error_e *err );
+extern uu_cstring_t UU_path_pop( uu_string_t dst, size_t len,
+                                 uu_cstring_t path );
 
 
 /*
  * UU_realpath()
  * - resolves all symlinks and extra path characters, returning the result
- *   in `state`, which must be able to hold a path.
+ *   in `dst`, which must be able to hold a path.
  */
-extern uu_cstring_t UU_realpath( uu_cstring_t path, uu_string_t state,
+extern uu_cstring_t UU_realpath( uu_string_t dst, uu_cstring_t path, 
                                  uu_error_e *err );
 
 
