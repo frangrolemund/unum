@@ -84,5 +84,11 @@ static void fs_test_paths( void ) {
 	}
 	UT_assert_eq(last, __FILE__, "unexpected difference");
 	
-//	UU_path_join(<#uu_string_t dst#>, <#size_t len#>, <#uu_cstring_t *segs#>)
+	UT_assert_eq(UU_path_join(buf, U_PATH_MAX,
+	             "\0", "./abc", "\0", "def", NULL),
+	             "./abc/def", "invalid join");
+	             
+	UT_assert(UU_path_join(buf, 5, "bike", "X", NULL) == NULL, "invalid join");
+	UT_assert(UU_path_join(buf, 0, "Cd", "De", "Za", NULL) == NULL,
+	                       "invalid join");
 }

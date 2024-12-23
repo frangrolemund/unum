@@ -17,6 +17,8 @@
 | PERFORMANCE OF THIS SOFTWARE.
 | ---------------------------------------------------------------*/
 
+#include <stdarg.h>
+
 #include "u_common.h"
 #include "u_fs.h"
 
@@ -85,30 +87,44 @@ struct stat UU_file_info( uu_cstring_t path ) {
 }
 
 
-uu_cstring_t UU_path_join( uu_string_t dst, size_t len, uu_cstring_t segs[] ) {
-	uu_cstring_t *cur = segs;
+uu_cstring_t UU_path_join( uu_string_t dst, size_t len, ...) {
+	va_list      ap;
 	uu_cstring_t src;
-	char         last = 0;
-
-	dst[0] = '\0';
+	uu_string_t  dstp     = dst;
 	
-	while ((src = *cur)) {
-		for (;;) {
-			if (!len) {
-				return NULL;
-			}
+	va_start(ap, len);
 
-			*dst = *src;
+	while ((src = va_arg(ap, uu_cstring_t))) {
+
+		if (len && dstp > dst && *(dstp - 1) != UNUM_PATH_SEP) {
+			*dstp++ = UNUM_PATH_SEP;
 			len--;
-
-			if (!*src) {
-				break;
-			
-			
-			}
 		}
 
-		cur++;
+		for (;;) {
+			if (!len) {
+				goto join_done;
+			}
+					
+			if (!(*dstp = *src)) {
+				break;
+			}
+			
+			src++;
+			dstp++;
+			len--;
+		}
+	}
+
+
+join_done:
+
+	va_end(ap);
+	
+	if (len) {
+		*dstp = '\0';
+	} else {
+		dst   = NULL;
 	}
 	
 	return dst;

@@ -58,11 +58,10 @@ extern struct stat  UU_file_info( uu_cstring_t path );
 
 /*
  * UU_path_join()
- * - join the path segments (NULL terminated) into a single path stored in
- *   `dst` and return the result.
+ * - join the path segments (NULL terminated, variable list uu_cstring_t at end)
+ *   into a single path stored in `dst` and return the result.
  */
-extern uu_cstring_t UU_path_join( uu_string_t dst, size_t len,
-                                  uu_cstring_t segs[] );
+extern uu_cstring_t UU_path_join( uu_string_t dst, size_t len, ...);
 
 
 /*
