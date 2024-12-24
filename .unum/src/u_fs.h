@@ -82,7 +82,15 @@ extern uu_error_e   UU_mkdir( uu_string_t dir, mode_t mode, uu_bool_t intermed);
  * - join the path segments (NULL terminated, variable list uu_cstring_t at end)
  *   into a single path stored in `dst` and return the result.
  */
-extern uu_cstring_t UU_path_join( uu_string_t dst, size_t len, ...);
+extern uu_cstring_t UU_path_join( uu_string_t dst, size_t len, ... );
+
+
+/*
+ * UU_path_join_s
+ * - join the path segments (NULL terminated, variable list uu_cstring_t)
+ *   into a single path stored in a static variable returned as the result.
+ */
+extern uu_cstring_t UU_path_join_s( uu_cstring_t item, ... );
 
 
 /*

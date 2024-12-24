@@ -116,10 +116,10 @@ void fs_test_dirs( void ) {
 	UT_assert(UU_is_dir(tmpdir), "failed to create");
 	
 	UT_assert(rmdir(tmpdir) == 0, "cannot remove dir");
-	UT_assert(rmdir(UU_path_join(tmpdir, U_PATH_MAX, UNUM_DIR_TEST, "a", "b",
-					             "c", NULL)) == 0, "cannot remove dir");
-	UT_assert(rmdir(UU_path_join(tmpdir, U_PATH_MAX, UNUM_DIR_TEST, "a", "b",
-	                             NULL)) == 0, "cannot remove dir");
-	UT_assert(rmdir(UU_path_join(tmpdir, U_PATH_MAX, UNUM_DIR_TEST, "a",
-	                             NULL)) == 0, "cannot remove dir");
+	UT_assert(rmdir(UU_path_join_s(UNUM_DIR_TEST, "a", "b", "c", NULL)) == 0,
+	                               "cannot remove dir");
+	UT_assert(rmdir(UU_path_join_s(UNUM_DIR_TEST, "a", "b", NULL)) == 0,
+	                               "cannot remove dir");
+	UT_assert(rmdir(UU_path_join_s(UNUM_DIR_TEST, "a", NULL)) == 0,
+	                               "cannot remove dir");
 }

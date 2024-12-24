@@ -24,6 +24,9 @@
 
 typedef char * uu_string_t;
 
+static uu_string_t path_vjoin( uu_string_t dst, size_t len, uu_string_t dstp,
+                               va_list ap);
+
 uu_error_e UU_basename( uu_string_t dst, size_t len, uu_cstring_t src ) {
 	int blen = 0;
 	
@@ -109,10 +112,38 @@ uu_error_e UU_mkdir( uu_string_t dir, mode_t mode, uu_bool_t intermed) {
 
 uu_cstring_t UU_path_join( uu_string_t dst, size_t len, ...) {
 	va_list      ap;
-	uu_cstring_t src;
-	uu_string_t  dstp = dst;
 	
 	va_start(ap, len);
+	dst = path_vjoin(dst, len, dst, ap);
+	va_end(ap);
+	
+	return dst;
+}
+
+
+extern uu_cstring_t UU_path_join_s( uu_cstring_t item, ... ) {
+	static uu_path_t buf   = {'\0'};
+	size_t           ilen;
+	uu_string_t      ret;
+	va_list			 ap;
+	
+	
+	if (!item || (ilen = strlen(item)) >= U_PATH_MAX) {
+		return NULL;
+	}
+	
+	strcpy(buf, item);
+	va_start(ap, item);
+	ret = path_vjoin(buf, U_PATH_MAX - ilen, buf + ilen, ap);
+	va_end(ap);
+	
+	return ret;
+}
+
+
+static uu_string_t path_vjoin( uu_string_t dst, size_t len, uu_string_t dstp,
+                               va_list ap) {
+	uu_cstring_t src;
 
 	while ((src = va_arg(ap, uu_cstring_t))) {
 
@@ -139,10 +170,9 @@ uu_cstring_t UU_path_join( uu_string_t dst, size_t len, ...) {
 
 join_done:
 
-	va_end(ap);
-	
 	if (len) {
 		*dstp = '\0';
+		
 	} else {
 		dst   = NULL;
 	}
