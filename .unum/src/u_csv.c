@@ -99,13 +99,13 @@ static uu_csv_t *csv_new( unsigned cols, size_t buf_len, uu_cstring_t path,
 	uu_csv_t     *ret      = NULL;
 	const size_t total_len = sizeof(uu_csv_t) + sizeof(char [buf_len]);
 	
-	ret = UU_malloc(total_len);
+	ret = UU_mem_alloc(total_len);
 	if (!ret) {
 		UU_set_errorp(err, UU_ERR_MEM);
 		return NULL;
 	}
 	
-	UU_memset(ret, 0, total_len);
+	UU_mem_set(ret, 0, total_len);
 	ret->num_cols = cols;
 	ret->size     = total_len;
 	
@@ -128,16 +128,16 @@ static uu_error_e csv_update_path( uu_csv_t *csv, uu_cstring_t path ) {
 	}
 	
 	if (csv->path) {
-		UU_free(csv->path);
+		UU_mem_free(csv->path);
 		csv->path = NULL;
 	}
 	
 	if (path) {
-		if (!(path = UU_realpath(dst, path, &err))) {
+		if (!(path = UU_path_normalize(dst, path, &err))) {
 			return err;
 		}
 	
-		csv->path = UU_strdup(path);
+		csv->path = UU_mem_strdup(path);
 		if (!csv->path) {
 			return UU_ERR_MEM;
 		}
@@ -159,20 +159,20 @@ void UU_csv_delete( uu_csv_t *csv ) {
 	}
 	
 	if (csv->rows) {
-		UU_free(csv->rows);
+		UU_mem_free(csv->rows);
 	}
 	
 	if (csv->path) {
-		UU_free(csv->path);
+		UU_mem_free(csv->path);
 	}
 
-	UU_free(csv);
+	UU_mem_free(csv);
 }
 
 
 static void csv_delete_field( uu_csv_t *csv, uu_string_t s ) {
 	if (s && !csv_is_file(csv, s)) {
-		UU_free(s);
+		UU_mem_free(s);
 	}
 }
 
@@ -252,7 +252,7 @@ static uu_bool_t csv_bnf_RECORD( uu_csv_t *csv, uu_string_t cur,
 	if (csv->max_rows <= csv->num_rows) {
 		csv->max_rows += ROW_GROUP_SIZE;
 		row_buf_len    = sizeof(uu_string_t *) * csv->max_rows * csv->num_cols;
-		csv->rows      = (uu_string_t *) UU_realloc(csv->rows, row_buf_len);
+		csv->rows      = (uu_string_t *) UU_mem_realloc(csv->rows, row_buf_len);
 		
 		if (!csv->rows) {
 			UU_set_errorp(err, UU_ERR_MEM);
@@ -448,7 +448,7 @@ uu_error_e UU_csv_set( uu_csv_t *csv, unsigned row, unsigned col,
 	}
 	
 	if (value) {
-		field = UU_strdup(value);
+		field = UU_mem_strdup(value);
 		if (!field) {
 			return UU_ERR_MEM;
 		}

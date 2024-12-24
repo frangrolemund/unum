@@ -130,7 +130,7 @@ void *_UU_memc_realloc( void *ptr, size_t size, const char *file, int line ) {
 	size_t 	 old_size = ptr ? item->size : 0;
 	
 	if (size == 0) {
-		UU_free(ptr);
+		UU_mem_free(ptr);
 		return NULL;
 	}
 	

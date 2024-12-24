@@ -27,7 +27,7 @@ typedef char * uu_string_t;
 static uu_string_t path_vjoin( uu_string_t dst, size_t len, uu_string_t dstp,
                                va_list ap);
 
-uu_error_e UU_basename( uu_string_t dst, size_t len, uu_cstring_t src ) {
+uu_error_e UU_path_basename( uu_string_t dst, size_t len, uu_cstring_t src ) {
 	int blen = 0;
 	
 	while (src && *src) {
@@ -50,7 +50,7 @@ uu_error_e UU_basename( uu_string_t dst, size_t len, uu_cstring_t src ) {
 }
 
 
-uu_error_e UU_dirname( uu_string_t dst, size_t len, uu_cstring_t src ) {
+uu_error_e UU_path_dirname( uu_string_t dst, size_t len, uu_cstring_t src ) {
 	size_t i   = 0;
 	char *last = dst;
 	
@@ -85,12 +85,12 @@ struct stat UU_file_info( uu_cstring_t path ) {
 		return s;
 	}
 	
-	UU_memset(&s, 0, sizeof(s));
+	UU_mem_set(&s, 0, sizeof(s));
 	return s;	
 }
 
 
-uu_error_e UU_mkdir( uu_string_t dir, mode_t mode, uu_bool_t intermed) {
+uu_error_e UU_dir_create( uu_string_t dir, mode_t mode, uu_bool_t intermed) {
 	uu_path_t    state = {'\0'};
 	uu_cstring_t cur;
 	struct stat  s;
@@ -209,8 +209,8 @@ extern uu_cstring_t UU_path_prefix( uu_string_t dst, size_t len,
 }
 
 
-uu_cstring_t UU_realpath( uu_string_t dst, uu_cstring_t path,
-                          uu_error_e *err ) {
+uu_cstring_t UU_path_normalize( uu_string_t dst, uu_cstring_t path,
+                                uu_error_e *err ) {
 	UU_set_errorp(err, UU_OK);
 	
 #if UNUM_OS_MACOS

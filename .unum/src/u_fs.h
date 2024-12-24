@@ -27,19 +27,19 @@
 #define U_PATH_MAX       PATH_MAX
 typedef char uu_path_t[U_PATH_MAX];
 
+
 /*
- * UU_basename()
- * - copy the file name portion of a path from `src` into `dst`.
+ * UU_file_exists()
+ * - identify if the provided path refers to a file.
  */
-extern uu_error_e   UU_basename( uu_string_t dst, size_t len,
-                                 uu_cstring_t src );
+#define UU_file_exists(p)   ((UU_file_info(p).st_mode & S_IFREG) ? true : false)
 
 
 /*
- * UU_dirname()
- * - copy the directory name portion of a path from `src` into `dst`.
+ * UU_file_none()
+ * - identify if the provided path does not refer to a valid file object.
  */
-extern uu_error_e   UU_dirname( uu_string_t dst, size_t len, uu_cstring_t src );
+#define UU_file_none(p)   ((UU_file_info(p).st_mode == 0) ? true : false)
 
 
 /*
@@ -50,31 +50,35 @@ extern struct stat  UU_file_info( uu_cstring_t path );
 
 
 /*
- * UU_is_file()
- * - identify if the provided path refers to a file.
- */
-#define UU_is_file(p)   ((UU_file_info(p).st_mode & S_IFREG) ? true : false)
-
-
-/*
- * UU_no_file()
- * - identify if the provided path does not refer to a valid file object.
- */
-#define UU_no_file(p)   ((UU_file_info(p).st_mode == 0) ? true : false)
-
-
-/*
- * UU_is_dir()
- * - identify if the provided path refers to a directory.
- */
-#define UU_is_dir(p)    ((UU_file_info(p).st_mode & S_IFDIR) ? true : false)
-
-
-/*
- * UU_mkdir()
+ * UU_dir_create()
  * - create a directory, including intermediaries as necessary.
  */
-extern uu_error_e   UU_mkdir( uu_string_t dir, mode_t mode, uu_bool_t intermed);
+extern uu_error_e   UU_dir_create( uu_string_t dir, mode_t mode,
+                                   uu_bool_t intermed);
+
+
+/*
+ * UU_dir_exists()
+ * - identify if the provided path refers to a directory.
+ */
+#define UU_dir_exists(p)    ((UU_file_info(p).st_mode & S_IFDIR) ? true : false)
+
+
+
+/*
+ * UU_path_basename()
+ * - copy the file name portion of a path from `src` into `dst`.
+ */
+extern uu_error_e   UU_path_basename( uu_string_t dst, size_t len,
+                                      uu_cstring_t src );
+
+
+/*
+ * UU_path_dirname()
+ * - copy the directory name portion of a path from `src` into `dst`.
+ */
+extern uu_error_e   UU_path_dirname( uu_string_t dst, size_t len,
+                                     uu_cstring_t src );
 
 
 /*
@@ -94,6 +98,15 @@ extern uu_cstring_t UU_path_join_s( uu_cstring_t item, ... );
 
 
 /*
+ * UU_path_normalize()
+ * - resolves all symlinks and extra path characters, returning the result
+ *   in `dst`, which must be able to hold a path.
+ */
+extern uu_cstring_t UU_path_normalize( uu_string_t dst, uu_cstring_t path, 
+                                       uu_error_e *err );
+
+
+/*
  * UU_path_prefix()
  * - return the first path segment from `path`, saving it in `dst`, returning
  *   successive levels of the hiearchy with subsequent calls until returning
@@ -101,15 +114,6 @@ extern uu_cstring_t UU_path_join_s( uu_cstring_t item, ... );
  */
 extern uu_cstring_t UU_path_prefix( uu_string_t dst, size_t len,
                                     uu_cstring_t path );
-
-
-/*
- * UU_realpath()
- * - resolves all symlinks and extra path characters, returning the result
- *   in `dst`, which must be able to hold a path.
- */
-extern uu_cstring_t UU_realpath( uu_string_t dst, uu_cstring_t path, 
-                                 uu_error_e *err );
 
 
 #endif /* UNUM_FS_H */

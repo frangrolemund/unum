@@ -30,7 +30,7 @@ static void fs_test_dirs( void );
 
 
 int main( int argc, char *argv[] ) {
-	return UT_test(argc, argv, unittest_fs);
+	return UT_test_run(argc, argv, unittest_fs);
 }
 
 
@@ -46,20 +46,22 @@ static void fs_test_paths( void ) {
 	struct stat  s;
 	uu_string_t  src, dest, last;
 
-	UT_set_name("file paths");
+	UT_test_setname("file paths");
 	
-	UT_assert(UU_basename(path, U_PATH_MAX, __FILE__) == UU_OK, "failed base");
-	UT_assert_eq(path, "ut_u_fs.c", "failed base");
-	UT_printf("file base: %s", path);
+	UT_test_assert(UU_path_basename(path, U_PATH_MAX, __FILE__) == UU_OK,
+	               "failed base");
+	UT_test_assert_eq(path, "ut_u_fs.c", "failed base");
+	UT_test_printf("file base: %s", path);
 	
-	UT_assert(UU_dirname(path, U_PATH_MAX, __FILE__) == UU_OK, "failed dir");
-	UT_assert(path[strlen(path)-1] == UNUM_PATH_SEP, "failed dir");
-	UT_printf("file dir: %s", path);
+	UT_test_assert(UU_path_dirname(path, U_PATH_MAX, __FILE__) == UU_OK,
+	               "failed dir");
+	UT_test_assert(path[strlen(path)-1] == UNUM_PATH_SEP, "failed dir");
+	UT_test_printf("file dir: %s", path);
 	
-	UT_assert(UU_is_file(__FILE__), "not file");
+	UT_test_assert(UU_file_exists(__FILE__), "not file");
 	s = UU_file_info(__FILE__);
-	UT_assert(s.st_size > 0 && s.st_mode & S_IFREG, "failed file info");
-	UT_printf("file size: %ld", s.st_size);
+	UT_test_assert(s.st_size > 0 && s.st_mode & S_IFREG, "failed file info");
+	UT_test_printf("file size: %ld", s.st_size);
 	
 	src  = __FILE__;
 	dest = path;
@@ -74,52 +76,54 @@ static void fs_test_paths( void ) {
 	} while (*src);
 	*dest = '\0';
 	
-	UT_printf("realpath: %s", path);
-	dest = (uu_string_t) UU_realpath(path, NULL, NULL);
-	UT_assert(!dest, "failed realpath");
-	dest = (uu_string_t) UU_realpath(buf, path, NULL);
-	UT_assert_eq(dest, __FILE__, "failed realpath");
-	UT_assert(dest == buf, "unexpected unused state");
-	UT_printf("computed: %s", dest);
+	UT_test_printf("realpath: %s", path);
+	dest = (uu_string_t) UU_path_normalize(path, NULL, NULL);
+	UT_test_assert(!dest, "failed realpath");
+	dest = (uu_string_t) UU_path_normalize(buf, path, NULL);
+	UT_test_assert_eq(dest, __FILE__, "failed realpath");
+	UT_test_assert(dest == buf, "unexpected unused state");
+	UT_test_printf("computed: %s", dest);
 	
 	while ((dest = (uu_string_t) UU_path_prefix(path, U_PATH_MAX, __FILE__))) {
-		UT_printf("pop seg: %s", dest);
+		UT_test_printf("pop seg: %s", dest);
 		last = dest;
 	}
-	UT_assert_eq(last, __FILE__, "unexpected difference");
+	UT_test_assert_eq(last, __FILE__, "unexpected difference");
 	
-	UT_assert_eq(UU_path_join(buf, U_PATH_MAX,
+	UT_test_assert_eq(UU_path_join(buf, U_PATH_MAX,
 	             "\0", "./abc", "\0", "def", NULL),
 	             "./abc/def", "invalid join");
 	             
-	UT_assert(UU_path_join(buf, 5, "bike", "X", NULL) == NULL, "invalid join");
-	UT_assert(UU_path_join(buf, 0, "Cd", "De", "Za", NULL) == NULL,
-	                       "invalid join");
+	UT_test_assert(UU_path_join(buf, 5, "bike", "X", NULL) == NULL,
+	               "invalid join");
+	UT_test_assert(UU_path_join(buf, 0, "Cd", "De", "Za", NULL) == NULL,
+	               "invalid join");
 }
 
  
 void fs_test_dirs( void ) {
 	uu_path_t tmpdir;
 	
-	UT_set_name("directories");
+	UT_test_setname("directories");
 	
-	UT_assert(UU_path_join(tmpdir, U_PATH_MAX, UNUM_DIR_TEST, "a", "b", "c",
-	          "d", NULL), "path_join_failed");
-	UT_assert(UU_no_file(tmpdir), "dir exists");
-	UT_assert(UU_mkdir(tmpdir, S_IRWXU, false) != UU_OK, "created dir?");
-	UT_assert(UU_no_file(tmpdir), "dir exists");
+	UT_test_assert(UU_path_join(tmpdir, U_PATH_MAX, UNUM_DIR_TEST, "a", "b",
+	          "c", "d", NULL), "path_join_failed");
+	UT_test_assert(UU_file_none(tmpdir), "dir exists");
+	UT_test_assert(UU_dir_create(tmpdir, S_IRWXU, false) != UU_OK, "created dir?");
+	UT_test_assert(UU_file_none(tmpdir), "dir exists");
 		
-	UT_assert(UU_mkdir(tmpdir, S_IRWXU, true) == UU_OK, "failed to create");
-	UT_assert(UU_is_dir(tmpdir), "failed to create");
-	UT_printf("created directory %s", tmpdir);
-	UT_assert(UU_mkdir(tmpdir, S_IRWXU, true) == UU_OK, "not idempotent");
-	UT_assert(UU_is_dir(tmpdir), "failed to create");
+	UT_test_assert(UU_dir_create(tmpdir, S_IRWXU, true) == UU_OK,
+	               "failed to create");
+	UT_test_assert(UU_dir_exists(tmpdir), "failed to create");
+	UT_test_printf("created directory %s", tmpdir);
+	UT_test_assert(UU_dir_create(tmpdir, S_IRWXU, true) == UU_OK, "not idempotent");
+	UT_test_assert(UU_dir_exists(tmpdir), "failed to create");
 	
-	UT_assert(rmdir(tmpdir) == 0, "cannot remove dir");
-	UT_assert(rmdir(UU_path_join_s(UNUM_DIR_TEST, "a", "b", "c", NULL)) == 0,
-	                               "cannot remove dir");
-	UT_assert(rmdir(UU_path_join_s(UNUM_DIR_TEST, "a", "b", NULL)) == 0,
-	                               "cannot remove dir");
-	UT_assert(rmdir(UU_path_join_s(UNUM_DIR_TEST, "a", NULL)) == 0,
-	                               "cannot remove dir");
+	UT_test_assert(rmdir(tmpdir) == 0, "cannot remove dir");
+	UT_test_assert(rmdir(UU_path_join_s(UNUM_DIR_TEST, "a", "b", "c",
+	                                    NULL)) == 0, "cannot remove dir");
+	UT_test_assert(rmdir(UU_path_join_s(UNUM_DIR_TEST, "a", "b", NULL)) == 0,
+	               "cannot remove dir");
+	UT_test_assert(rmdir(UU_path_join_s(UNUM_DIR_TEST, "a", NULL)) == 0,
+	               "cannot remove dir");
 }

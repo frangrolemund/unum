@@ -43,40 +43,40 @@ static uu_string_t tmp_dir    = NULL;
 static uu_string_t *tmp_files = NULL;
 static int         num_tmp    = 0;
 
-static void  discard_tmp_data( void );
+static void delete_tmp_files( void );
 
 
-int _UT_test( uu_cstring_t file, int argc, uu_string_t argv[],
-	         UT_test_entry_t entry_fn ) {
+int _UT_test_run( uu_cstring_t file, int argc, uu_string_t argv[],
+	              UT_test_entry_t entry_fn ) {
 	int ret;
 	
-	UT_assert(argc > 0 && argv[0], "command-line not provided");
+	UT_test_assert(argc > 0 && argv[0], "command-line not provided");
 
-	ret = UU_basename(prog, sizeof(prog), argv[0]);
-	UT_assert(ret == UU_OK, "invalid program");
+	ret = UU_path_basename(prog, sizeof(prog), argv[0]);
+	UT_test_assert(ret == UU_OK, "invalid program");
 	
-	ret = UU_dirname(src_path, sizeof(src_path), file);
-	UT_assert(ret == UU_OK, "invalid source file");
+	ret = UU_path_dirname(src_path, sizeof(src_path), file);
+	UT_test_assert(ret == UU_OK, "invalid source file");
 	
-	UT_set_name("--- BEGIN");
-	UT_printf("unit test starting");
+	UT_test_setname("--- BEGIN");
+	UT_test_printf("unit test starting");
 	test_name = NULL;
 	
 	ret = entry_fn(argc, argv);
 	
-	UT_set_name("-- RESULT");
+	UT_test_setname("-- RESULT");
 	
-	discard_tmp_data();
+	delete_tmp_files();
 	
 	if (UU_memc_num_bytes()) {
-		UT_printf("memory leaks detected");
-		UT_assert(0 == UU_memc_dump(), "memory leak(s) detected")
+		UT_test_printf("memory leaks detected");
+		UT_test_assert(0 == UU_memc_dump(), "memory leak(s) detected")
 	}
 	
 	if (ret) {
-		UT_printf("unit test failed with return code %d", ret);
+		UT_test_printf("unit test failed with return code %d", ret);
 	} else {
-		UT_printf("unit test OK");
+		UT_test_printf("unit test OK");
 	}
 	
 	return ret;
@@ -101,15 +101,15 @@ void _UT_test_failed( uu_cstring_t expr, uu_cstring_t file, int line,
 }
 
 
-void UT_set_name( uu_cstring_t name ) {
+void UT_test_setname( uu_cstring_t name ) {
 	if (test_name != NULL) {
-		UT_printf("OK");
+		UT_test_printf("OK");
 	}
 	test_name = name;
 }
 
 
-void UT_printf( uu_cstring_t fmt, ... ) {
+void UT_test_printf( uu_cstring_t fmt, ... ) {
 	char     buf[2048];
 	va_list  val;
 
@@ -125,21 +125,21 @@ void UT_printf( uu_cstring_t fmt, ... ) {
 }
 
 
-char *UT_rel_file( uu_cstring_t file ) {
+char *UT_test_filename( uu_cstring_t file ) {
 	static uu_path_t ret;
 
-	UT_assert(file && *file, "File invalid.");
+	UT_test_assert(file && *file, "File invalid.");
 	
 	strcpy(ret, src_path);
 	strcat(ret, file);
 	
-	UT_assert(UU_is_file(ret), "File not found.");
+	UT_test_assert(UU_file_exists(ret), "File not found.");
 		
 	return ret;
 }
 
 
-uu_cstring_t UT_tmpnam( void ) {
+uu_cstring_t UT_test_tempfile( void ) {
 	static uu_path_t ret;
 	time_t           now;
 	struct tm        *tm_now;
@@ -156,9 +156,11 @@ uu_cstring_t UT_tmpnam( void ) {
 				 tm_now->tm_min, tm_now->tm_sec);
 		tmp_dir = (uu_string_t) UU_path_join_s(UNUM_DIR_TEST, prog, buf,
 		                                       NULL);
-		UT_assert(tmp_dir && (tmp_dir = UU_strdup(tmp_dir)), "temp failure");
+		UT_test_assert(tmp_dir && (tmp_dir = UU_mem_strdup(tmp_dir)),
+		               "temp failure");
 		UU_mem_tare(tmp_dir);
-		UT_assert(UU_mkdir(tmp_dir, S_IRWXU, true) == UU_OK, "mkdir failure");
+		UT_test_assert(UU_dir_create(tmp_dir, S_IRWXU, true) == UU_OK,
+					   "mkdir failure");
 	}
 	
 	strcpy(ret, tmp_dir);
@@ -166,18 +168,18 @@ uu_cstring_t UT_tmpnam( void ) {
 	strcat(ret, buf);
 	
 	num_tmp++;
-	tmp_files = UU_realloc(tmp_files, sizeof(uu_string_t) * num_tmp);
-	UT_assert(tmp_files, "out of memory");
+	tmp_files = UU_mem_realloc(tmp_files, sizeof(uu_string_t) * num_tmp);
+	UT_test_assert(tmp_files, "out of memory");
 	UU_mem_tare(tmp_files);
-	tmp_files[num_tmp - 1] = tf = UU_strdup(ret);
-	UT_assert(tf, "out of memory");
+	tmp_files[num_tmp - 1] = tf = UU_mem_strdup(ret);
+	UT_test_assert(tf, "out of memory");
 	UU_mem_tare(tf);
 	
 	return ret;
 }
 
 
-static void discard_tmp_data( void ) {
+static void delete_tmp_files( void ) {
 	uu_bool_t ok = true;
 	
 	if (!tmp_dir) {
@@ -185,16 +187,17 @@ static void discard_tmp_data( void ) {
 	}
 	
 	for (int i = 0; i < num_tmp; i++) {
-		if (UU_is_file(tmp_files[i]) && unlink(tmp_files[i]) != 0) {
-			UT_printf("error: failed to delete %s (errno=%d)", tmp_files[i],
+		if (UU_file_exists(tmp_files[i]) && unlink(tmp_files[i]) != 0) {
+			UT_test_printf("error: failed to delete %s (errno=%d)", tmp_files[i],
 			          errno);
 			ok = false;
 		}
 	}
 	
-	UT_assert(ok, "failed to delete temporary files.");
+	UT_test_assert(ok, "failed to delete temporary files.");
 	
-	if (UU_is_dir(tmp_dir) && rmdir(tmp_dir) != 0) {
-		UT_printf("warning: failed to remove temporary directory %s", tmp_dir);
+	if (UU_dir_exists(tmp_dir) && rmdir(tmp_dir) != 0) {
+		UT_test_printf("warning: failed to remove temporary directory %s",
+		               tmp_dir);
 	}
 }

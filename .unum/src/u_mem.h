@@ -38,36 +38,37 @@
 	extern unsigned  _UU_memc_num_allocs( void );
 	extern unsigned  _UU_memc_dump( void );
 
-	#define UU_malloc(n)              _UU_memc_malloc((n), __FILE__, \
-													  __LINE__)
-	#define UU_free(p)                _UU_memc_free(p)
-	#define UU_realloc(p, n)          _UU_memc_realloc((p), (n), __FILE__, \
-													   __LINE__)
+	#define UU_mem_alloc(n)           _UU_memc_malloc((n), __FILE__, \
+	                                                  __LINE__)
+	#define UU_mem_free(p)            _UU_memc_free(p)
+	#define UU_mem_realloc(p, n)      _UU_memc_realloc((p), (n), __FILE__, \
+	                                                   __LINE__)
 	#define UU_mem_tare(p)            _UU_memc_tare((p))
 	#define UU_memc_num_bytes()       _UU_memc_num_bytes()
 	#define UU_memc_num_allocs()      _UU_memc_num_allocs()
 	#define UU_memc_dump()            _UU_memc_dump()
 	
-	#define UU_strdup(s)              ((char *) strcpy((char *) \
-									       UU_malloc(strlen(s) + 1), s))
+	#define UU_mem_strdup(s)          ((char *) strcpy((char *) \
+									   UU_mem_alloc(strlen(s) + 1), s))
   
 #else
 
-	#define UU_malloc(n)              malloc(n)
-	#define UU_free(p)                free(p)
-	#define UU_realloc(p, n)          realloc((p), (n))
-	#define UU_strdup(s)              strdup((s))
+	#define UU_mem_alloc(n)           malloc(n)
+	#define UU_mem_free(p)            free(p)
+	#define UU_mem_realloc(p, n)      realloc((p), (n))
   
 	#define UU_mem_tare(p)            assert(p != NULL)
 	#define UU_memc_num_bytes()       ((unsigned) 0)
 	#define UU_memc_num_allocs()      ((unsigned) 0)
 	#define UU_memc_dump()            assert(0)
+	
+	#define UU_mem_strdup(s)          strdup((s))
   
 #endif /* UNUM_MEM_CHECKING */
 
 
-#define UU_memset(p, v, n)            memset((p), (v), (n))
-#define UU_memcpy(d, s, n)            memcpy((d), (s), (n))
+#define UU_mem_set(p, v, n)           memset((p), (v), (n))
+#define UU_mem_copy(d, s, n)          memcpy((d), (s), (n))
 
 
 #endif /* UNUM_MEM_H */
