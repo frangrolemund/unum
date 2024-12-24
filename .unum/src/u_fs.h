@@ -57,6 +57,27 @@ extern struct stat  UU_file_info( uu_cstring_t path );
 
 
 /*
+ * UU_no_file()
+ * - identify if the provided path does not refer to a valid file object.
+ */
+#define UU_no_file(p)   ((UU_file_info(p).st_mode == 0) ? true : false)
+
+
+/*
+ * UU_is_dir()
+ * - identify if the provided path refers to a directory.
+ */
+#define UU_is_dir(p)    ((UU_file_info(p).st_mode & S_IFDIR) ? true : false)
+
+
+/*
+ * UU_mkdir()
+ * - create a directory, including intermediaries as necessary.
+ */
+extern uu_error_e   UU_mkdir( uu_string_t dir, mode_t mode, uu_bool_t intermed);
+
+
+/*
  * UU_path_join()
  * - join the path segments (NULL terminated, variable list uu_cstring_t at end)
  *   into a single path stored in `dst` and return the result.
@@ -65,12 +86,13 @@ extern uu_cstring_t UU_path_join( uu_string_t dst, size_t len, ...);
 
 
 /*
- * UU_path_pop()
- * - return the _next_ sub-directory segment from the path using the `dst`
- *   to store intermediate data between repeated invocations.
+ * UU_path_prefix()
+ * - return the first path segment from `path`, saving it in `dst`, returning
+ *   successive levels of the hiearchy with subsequent calls until returning
+ *   NULL when there are no more sub-items.
  */
-extern uu_cstring_t UU_path_pop( uu_string_t dst, size_t len,
-                                 uu_cstring_t path );
+extern uu_cstring_t UU_path_prefix( uu_string_t dst, size_t len,
+                                    uu_cstring_t path );
 
 
 /*

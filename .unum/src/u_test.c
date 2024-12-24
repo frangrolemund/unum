@@ -20,6 +20,7 @@
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #include "u_fs.h"
 #include "u_test.h"
@@ -50,13 +51,13 @@ int _UT_test( uu_cstring_t file, int argc, uu_string_t argv[],
 	ret = UU_dirname(src_path, sizeof(src_path), file);
 	UT_assert(ret == UU_OK, "invalid source file");
 	
-	UT_set_test_name("--- BEGIN");
+	UT_set_name("--- BEGIN");
 	UT_printf("unit test starting");
 	test_name = NULL;
 	
 	ret = entry_fn(argc, argv);
 	
-	UT_set_test_name("-- RESULT");
+	UT_set_name("-- RESULT");
 	
 	if (UU_memc_num_bytes()) {
 		UT_printf("memory leaks detected");
@@ -91,7 +92,7 @@ void _UT_test_failed( uu_cstring_t expr, uu_cstring_t file, int line,
 }
 
 
-void UT_set_test_name( uu_cstring_t name ) {
+void UT_set_name( uu_cstring_t name ) {
 	if (test_name != NULL) {
 		UT_printf("OK");
 	}
@@ -115,7 +116,7 @@ void UT_printf( uu_cstring_t fmt, ... ) {
 }
 
 
-char *UT_test_relpath( uu_cstring_t file ) {
+char *UT_rel_file( uu_cstring_t file ) {
 	static uu_path_t ret;
 
 	UT_assert(file && *file, "File invalid.");
@@ -129,14 +130,25 @@ char *UT_test_relpath( uu_cstring_t file ) {
 }
 
 
-uu_cstring_t UT_test_tmpnam( uu_string_t state ) {
-	UT_assert(state, "unexpected state");
+uu_cstring_t UT_test_tmpnam( uu_string_t dst, size_t len ) {
+	time_t    now;
+	struct tm *tm_now;
+	char      time_desc[20];
+	uu_path_t buf;
+	
+	UT_assert(dst && len, "unexpected args");
 	
 	if (!tmp_dir) {
-		
-	
-	
-	
+		now     = time(NULL);
+		tm_now  = localtime(&now);
+		snprintf(time_desc, sizeof(time_desc)/sizeof(time_desc[0]),
+                 "%02d%02d%02d-%02d%02d%02d", tm_now->tm_mon + 1,
+                 tm_now->tm_mday, tm_now->tm_year - 100, tm_now->tm_hour,
+				 tm_now->tm_min, tm_now->tm_sec);
+		tmp_dir = (uu_string_t) UU_path_join(buf, U_PATH_MAX, UNUM_DIR_TEST,
+											 prog, time_desc, NULL);
+		UT_assert(tmp_dir && (tmp_dir = UU_strdup(tmp_dir)), "temp failure");
+		UU_mem_tare(tmp_dir);
 	}
 
 	return NULL;

@@ -59,7 +59,7 @@ static void csv_assert_value(uu_csv_t *csv, unsigned row, unsigned col,
 static void csv_test_simple( void ) {
 	uu_csv_t *cf;
 
-	UT_set_test_name("contrived parsing");
+	UT_set_name("contrived parsing");
 	
 	// - eol variations
 	UT_printf("eol testing...");
@@ -141,7 +141,7 @@ static void csv_test_simple( void ) {
 static void csv_test_simple_file_1( void ) {
 	uu_csv_t *cf;
 
-	UT_set_test_name("file parsing #1");
+	UT_set_name("file parsing #1");
 
 	cf = read_test_file("ut_u_csv_1.csv");
 	
@@ -204,7 +204,7 @@ static uu_csv_t *read_test_file( uu_cstring_t file ) {
 	uu_csv_t *cf;
 	
 	UT_printf("reading %s", file);
-	cf = UU_csv_open(UT_test_relpath(file), NULL);
+	cf = UU_csv_open(UT_rel_file(file), NULL);
 	UT_assert(cf, "failed to read test file.");
 	
 	return cf;
@@ -215,7 +215,7 @@ static void csv_test_simple_file_2( void ) {
 	uu_csv_t *cf;
 	int      i, j;
 
-	UT_set_test_name("file parsing #2");
+	UT_set_name("file parsing #2");
 
 	cf = read_test_file("ut_u_csv_2.csv");
 	
@@ -236,7 +236,7 @@ static void csv_test_simple_file_2( void ) {
 static void csv_test_simple_mod_1( void ) {
 	uu_csv_t *cf;
 
-	UT_set_test_name("file modification #1");
+	UT_set_name("file modification #1");
 	
 	cf = read_test_file("ut_u_csv_1.csv");
 

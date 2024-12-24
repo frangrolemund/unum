@@ -87,10 +87,30 @@ struct stat UU_file_info( uu_cstring_t path ) {
 }
 
 
+uu_error_e UU_mkdir( uu_string_t dir, mode_t mode, uu_bool_t intermed) {
+	uu_path_t    state = {'\0'};
+	uu_cstring_t cur;
+	struct stat  s;
+	
+	while ((cur = UU_path_prefix(state, U_PATH_MAX, dir))) {
+		s = UU_file_info(cur);
+		
+		if (s.st_mode & S_IFDIR) {
+			continue;
+
+		} else if (s.st_mode != 0 || !intermed || mkdir(cur, mode)) {
+			return UU_ERR_FILE;
+		}	
+	}
+	
+	return UU_OK;
+}
+
+
 uu_cstring_t UU_path_join( uu_string_t dst, size_t len, ...) {
 	va_list      ap;
 	uu_cstring_t src;
-	uu_string_t  dstp     = dst;
+	uu_string_t  dstp = dst;
 	
 	va_start(ap, len);
 
@@ -131,8 +151,8 @@ join_done:
 }
 
 
-extern uu_cstring_t UU_path_pop( uu_string_t dst, size_t len,
-                                 uu_cstring_t path ) {
+extern uu_cstring_t UU_path_prefix( uu_string_t dst, size_t len,
+                                    uu_cstring_t path ) {
 	uu_cstring_t ret = dst;
 	
 	while (*dst == *path && len > 0 && *path) {

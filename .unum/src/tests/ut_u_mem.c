@@ -48,7 +48,7 @@ static void mem_test_simple( void ) {
 	size_t          expected_size = 0;
 	const int       num_tests     = sizeof(tests)/sizeof(tests[0]);
 	
-	UT_set_test_name("simple allocation patterns");
+	UT_set_name("simple allocation patterns");
 	UT_printf("checking basic");
 	
 	for (int i = 0; i < num_tests; i++) {
@@ -87,7 +87,7 @@ static void mem_test_simple( void ) {
 static void mem_test_list( void ) {
 	uu_string_t one, two, three, four, five;
 
-	UT_set_test_name("memory list checks");
+	UT_set_name("memory list checks");
 	
 	UT_printf("allocating items");
 	one   = UU_strdup("one");
@@ -130,7 +130,7 @@ static void mem_test_realloc( void ) {
 	size_t last_count, count, other;
 	char c                             = 'a';
 	
-	UT_set_test_name("realloc checks");
+	UT_set_name("realloc checks");
 	
 	last_count      = 256;
 	s0              = UU_strdup("abc");             // ...not first

@@ -27,6 +27,8 @@
 #error "Unit testing only."
 #endif
 
+#define UNUM_DIR_TEST  UNUM_DIR_DEPLOY UNUM_PATH_SEP_S "test"
+
 
 /*
  * UT_assert()
@@ -49,10 +51,18 @@ extern void UT_printf( uu_cstring_t fmt, ... );
 
 
 /*
- * UT_set_test_name()
+ * UT_rel_file()
+ * - converts a relative filename co-located with the test into an absolute
+ *   file path.
+ */
+extern char *UT_rel_file( uu_cstring_t file );
+
+
+/*
+ * UT_set_name()
  * - assign a name to the current test.
  */
-extern void UT_set_test_name( uu_cstring_t name );
+extern void UT_set_name( uu_cstring_t test_name );
 
 
 /*
@@ -66,19 +76,11 @@ extern int  _UT_test( uu_cstring_t file, int argc, uu_string_t argv[],
 					  
 					  
 /*
- * UT_test_relpath()
- * - converts a relative filename co-located with the test into an absolute
- *   file path.
- */
-extern char *UT_test_relpath( uu_cstring_t file );
-
-
-/*
- *  UT_test_tempnam()
+ * UT_tempnam()
  * - returns a temporary filename in the test-specific directory, storing it
  *   in `dst`.
  */
-extern uu_cstring_t UT_test_tmpnam( uu_string_t dst );
+extern uu_cstring_t UT_tmpnam( uu_string_t dst, size_t len );
 
 
 #endif /* UNUM_TEST_H */
