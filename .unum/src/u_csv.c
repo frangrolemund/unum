@@ -44,7 +44,7 @@ static uu_bool_t csv_bnf_EOL( uu_string_t cur, uu_string_t *next);
 #define ROW_GROUP_SIZE  32
 
 #define csv_field(csv, r, c)   (*(csv->rows + ((csv->num_cols * r) + c)))
-#define csv_is_file_s(csv, s)  (s >= (char *)csv &&\
+#define csv_is_file(csv, s)    (s >= (char *)csv &&\
 							    s < ((char *)csv + csv->size))
 
 
@@ -171,7 +171,7 @@ void UU_csv_delete( uu_csv_t *csv ) {
 
 
 static void csv_delete_field( uu_csv_t *csv, uu_string_t s ) {
-	if (s && !csv_is_file_s(csv, s)) {
+	if (s && !csv_is_file(csv, s)) {
 		UU_free(s);
 	}
 }
