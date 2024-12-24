@@ -18,9 +18,11 @@
 | ---------------------------------------------------------------*/
 
 #include <stdarg.h>
+#include <errno.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <unistd.h>
 
 #include "u_fs.h"
 #include "u_test.h"
@@ -38,6 +40,11 @@ static char        prog[256];
 static uu_path_t   src_path;
 static const char  *test_name = NULL;
 static uu_string_t tmp_dir    = NULL;
+static uu_string_t *tmp_files = NULL;
+static int         num_tmp    = 0;
+
+static void  discard_tmp_data( void );
+
 
 int _UT_test( uu_cstring_t file, int argc, uu_string_t argv[],
 	         UT_test_entry_t entry_fn ) {
@@ -58,6 +65,8 @@ int _UT_test( uu_cstring_t file, int argc, uu_string_t argv[],
 	ret = entry_fn(argc, argv);
 	
 	UT_set_name("-- RESULT");
+	
+	discard_tmp_data();
 	
 	if (UU_memc_num_bytes()) {
 		UT_printf("memory leaks detected");
@@ -130,26 +139,62 @@ char *UT_rel_file( uu_cstring_t file ) {
 }
 
 
-uu_cstring_t UT_test_tmpnam( uu_string_t dst, size_t len ) {
-	time_t    now;
-	struct tm *tm_now;
-	char      time_desc[20];
-	uu_path_t buf;
+uu_cstring_t UT_tmpnam( void ) {
+	static uu_path_t ret;
+	time_t           now;
+	struct tm        *tm_now;
+	char             buf[32];
+	uu_string_t      tf;
 	
-	UT_assert(dst && len, "unexpected args");
-	
+	now     = time(NULL);
+
 	if (!tmp_dir) {
-		now     = time(NULL);
 		tm_now  = localtime(&now);
-		snprintf(time_desc, sizeof(time_desc)/sizeof(time_desc[0]),
+		snprintf(buf, sizeof(buf)/sizeof(buf[0]),
                  "%02d%02d%02d-%02d%02d%02d", tm_now->tm_mon + 1,
                  tm_now->tm_mday, tm_now->tm_year - 100, tm_now->tm_hour,
 				 tm_now->tm_min, tm_now->tm_sec);
-		tmp_dir = (uu_string_t) UU_path_join(buf, U_PATH_MAX, UNUM_DIR_TEST,
-											 prog, time_desc, NULL);
+		tmp_dir = (uu_string_t) UU_path_join_s(UNUM_DIR_TEST, prog, buf,
+		                                       NULL);
 		UT_assert(tmp_dir && (tmp_dir = UU_strdup(tmp_dir)), "temp failure");
 		UU_mem_tare(tmp_dir);
+		UT_assert(UU_mkdir(tmp_dir, S_IRWXU, true) == UU_OK, "mkdir failure");
 	}
+	
+	strcpy(ret, tmp_dir);
+	snprintf(buf, sizeof(buf)/sizeof(buf[0]), "%ld%d.tmp", now, num_tmp);
+	strcat(ret, buf);
+	
+	num_tmp++;
+	tmp_files = UU_realloc(tmp_files, sizeof(uu_string_t) * num_tmp);
+	UT_assert(tmp_files, "out of memory");
+	UU_mem_tare(tmp_files);
+	tmp_files[num_tmp - 1] = tf = UU_strdup(ret);
+	UT_assert(tf, "out of memory");
+	UU_mem_tare(tf);
+	
+	return ret;
+}
 
-	return NULL;
+
+static void discard_tmp_data( void ) {
+	uu_bool_t ok = true;
+	
+	if (!tmp_dir) {
+		return;
+	}
+	
+	for (int i = 0; i < num_tmp; i++) {
+		if (UU_is_file(tmp_files[i]) && unlink(tmp_files[i]) != 0) {
+			UT_printf("error: failed to delete %s (errno=%d)", tmp_files[i],
+			          errno);
+			ok = false;
+		}
+	}
+	
+	UT_assert(ok, "failed to delete temporary files.");
+	
+	if (UU_is_dir(tmp_dir) && rmdir(tmp_dir) != 0) {
+		UT_printf("warning: failed to remove temporary directory %s", tmp_dir);
+	}
 }

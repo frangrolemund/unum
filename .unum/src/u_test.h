@@ -77,10 +77,9 @@ extern int  _UT_test( uu_cstring_t file, int argc, uu_string_t argv[],
 					  
 /*
  * UT_tempnam()
- * - returns a temporary filename in the test-specific directory, storing it
- *   in `dst`.
+ * - returns a temporary filename in a static variable.
  */
-extern uu_cstring_t UT_tmpnam( uu_string_t dst, size_t len );
+extern uu_cstring_t UT_tmpnam( void );
 
 
 #endif /* UNUM_TEST_H */
