@@ -139,12 +139,11 @@ char *UT_test_filename( uu_cstring_t file ) {
 }
 
 
-uu_cstring_t UT_test_tempfile( void ) {
-	static uu_path_t ret;
+uu_cstring_t UT_test_tempfile( uu_cstring_t extension ) {
 	time_t           now;
 	struct tm        *tm_now;
 	char             buf[32];
-	uu_string_t      tf;
+	uu_string_t      ret;
 	
 	now     = time(NULL);
 
@@ -163,17 +162,16 @@ uu_cstring_t UT_test_tempfile( void ) {
 					   "mkdir failure");
 	}
 	
-	strcpy(ret, tmp_dir);
-	snprintf(buf, sizeof(buf)/sizeof(buf[0]), "%ld%d.tmp", now, num_tmp);
-	strcat(ret, buf);
-	
+	snprintf(buf, sizeof(buf)/sizeof(buf[0]), "tmp-%ld%d.%s", now, num_tmp,
+			 extension ? extension : "tmp");
+
 	num_tmp++;
 	tmp_files = UU_mem_realloc(tmp_files, sizeof(uu_string_t) * num_tmp);
 	UT_test_assert(tmp_files, "out of memory");
 	UU_mem_tare(tmp_files);
-	tmp_files[num_tmp - 1] = tf = UU_mem_strdup(ret);
-	UT_test_assert(tf, "out of memory");
-	UU_mem_tare(tf);
+	tmp_files[num_tmp - 1] = ret = UU_mem_strdup(UU_path_join_s(tmp_dir, buf));
+	UT_test_assert(ret, "out of memory");
+	UU_mem_tare(ret);
 	
 	return ret;
 }

@@ -77,9 +77,10 @@ extern int  _UT_test_run( uu_cstring_t file, int argc, uu_string_t argv[],
 					  
 /*
  * UT_test_tempfile()
- * - returns a temporary filename in a static variable.
+ * - returns a temporary filename allocated on the heap that will be released
+ *   after the test completes.
  */
-extern uu_cstring_t UT_test_tempfile( void );
+extern uu_cstring_t UT_test_tempfile( uu_cstring_t extension );
 
 
 #endif /* UNUM_TEST_H */

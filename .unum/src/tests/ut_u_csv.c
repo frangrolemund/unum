@@ -234,27 +234,37 @@ static void csv_test_simple_file_2( void ) {
 
 
 static void csv_test_simple_mod_1( void ) {
-	uu_csv_t *cf;
+	uu_csv_t     *cf;
+	uu_cstring_t tmp_name;
+	uu_error_e	 err;
 
 	UT_test_setname("file modification #1");
 	
 	cf = read_test_file("ut_u_csv_1.csv");
 
-	UT_test_printf("modifying and verifying");
+	UT_test_printf("modifying and writing to file");
 	UT_test_assert(UU_csv_set(cf, 0, 2, "stars") == UU_OK,
 	               "failed to assign value");
-	UT_test_assert(UU_csv_set(cf, 2, 3, "launch") == UU_OK,
+	UT_test_assert(UU_csv_set(cf, 2, 3, "launch\ndate") == UU_OK,
 	               "failed to assign value");
-	UT_test_assert(UU_csv_set(cf, 4, 4, "orbit") == UU_OK,
+	UT_test_assert(UU_csv_set(cf, 4, 4, "orbit \"every\" day") == UU_OK,
 	               "failed to assign value");
+	               
+	tmp_name = UT_test_tempfile("csv");
+	UT_test_assert(UU_csv_write(cf, tmp_name) == UU_OK, "failed to write");
 	
+	UU_csv_delete(cf);
+	
+	UT_test_printf("re-opening and verifying");
+	cf = UU_csv_open(tmp_name, &err);
+	UT_test_assert(cf && err == UU_OK, "failed to reopen.");	
 	UT_test_assert_eq(UU_csv_get(cf, 0, 2, NULL), "stars",
 	                  "failed to find value");
 
-	UT_test_assert_eq(UU_csv_get(cf, 2, 3, NULL), "launch",
+	UT_test_assert_eq(UU_csv_get(cf, 2, 3, NULL), "launch\ndate",
 	                  "failed to find value");
 
-	UT_test_assert_eq(UU_csv_get(cf, 4, 4, NULL), "orbit",
+	UT_test_assert_eq(UU_csv_get(cf, 4, 4, NULL), "orbit \"every\" day",
 	                  "failed to find value");
 
 	UT_test_assert(UU_csv_set(cf, -1, 4, "rover") == UU_ERR_ARGS,

@@ -17,6 +17,7 @@
 | PERFORMANCE OF THIS SOFTWARE.
 | ---------------------------------------------------------------*/
 
+#include <ctype.h>
 #include <stdio.h>
 #include <string.h>
 #include "u_csv.h"
@@ -38,6 +39,9 @@ static uu_bool_t csv_bnf_CRLF( uu_string_t cur, uu_string_t *next );
 static uu_bool_t csv_bnf_CR( uu_string_t cur, uu_string_t *next );
 static uu_bool_t csv_bnf_LF( uu_string_t cur, uu_string_t *next );
 static uu_bool_t csv_bnf_EOL( uu_string_t cur, uu_string_t *next);
+static uu_bool_t csv_req_quote( uu_cstring_t field );
+static uu_bool_t csv_write_field( FILE *fp, uu_cstring_t field,
+                                  uu_bool_t comma, uu_bool_t quoted);
 
 
 #define MAX_COLS        256
@@ -467,4 +471,81 @@ uu_cstring_t UU_csv_file_path( uu_csv_t *csv ) {
 	}
 
 	return NULL;
+}
+
+
+uu_error_e UU_csv_write( uu_csv_t *csv, uu_cstring_t path ) {
+	FILE         *fp   = NULL;
+	uu_cstring_t field;
+	uu_bool_t    req_quote;
+	uu_error_e	 ret   = UU_OK;
+	
+	if (!csv || !csv->num_rows || !csv->num_cols) {
+		return UU_ERR_ARGS;
+	}
+	
+	fp = fopen(path, "w");
+	if (!fp) {
+		return UU_ERR_FILE;
+	}
+	
+	for (int i = 0; i < csv->num_rows; i++) {
+		for (int j = 0; j < csv->num_cols; j++) {
+			field     = csv_field(csv, i, j);
+			req_quote = csv_req_quote(field);
+			
+			if (!csv_write_field(fp, field, j > 0, req_quote)) {
+				ret = UU_ERR_FILE;
+				goto write_done;
+			}
+		}
+		
+		fprintf(fp, "\n");
+	}
+	
+write_done:
+	fclose(fp);
+	
+	return ret;
+}
+
+
+static uu_bool_t csv_req_quote( uu_cstring_t field ) {
+	char c;
+	
+	while (field && *field && (c = *field++)) {
+		if (c == ',' || isspace(c)) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+
+static uu_bool_t csv_write_field( FILE *fp, uu_cstring_t field,
+                                  uu_bool_t comma, uu_bool_t quoted) {
+	if (comma && !fputc(',', fp)) {
+		return false;
+	}
+	
+	if (quoted && !fputc('\"', fp)) {
+		return false;
+	}
+	
+	for (; field && *field ; field++) {
+		if (!fputc(*field, fp)) {
+			return false;
+		}
+		
+		if (*field == '\"' && !fputc(*field, fp)) {
+			return false;
+		}
+	}
+		
+	if (quoted && !fputc('\"', fp)) {
+		return false;
+	}
+	
+	return true;
 }

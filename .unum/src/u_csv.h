@@ -62,7 +62,7 @@ extern uu_csv_t     *UU_csv_memory( uu_cstring_t buf, uu_error_e *err );
  * UU_csv_write()
  * - write the CSV file to the path or NULL to use the same path as input.
  */
-extern int          UU_csv_write( uu_cstring_t path );
+extern uu_error_e   UU_csv_write( uu_csv_t *csv, uu_cstring_t path );
 
 
 /*
