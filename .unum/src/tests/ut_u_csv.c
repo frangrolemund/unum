@@ -238,7 +238,7 @@ static void csv_test_simple_mod_1( void ) {
 	uu_cstring_t tmp_name;
 	uu_error_e	 err;
 
-	UT_test_setname("file modification #1");
+	UT_test_setname("file mod #1");
 	
 	cf = read_test_file("ut_u_csv_1.csv");
 
