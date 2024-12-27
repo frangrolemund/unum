@@ -226,3 +226,10 @@ uu_cstring_t UU_path_normalize( uu_string_t dst, uu_cstring_t path,
 
 #endif
 }
+
+
+extern uu_cstring_t UU_path_normalize_s( uu_cstring_t path, uu_error_e *err ) {
+	static uu_path_t ret = { '\0' };
+	
+	return UU_path_normalize(ret, path, err);
+}

@@ -90,7 +90,7 @@ extern uu_cstring_t UU_path_join( uu_string_t dst, size_t len, ... );
 
 
 /*
- * UU_path_join_s
+ * UU_path_join_s()
  * - join the path segments (!! NULL terminated !!, variable list uu_cstring_t)
  *   into a single path stored in a static variable returned as the result.
  */
@@ -104,6 +104,14 @@ extern uu_cstring_t UU_path_join_s( uu_cstring_t item, ... );
  */
 extern uu_cstring_t UU_path_normalize( uu_string_t dst, uu_cstring_t path, 
                                        uu_error_e *err );
+
+
+/*
+ * UU_path_normalize_s()
+ * - resolves all symlinks and extra path characters, returning the result
+ *   in a static variable.
+ */
+extern uu_cstring_t UU_path_normalize_s( uu_cstring_t path, uu_error_e *err );
 
 
 /*

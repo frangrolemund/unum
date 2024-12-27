@@ -106,7 +106,7 @@ extern uu_cstring_t UU_csv_get( uu_csv_t *csv, unsigned row, unsigned col,
  * - assign the value of a specific cell in the CSV file.
  */
 extern uu_error_e   UU_csv_set( uu_csv_t *csv, unsigned row, unsigned col,
-                                uu_string_t value );
+                                uu_cstring_t value );
 
 
 /*

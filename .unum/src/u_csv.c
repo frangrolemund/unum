@@ -133,6 +133,10 @@ static uu_error_e csv_update_path( uu_csv_t *csv, uu_cstring_t path ) {
 	}
 	
 	if (csv->path) {
+		if (path && !strcmp(csv->path, path)) {
+			return UU_OK;
+		}
+
 		UU_mem_free(csv->path);
 		csv->path = NULL;
 	}
@@ -454,7 +458,7 @@ uu_cstring_t UU_csv_get( uu_csv_t *csv, unsigned row, unsigned col,
 
 
 uu_error_e UU_csv_set( uu_csv_t *csv, unsigned row, unsigned col,
-					   uu_string_t value ) {
+					   uu_cstring_t value ) {
 	uu_string_t field = NULL;
 					   
 	if (!csv || row >= csv->num_rows || col >= csv->num_cols) {
@@ -516,7 +520,7 @@ uu_error_e UU_csv_write( uu_csv_t *csv, uu_cstring_t path ) {
 write_done:
 	fclose(fp);
 	
-	return ret;
+	return csv_update_path(csv, path);
 }
 
 

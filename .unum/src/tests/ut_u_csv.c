@@ -35,6 +35,8 @@ static void csv_sm2_add_verify3( uu_csv_t *csv );
 static void csv_sm2_add_verify4( uu_csv_t *csv );
 static void csv_sm2_ins_verify5( uu_csv_t *csv );
 static void csv_sm2_ins_verify6( uu_csv_t *csv );
+static void csv_test_creation( void );
+static uu_string_t csv_rand_text( int min, int max, uu_bool_t allow_newline );
 
 
 int main( int argc, char *argv[] ) {
@@ -48,6 +50,7 @@ static int unittest_csv( int argc, char *argv[] ) {
 	csv_test_simple_file_2();
 	csv_test_simple_mod_1();
 	csv_test_simple_mod_2();
+	csv_test_creation();
 	
 	return 0;
 }
@@ -461,4 +464,116 @@ static void csv_sm2_ins_verify6( uu_csv_t *csv ) {
 	csv_assert_value(csv, 4, 2, NULL);
 	csv_assert_value(csv, 4, 3, "b");
 	csv_assert_value(csv, 4, 4, NULL);
+}
+
+
+static void csv_test_creation( void ) {
+	uu_csv_t       *csv      = NULL;
+	uu_cstring_t   tmp_name;
+	const unsigned num_cols  = 6;
+	const unsigned num_rows  = 100000;
+	uu_cstring_t   value;
+	char           buf[256];
+	
+	UT_test_setname("file create");
+	
+	for (int t = 0; t < 3; t++) {
+		srand(53217);
+		
+		switch (t) {
+		case 0:
+			UT_test_printf("creating table");
+			csv = UU_csv_new(num_cols);
+			UT_test_assert(csv && UU_csv_col_count(csv) == num_cols,
+						   "create fail");
+			break;
+
+		case 1:
+			UT_test_printf("reading in-memory table");
+			UT_test_assert(UU_csv_row_count(csv) == num_rows, "invalid rows");
+			break;
+			
+		case 2:
+			UT_test_printf("writing/re-reading table");
+			tmp_name = UT_test_tempfile("csv");
+			UT_test_assert(UU_csv_write(csv, tmp_name) == UU_OK, "write fail");
+			UT_test_assert(!strcmp(UU_csv_file_path(csv),
+			               UU_path_normalize_s(tmp_name, NULL)),
+			               "invalid file path");
+			UU_csv_delete(csv);
+			csv = UU_csv_open(tmp_name, NULL);
+			UT_test_assert(csv && UU_csv_col_count(csv) == num_cols,
+			               "reopen fail");
+			UT_test_assert(UU_csv_row_count(csv) == num_rows, "invalid rows");
+			break;
+		}
+	
+		for (int i = 0; i < num_rows; i++) {
+			if (t == 0) {
+				UT_test_assert(UU_csv_add_row(csv), "failed to add row");
+			}
+		
+			value = rand() % 5 != 0 ? csv_rand_text(10, 20, false) : NULL;
+			if (t == 0) {
+				UT_test_assert(UU_csv_set(csv, i, 0, value) == UU_OK, "fail");
+			} else {
+				csv_assert_value(csv, i, 0, value);
+			}
+			
+			value = rand() % 3 != 0 ? "TRUE" : "FALSE";
+			if (t == 0) {
+				UT_test_assert(UU_csv_set(csv, i, 1, value) == UU_OK, "fail");
+			} else {
+				csv_assert_value(csv, i, 1, value);
+			}
+
+			sprintf(buf, "%d", rand());
+			value = rand() % 10 == 0 ? buf : NULL;
+			if (t == 0) {
+				UT_test_assert(UU_csv_set(csv, i, 2, value) == UU_OK, "fail");
+			} else {
+				csv_assert_value(csv, i, 2, value);
+			}
+
+			value = rand() % 5 != 0 ? csv_rand_text(75, 120, true) : NULL;
+			if (t == 0) {
+				UT_test_assert(UU_csv_set(csv, i, 3, value) == UU_OK, "fail");
+			} else {
+				csv_assert_value(csv, i, 3, value);
+			}
+			
+			if (t > 0) {
+				csv_assert_value(csv, i, 4, NULL);
+			}
+			
+			value = rand() % 5 != 0 ? csv_rand_text(5, 10, true) : NULL;
+			if (t == 0) {
+				UT_test_assert(UU_csv_set(csv, i, 5, value) == UU_OK, "fail");
+			} else {
+				csv_assert_value(csv, i, 5, value);
+			}
+
+		}
+	}
+
+	UU_csv_delete(csv);
+}
+
+
+static uu_string_t csv_rand_text( int min, int max, uu_bool_t allow_newline ) {
+	static char buf[256];
+	int         i, len;
+	
+	len = min + (rand() % (max - min));
+	for (i = 0; i < len; i++) {
+		buf[i] = (allow_newline && rand() % 15 == 0) ?
+				 '\n' :
+		         (rand() % ('Z' - '0')) + '0';
+	}
+	buf[i] = '\0';
+	
+	len = (int) strlen(buf);
+	UT_test_assert(len >= min && len <= max, "invalid test text");
+	
+	return buf;
 }
