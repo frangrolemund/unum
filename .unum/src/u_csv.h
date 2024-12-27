@@ -71,11 +71,26 @@ extern uu_error_e   UU_csv_write( uu_csv_t *csv, uu_cstring_t path );
  */
 extern void         UU_csv_delete( uu_csv_t *csv );
 
+
 /*
  * UU_csv_add_row()
- * - add a new row to the table.
+ * - add a new row to the table, returning the new row count or 0 for error.
  */
-extern int          UU_csv_add_row( uu_csv_t *csv );
+extern unsigned     UU_csv_add_row( uu_csv_t *csv );
+
+
+/*
+ * UU_csv_insert_row()
+ * - insert a new row into the table at the given offset.
+ */
+extern uu_error_e   UU_csv_insert_row( uu_csv_t *csv, unsigned offset );
+
+
+/*
+ * UU_csv_delete_row()
+ * - delete the given row from the table.
+ */
+extern uu_error_e   UU_csv_delete_row( uu_csv_t *csv, unsigned row );
 
 
 /*
@@ -95,17 +110,17 @@ extern uu_error_e   UU_csv_set( uu_csv_t *csv, unsigned row, unsigned col,
 
 
 /*
- * UU_csv_rows()
- * - get the number of rows in the CSV file.
+ * UU_csv_row_count()
+ * - the number of rows in the CSV table.
  */
-extern unsigned     UU_csv_rows( uu_csv_t *csv );
+extern unsigned     UU_csv_row_count( uu_csv_t *csv );
 
 
 /*
- * UU_csv_cols()
- * - get the number of columns in the CSV file.
+ * UU_csv_col_count()
+ * - the number of columns in the CSV table.
  */
-extern unsigned     UU_csv_cols( uu_csv_t *csv );
+extern unsigned     UU_csv_col_count( uu_csv_t *csv );
 
 
 /*

@@ -31,6 +31,7 @@ static void csv_delete_field( uu_csv_t *csv, uu_string_t s );
 static uu_bool_t csv_bnf_FILE( uu_csv_t *csv, uu_error_e *err );
 static uu_bool_t csv_bnf_RECORD( uu_csv_t *csv, uu_string_t cur,
                                  uu_string_t *next, uu_error_e *err );
+static uu_bool_t csv_ensure_rows( uu_csv_t *csv );
 static uu_bool_t csv_bnf_FIELD( uu_string_t cur, uu_string_t *start_field,
                                 uu_string_t *end_field, uu_string_t *next,
 							    uu_bool_t *is_eol );
@@ -47,7 +48,7 @@ static uu_bool_t csv_write_field( FILE *fp, uu_cstring_t field,
 #define MAX_COLS        256
 #define ROW_GROUP_SIZE  32
 
-#define csv_field(csv, r, c)   (*(csv->rows + ((csv->num_cols * r) + c)))
+#define csv_field(csv, r, c)   (*(csv->rows + ((csv->num_cols * (r)) + (c))))
 #define csv_is_file(csv, s)    (s >= (char *)csv &&\
 							    s < ((char *)csv + csv->size))
 
@@ -217,7 +218,6 @@ static uu_bool_t csv_bnf_RECORD( uu_csv_t *csv, uu_string_t cur,
 	int          count           = 0;
 	uu_string_t  start, end;
 	uu_bool_t    is_eol          = false;
-	size_t       row_buf_len     = 0;
 
 	while (csv_bnf_FIELD(cur, &start, &end, next, &is_eol)) {
 		assert(count < MAX_COLS);
@@ -253,15 +253,9 @@ static uu_bool_t csv_bnf_RECORD( uu_csv_t *csv, uu_string_t cur,
 	
 	csv->num_cols = count;
 	
-	if (csv->max_rows <= csv->num_rows) {
-		csv->max_rows += ROW_GROUP_SIZE;
-		row_buf_len    = sizeof(uu_string_t *) * csv->max_rows * csv->num_cols;
-		csv->rows      = (uu_string_t *) UU_mem_realloc(csv->rows, row_buf_len);
-		
-		if (!csv->rows) {
-			UU_set_errorp(err, UU_ERR_MEM);
-			return false;
-		}
+	if (!csv_ensure_rows(csv)) {
+		UU_set_errorp(err, UU_ERR_MEM);
+		return false;
 	}
 
 	for (int i = 0; i < count; i++) {
@@ -269,6 +263,22 @@ static uu_bool_t csv_bnf_RECORD( uu_csv_t *csv, uu_string_t cur,
 	}
 	
 	csv->num_rows++;
+	
+	return true;
+}
+
+static uu_bool_t csv_ensure_rows( uu_csv_t *csv ) {
+	size_t row_buf_len = 0;
+
+	if (csv->max_rows <= csv->num_rows) {
+		csv->max_rows += ROW_GROUP_SIZE;
+		row_buf_len    = sizeof(uu_string_t *) * csv->max_rows * csv->num_cols;
+		csv->rows      = (uu_string_t *) UU_mem_realloc(csv->rows, row_buf_len);
+		
+		if (!csv->rows) {
+			return false;
+		}
+	}
 	
 	return true;
 }
@@ -414,7 +424,7 @@ static uu_bool_t csv_bnf_EOL( uu_string_t cur, uu_string_t *next) {
 }
 
 
-unsigned UU_csv_rows( uu_csv_t *csv ) {
+unsigned UU_csv_row_count( uu_csv_t *csv ) {
 	if (csv) {
 		return csv->num_rows;
 	}
@@ -423,7 +433,7 @@ unsigned UU_csv_rows( uu_csv_t *csv ) {
 }
 
 
-unsigned UU_csv_cols( uu_csv_t *csv ) {
+unsigned UU_csv_col_count( uu_csv_t *csv ) {
 	if (csv) {
 		return csv->num_cols;
 	}
@@ -548,4 +558,66 @@ static uu_bool_t csv_write_field( FILE *fp, uu_cstring_t field,
 	}
 	
 	return true;
+}
+
+
+unsigned UU_csv_add_row( uu_csv_t *csv ) {
+	if (!csv) {
+		return 0;
+	}
+	
+	return UU_csv_insert_row(csv, csv->num_rows) == UU_OK ? csv->num_rows : 0;
+}
+
+
+uu_error_e UU_csv_insert_row( uu_csv_t *csv, unsigned offset ) {
+	if (!csv || offset > csv->num_rows) {
+		return UU_ERR_ARGS;
+	}
+	
+	csv->num_rows++;
+	
+	if (!csv_ensure_rows(csv)) {
+		csv->num_rows--;
+		return UU_ERR_MEM;
+	}
+	
+	if (csv->num_rows > 1) {
+		for (int i = csv->num_rows - 1; i > offset; i--) {
+			for (int j = 0; j < csv->num_cols; j++) {
+				csv_field(csv, i, j) = csv_field(csv, i - 1, j);
+			}
+		}
+	}
+	
+	for (int j = 0; j < csv->num_cols; j++) {
+		csv_field(csv, offset, j) = NULL;
+	}
+
+	return UU_OK;
+}
+
+
+uu_error_e UU_csv_delete_row( uu_csv_t *csv, unsigned row ) {
+	if (!csv || row >= csv->num_rows) {
+		return UU_ERR_ARGS;
+	}
+
+	for (int j = 0; j < csv->num_cols; j++) {
+		csv_delete_field(csv, csv_field(csv, row, j));
+	}
+	
+	for (; row < csv->num_rows - 1 ; row++) {
+		for (int j = 0; j < csv->num_cols; j++) {
+			csv_field(csv, row, j) = csv_field(csv, row + 1, j);
+		}
+	}
+	
+	for (int j = 0; j < csv->num_cols; j++) {
+		csv_field(csv, row, j) = NULL;
+	}
+	
+	csv->num_rows--;
+	
+	return UU_OK;
 }

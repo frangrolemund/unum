@@ -169,7 +169,8 @@ uu_cstring_t UT_test_tempfile( uu_cstring_t extension ) {
 	tmp_files = UU_mem_realloc(tmp_files, sizeof(uu_string_t) * num_tmp);
 	UT_test_assert(tmp_files, "out of memory");
 	UU_mem_tare(tmp_files);
-	tmp_files[num_tmp - 1] = ret = UU_mem_strdup(UU_path_join_s(tmp_dir, buf));
+	tmp_files[num_tmp - 1] = ret = UU_mem_strdup(
+									  UU_path_join_s(tmp_dir, buf, NULL));
 	UT_test_assert(ret, "out of memory");
 	UU_mem_tare(ret);
 	
