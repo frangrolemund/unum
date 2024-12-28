@@ -2,11 +2,11 @@
 | vi: set noet ts=4 sw=4 fenc=utf-8
 | ---------------------------------------------------------------
 | Copyright 2024 Francis Henry Grolemund III
-|
+|   
 | Permission to use, copy, modify, and/or distribute this software for
 | any purpose with or without fee is hereby granted, provided that the
 | above copyright notice and this permission notice appear in all copies.
-|
+|   
 | THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL
 | WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED
 | WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE
@@ -17,14 +17,12 @@
 | PERFORMANCE OF THIS SOFTWARE.
 | ---------------------------------------------------------------*/
 
-#ifndef UNUM_DEPLOY_H
-#define UNUM_DEPLOY_H
+#include <stdio.h>
+#include "d_deploy.h"
 
-typedef enum {
-	UDT_INCREMENTAL = 0,
-	UDT_CLEAN
-} udeploy_type_e;
-
-extern void UD_deploy( udeploy_type_e deploy_type );
-
-#endif /* UNUM_DEPLOY_H */
+/*
+ *  TBD
+ */
+void UD_deploy( udeploy_type_e deploy_type ) {
+	printf("TODO: deploy...%d\n", deploy_type);
+}

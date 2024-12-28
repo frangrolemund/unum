@@ -95,7 +95,9 @@ extern uu_error_e   UU_csv_delete_row( uu_csv_t *csv, unsigned row );
 
 /*
  * UU_csv_get()
- * - get the value from a specific cell in the CSV file.
+ * - get the value from a specific cell in the CSV file.  Since a value can
+ *   be legitimately NULL when unset, errors are communicated using the last
+ *   parameter.
  */
 extern uu_cstring_t UU_csv_get( uu_csv_t *csv, unsigned row, unsigned col,
 								uu_error_e *err );

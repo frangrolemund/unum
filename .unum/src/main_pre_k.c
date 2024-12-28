@@ -49,7 +49,7 @@ int UM_main( int argc, char *argv[] ) {
 	
 	if (!strcmp(argv[1], "deploy")) {
 		printf("TODO: deploy\n");
-		UD_deploy(UDT_CLEAN);
+		UD_deploy(UD_DEPLOY_CLEAN);
 		printf("unum is bootstrapped\n");
 		
 	} else if (!strcmp(argv[1], "--version")) {
