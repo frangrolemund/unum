@@ -248,6 +248,7 @@ static void csv_test_simple_file_2( void ) {
 
 static void csv_test_simple_mod_1( void ) {
 	uu_csv_t     *cf;
+	uu_cstring_t tmp_file;
 
 	UT_test_setname("file mod #1");
 	
@@ -262,7 +263,27 @@ static void csv_test_simple_mod_1( void ) {
 	               "failed to assign value");
 	               
 	assert_mem_file(cf, csv_sm1_verify1);
-			  
+	
+	// ...check that NULL will re-write the same file if already set.
+	UT_test_assert(UU_csv_set(cf, 2, 3, "flight test") == UU_OK,
+	               "failed to assign value");
+	csv_assert_value(cf, 2, 3, "flight test");
+	tmp_file = UT_test_tempfile("csv");
+	UT_test_assert(UU_csv_write(cf, tmp_file) == UU_OK, "failed to write")
+	UU_csv_delete(cf);
+	
+	cf = UU_csv_open(tmp_file, NULL);
+	UT_test_assert(cf, "failed to open");
+	csv_assert_value(cf, 2, 3, "flight test");
+	UT_test_assert(UU_csv_set(cf, 2, 3, "burn") == UU_OK,
+	               "failed to assign value");
+	csv_assert_value(cf, 2, 3, "burn");
+	UT_test_assert(UU_csv_write(cf, NULL) == UU_OK, "failed to write")
+	UU_csv_delete(cf);
+	
+	cf = UU_csv_open(tmp_file, NULL);
+	UT_test_assert(cf, "failed to open");
+	csv_assert_value(cf, 2, 3, "burn");
 	UU_csv_delete(cf);
 }
 

@@ -498,6 +498,11 @@ uu_error_e UU_csv_write( uu_csv_t *csv, uu_cstring_t path ) {
 		return UU_ERR_ARGS;
 	}
 	
+	path = path ? path : csv->path;
+	if (!path) {
+		return UU_ERR_ARGS;
+	}
+	
 	fp = fopen(path, "w");
 	if (!fp) {
 		return UU_ERR_FILE;
