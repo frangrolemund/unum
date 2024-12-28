@@ -10,6 +10,12 @@
 		A103CEBC2CF765DF0057C7A3 /* u_test.c in Sources */ = {isa = PBXBuildFile; fileRef = A103CEBB2CF765DF0057C7A3 /* u_test.c */; };
 		A15CC5222CFCB8F0003E8F4D /* u_fs.c in Sources */ = {isa = PBXBuildFile; fileRef = A15CC5212CFCB8F0003E8F4D /* u_fs.c */; };
 		A15D927D2D2035F000504703 /* d_deploy.c in Sources */ = {isa = PBXBuildFile; fileRef = A15D927C2D2035F000504703 /* d_deploy.c */; };
+		A15D92912D2053A600504703 /* u_csv.c in Sources */ = {isa = PBXBuildFile; fileRef = A15D928C2D2053A600504703 /* u_csv.c */; };
+		A15D92922D2053A600504703 /* u_fs.c in Sources */ = {isa = PBXBuildFile; fileRef = A15D928D2D2053A600504703 /* u_fs.c */; };
+		A15D92932D2053A600504703 /* ut_d_manifest.c in Sources */ = {isa = PBXBuildFile; fileRef = A15D92902D2053A600504703 /* ut_d_manifest.c */; };
+		A15D92942D2053A600504703 /* u_test.c in Sources */ = {isa = PBXBuildFile; fileRef = A15D928F2D2053A600504703 /* u_test.c */; };
+		A15D92952D2053A600504703 /* d_manifest.c in Sources */ = {isa = PBXBuildFile; fileRef = A15D928B2D2053A600504703 /* d_manifest.c */; };
+		A15D92962D2053A600504703 /* u_mem.c in Sources */ = {isa = PBXBuildFile; fileRef = A15D928E2D2053A600504703 /* u_mem.c */; };
 		A1630FF72D0DDC2C00F92EC6 /* u_mem.c in Sources */ = {isa = PBXBuildFile; fileRef = A1630FF62D0DDC2C00F92EC6 /* u_mem.c */; };
 		A16310112D0DEFED00F92EC6 /* ut_u_mem.c in Sources */ = {isa = PBXBuildFile; fileRef = A16310102D0DEFED00F92EC6 /* ut_u_mem.c */; };
 		A16310142D0DF00500F92EC6 /* u_mem.c in Sources */ = {isa = PBXBuildFile; fileRef = A16310122D0DF00500F92EC6 /* u_mem.c */; };
@@ -30,6 +36,15 @@
 
 /* Begin PBXCopyFilesBuildPhase section */
 		A103CEB02CF7647D0057C7A3 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		A15D92812D20532400504703 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = /usr/share/man/man1/;
@@ -85,6 +100,13 @@
 		A15CC5212CFCB8F0003E8F4D /* u_fs.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = u_fs.c; path = /Users/fran/work/realproven/unum/.unum/src/u_fs.c; sourceTree = "<absolute>"; };
 		A15D927C2D2035F000504703 /* d_deploy.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = d_deploy.c; path = /Users/fran/work/realproven/unum/.unum/src/d_deploy.c; sourceTree = "<absolute>"; };
 		A15D927E2D20360F00504703 /* d_manifest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = d_manifest.h; path = /Users/fran/work/realproven/unum/.unum/src/d_manifest.h; sourceTree = "<absolute>"; };
+		A15D92832D20532400504703 /* ut_d_manifest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ut_d_manifest; sourceTree = BUILT_PRODUCTS_DIR; };
+		A15D928B2D2053A600504703 /* d_manifest.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = d_manifest.c; path = /Users/fran/work/realproven/unum/.unum/src/d_manifest.c; sourceTree = "<absolute>"; };
+		A15D928C2D2053A600504703 /* u_csv.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = u_csv.c; path = /Users/fran/work/realproven/unum/.unum/src/u_csv.c; sourceTree = "<absolute>"; };
+		A15D928D2D2053A600504703 /* u_fs.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = u_fs.c; path = /Users/fran/work/realproven/unum/.unum/src/u_fs.c; sourceTree = "<absolute>"; };
+		A15D928E2D2053A600504703 /* u_mem.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = u_mem.c; path = /Users/fran/work/realproven/unum/.unum/src/u_mem.c; sourceTree = "<absolute>"; };
+		A15D928F2D2053A600504703 /* u_test.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = u_test.c; path = /Users/fran/work/realproven/unum/.unum/src/u_test.c; sourceTree = "<absolute>"; };
+		A15D92902D2053A600504703 /* ut_d_manifest.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = ut_d_manifest.c; path = /Users/fran/work/realproven/unum/.unum/src/tests/ut_d_manifest.c; sourceTree = "<absolute>"; };
 		A1630FF52D0DD00000F92EC6 /* ut_u_csv_2.csv */ = {isa = PBXFileReference; lastKnownFileType = text; name = ut_u_csv_2.csv; path = /Users/fran/work/realproven/unum/.unum/src/tests/ut_u_csv_2.csv; sourceTree = "<absolute>"; };
 		A1630FF62D0DDC2C00F92EC6 /* u_mem.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = u_mem.c; path = /Users/fran/work/realproven/unum/.unum/src/u_mem.c; sourceTree = "<absolute>"; };
 		A16310082D0DEF1700F92EC6 /* ut_u_mem */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ut_u_mem; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -115,6 +137,13 @@
 
 /* Begin PBXFrameworksBuildPhase section */
 		A103CEAF2CF7647D0057C7A3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A15D92802D20532400504703 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -166,6 +195,19 @@
 			name = ut_u_csv;
 			sourceTree = "<group>";
 		};
+		A15D928A2D20532D00504703 /* ut_d_manifest */ = {
+			isa = PBXGroup;
+			children = (
+				A15D92902D2053A600504703 /* ut_d_manifest.c */,
+				A15D928B2D2053A600504703 /* d_manifest.c */,
+				A15D928C2D2053A600504703 /* u_csv.c */,
+				A15D928D2D2053A600504703 /* u_fs.c */,
+				A15D928E2D2053A600504703 /* u_mem.c */,
+				A15D928F2D2053A600504703 /* u_test.c */,
+			);
+			name = ut_d_manifest;
+			sourceTree = "<group>";
+		};
 		A163100F2D0DEF1F00F92EC6 /* ut_u_mem */ = {
 			isa = PBXGroup;
 			children = (
@@ -204,6 +246,7 @@
 				A103CEAD2CF763F50057C7A3 /* ut_u_csv */,
 				A163100F2D0DEF1F00F92EC6 /* ut_u_mem */,
 				A17C4DCA2D130E7D00CCFA29 /* ut_u_fs */,
+				A15D928A2D20532D00504703 /* ut_d_manifest */,
 				A1975C2D2CF37C1C005F115E /* Products */,
 			);
 			sourceTree = "<group>";
@@ -216,6 +259,7 @@
 				A103CEB22CF7647D0057C7A3 /* ut_u_csv */,
 				A16310082D0DEF1700F92EC6 /* ut_u_mem */,
 				A17C4DC32D130E6200CCFA29 /* ut_u_fs */,
+				A15D92832D20532400504703 /* ut_d_manifest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -260,6 +304,25 @@
 			);
 			productName = u_csv_test;
 			productReference = A103CEB22CF7647D0057C7A3 /* ut_u_csv */;
+			productType = "com.apple.product-type.tool";
+		};
+		A15D92822D20532400504703 /* ut_d_manifest */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A15D92872D20532400504703 /* Build configuration list for PBXNativeTarget "ut_d_manifest" */;
+			buildPhases = (
+				A15D927F2D20532400504703 /* Sources */,
+				A15D92802D20532400504703 /* Frameworks */,
+				A15D92812D20532400504703 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ut_d_manifest;
+			packageProductDependencies = (
+			);
+			productName = ut_d_manifest;
+			productReference = A15D92832D20532400504703 /* ut_d_manifest */;
 			productType = "com.apple.product-type.tool";
 		};
 		A16310072D0DEF1700F92EC6 /* ut_u_mem */ = {
@@ -350,6 +413,9 @@
 					A103CEB12CF7647D0057C7A3 = {
 						CreatedOnToolsVersion = 16.1;
 					};
+					A15D92822D20532400504703 = {
+						CreatedOnToolsVersion = 16.2;
+					};
 					A16310072D0DEF1700F92EC6 = {
 						CreatedOnToolsVersion = 16.1;
 					};
@@ -383,6 +449,7 @@
 				A103CEB12CF7647D0057C7A3 /* ut_u_csv */,
 				A16310072D0DEF1700F92EC6 /* ut_u_mem */,
 				A17C4DC22D130E6200CCFA29 /* ut_u_fs */,
+				A15D92822D20532400504703 /* ut_d_manifest */,
 			);
 		};
 /* End PBXProject section */
@@ -397,6 +464,19 @@
 				A15CC5222CFCB8F0003E8F4D /* u_fs.c in Sources */,
 				A1630FF72D0DDC2C00F92EC6 /* u_mem.c in Sources */,
 				A1B587DA2CF8AED0000D6C46 /* ut_u_csv.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A15D927F2D20532400504703 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A15D92912D2053A600504703 /* u_csv.c in Sources */,
+				A15D92922D2053A600504703 /* u_fs.c in Sources */,
+				A15D92932D2053A600504703 /* ut_d_manifest.c in Sources */,
+				A15D92942D2053A600504703 /* u_test.c in Sources */,
+				A15D92952D2053A600504703 /* d_manifest.c in Sources */,
+				A15D92962D2053A600504703 /* u_mem.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -465,6 +545,34 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = Q9UQ5RW44T;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"UNUM_UNIT_TEST=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		A15D92882D20532400504703 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = Q9UQ5RW44T;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"UNUM_UNIT_TEST=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		A15D92892D20532400504703 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = Q9UQ5RW44T;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -725,6 +833,15 @@
 			buildConfigurations = (
 				A103CEB72CF7647D0057C7A3 /* Debug */,
 				A103CEB82CF7647D0057C7A3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A15D92872D20532400504703 /* Build configuration list for PBXNativeTarget "ut_d_manifest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A15D92882D20532400504703 /* Debug */,
+				A15D92892D20532400504703 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
