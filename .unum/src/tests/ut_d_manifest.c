@@ -22,6 +22,7 @@
 #include "u_test.h"
 
 static int unittest_manifest( int argc, char *argv[] );
+static void manifest_test_simple( void );
 
 
 int main( int argc, char *argv[] ) {
@@ -30,6 +31,23 @@ int main( int argc, char *argv[] ) {
 
 
 static int unittest_manifest( int argc, char *argv[] ) {
-	UT_test_printf("TODO: manifest");
+	manifest_test_simple();
 	return 0;
+}
+
+
+static void manifest_test_simple( void ) {
+	ud_manifest_t *man;
+	uu_error_e    err;
+	
+	uu_cstring_t  tmp_file;
+	
+	tmp_file = UT_test_tempfile("csv", (uu_cstring_t []) {"foo", "bar", NULL});
+	tmp_file = UT_test_tempfile("csv", (uu_cstring_t []) {"foo", "bar", "baz",
+	                            NULL});
+	tmp_file = UT_test_tempfile("csv", (uu_cstring_t []) {"abc", "def", "ghi",
+	                            NULL});
+	UT_test_assert(tmp_file, "failed to create temp file");
+	
+//	man = UD_manifest_new("", &err)
 }

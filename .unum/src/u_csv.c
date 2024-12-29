@@ -27,22 +27,22 @@
 static uu_csv_t   *csv_new( unsigned cols, size_t buf_len, uu_cstring_t path,
 							uu_error_e *err );
 static uu_error_e csv_update_path( uu_csv_t *csv, uu_cstring_t path );
-static void csv_delete_field( uu_csv_t *csv, uu_string_t s );
-static uu_bool_t csv_bnf_FILE( uu_csv_t *csv, uu_error_e *err );
-static uu_bool_t csv_bnf_RECORD( uu_csv_t *csv, uu_string_t cur,
-                                 uu_string_t *next, uu_error_e *err );
-static uu_bool_t csv_ensure_rows( uu_csv_t *csv );
-static uu_bool_t csv_bnf_FIELD( uu_string_t cur, uu_string_t *start_field,
-                                uu_string_t *end_field, uu_string_t *next,
-							    uu_bool_t *is_eol );
-static uu_bool_t csv_bnf_COMMA( uu_string_t cur, uu_string_t *next );
-static uu_bool_t csv_bnf_CRLF( uu_string_t cur, uu_string_t *next );
-static uu_bool_t csv_bnf_CR( uu_string_t cur, uu_string_t *next );
-static uu_bool_t csv_bnf_LF( uu_string_t cur, uu_string_t *next );
-static uu_bool_t csv_bnf_EOL( uu_string_t cur, uu_string_t *next);
-static uu_bool_t csv_req_quote( uu_cstring_t field );
-static uu_bool_t csv_write_field( FILE *fp, uu_cstring_t field,
-                                  uu_bool_t comma, uu_bool_t quoted);
+static void       csv_delete_field( uu_csv_t *csv, uu_string_t s );
+static uu_bool_t  csv_bnf_FILE( uu_csv_t *csv, uu_error_e *err );
+static uu_bool_t  csv_bnf_RECORD( uu_csv_t *csv, uu_string_t cur,
+                                  uu_string_t *next, uu_error_e *err );
+static uu_bool_t  csv_ensure_rows( uu_csv_t *csv );
+static uu_bool_t  csv_bnf_FIELD( uu_string_t cur, uu_string_t *start_field,
+                                 uu_string_t *end_field, uu_string_t *next,
+								 uu_bool_t *is_eol );
+static uu_bool_t  csv_bnf_COMMA( uu_string_t cur, uu_string_t *next );
+static uu_bool_t  csv_bnf_CRLF( uu_string_t cur, uu_string_t *next );
+static uu_bool_t  csv_bnf_CR( uu_string_t cur, uu_string_t *next );
+static uu_bool_t  csv_bnf_LF( uu_string_t cur, uu_string_t *next );
+static uu_bool_t  csv_bnf_EOL( uu_string_t cur, uu_string_t *next);
+static uu_bool_t  csv_req_quote( uu_cstring_t field );
+static uu_bool_t  csv_write_field( FILE *fp, uu_cstring_t field,
+                                   uu_bool_t comma, uu_bool_t quoted);
 
 
 #define MAX_COLS        256

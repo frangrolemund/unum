@@ -21,7 +21,7 @@
 #include <string.h>
 
 #include "u_common.h"
-#include "deploy.h"
+#include "d_deploy.h"
 
 #ifndef UNUM_BOOTSTRAP
 #error "Bootstrapping only."

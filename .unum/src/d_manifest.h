@@ -27,17 +27,28 @@
 #define U_MANIFEST_MAX_NAME 256
 
 
-typedef struct {
-	uu_csv_t *csv;
-} ud_manifest_t;
-
+typedef enum {
+	UD_MANP_CORE = 0,   // ... bootstrapping
+	UD_MANP_KERN,       // ... kernel runtime (requires core)
+	UD_MANP_CUSTOM,     // ... non-kernel systems (requires kern)
+	UD_MANP_TEST        // ... unit testing (requires custom, kern or core)
+} ud_manifest_phase_e;
 
 typedef enum {
-	UD_MANIFEST_CORE = 0,   // ... bootstrapping
-	UD_MANIFEST_KERN,       // ... kernel runtime (requires core)
-	UD_MANIFEST_CUSTOM,     // ... non-kernel systems (requires kern)
-	UD_MANIFEST_TEST        // ... unit testing (requires custom, kern or core)
-} ud_manifest_phase_e;
+	UD_MANC_FILE  = 0,
+	UD_MANC_PHASE,
+	UD_MANC_REQ,
+	UD_MANC_NAME,
+	
+	UD_MANC_COUNT
+} ud_manifest_column_e;
+
+
+typedef struct {
+	uu_path_t root;
+	uu_csv_t  *csv;
+	int       col_map[UD_MANC_COUNT];
+} ud_manifest_t;
 
 
 typedef struct {
@@ -57,7 +68,7 @@ typedef struct {
  * - create an empty manifest while assuming files are relative to the
  *   provided root directory.
  */
-extern ud_manifest_t *UD_manifest_new( uu_cstring_t root );
+extern ud_manifest_t *UD_manifest_new( uu_cstring_t root, uu_error_e *err );
 
 
 /*

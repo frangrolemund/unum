@@ -268,7 +268,7 @@ static void csv_test_simple_mod_1( void ) {
 	UT_test_assert(UU_csv_set(cf, 2, 3, "flight test") == UU_OK,
 	               "failed to assign value");
 	csv_assert_value(cf, 2, 3, "flight test");
-	tmp_file = UT_test_tempfile("csv");
+	tmp_file = UT_test_tempfile("csv", NULL);
 	UT_test_assert(UU_csv_write(cf, tmp_file) == UU_OK, "failed to write")
 	UU_csv_delete(cf);
 	
@@ -297,7 +297,7 @@ static void assert_mem_file( uu_csv_t *csv, void (*test)(uu_csv_t *csv)) {
 	test(csv);
 	
 	UT_test_printf("...file test");
-	tmp_name = UT_test_tempfile("csv");
+	tmp_name = UT_test_tempfile("csv", NULL);
 	UT_test_assert(UU_csv_write(csv, tmp_name) == UU_OK, "failed to write");
 	cf  = UU_csv_open(tmp_name, &err);
 	UT_test_assert(cf, "failed to reopen");
@@ -516,7 +516,7 @@ static void csv_test_creation( void ) {
 			
 		case 2:
 			UT_test_printf("writing/re-reading table");
-			tmp_name = UT_test_tempfile("csv");
+			tmp_name = UT_test_tempfile("csv", NULL);
 			UT_test_assert(UU_csv_write(csv, tmp_name) == UU_OK, "write fail");
 			UT_test_assert(!strcmp(UU_csv_file_path(csv),
 			               UU_path_normalize_s(tmp_name, NULL)),

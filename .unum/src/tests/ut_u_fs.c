@@ -42,7 +42,7 @@ static int unittest_fs( int argc, char *argv[] ) {
 
 
 static void fs_test_paths( void ) {
-	uu_path_t    path, buf;
+	uu_path_t    path, buf, spath;
 	struct stat  s;
 	uu_string_t  src, dest, last;
 
@@ -89,6 +89,11 @@ static void fs_test_paths( void ) {
 		last = dest;
 	}
 	UT_test_assert_eq(last, __FILE__, "unexpected difference");
+	
+	#if UNUM_OS_UNIX == 0
+	// - the path checks below will need to be reworked.
+	#error "Not yet supported."
+	#endif
 	
 	UT_test_assert_eq(UU_path_join(buf, U_PATH_MAX,
 	             "\0", "./abc", "\0", "def", NULL),

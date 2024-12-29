@@ -424,7 +424,9 @@ static void write_config( void ) {
 	printf_config(" */");
 	printf_config("");
 
-	
+
+	printf_config("#define UNUM_OS_UNIX         %d",
+                    platform == P_WINDOWS ? 0 : 1);	
 	printf_config("#define UNUM_OS_WIN          %d", 
 	                platform == P_WINDOWS ? 1 : 0);
 	printf_config("#define UNUM_OS_MACOS        %d", 

@@ -39,7 +39,11 @@
 						  }
 extern void _UT_test_failed( uu_cstring_t expr, uu_cstring_t file, int line,
 							 uu_cstring_t msg);
-							 
+
+/*
+ * UT_test_assert_eq()
+ * - verify a test assert that two strings are equivalent.
+ */
 #define UT_test_assert_eq( s1, s2, d ) UT_test_assert(!strcmp((s1), (s2)), (d))
 
 
@@ -78,9 +82,12 @@ extern int  _UT_test_run( uu_cstring_t file, int argc, uu_string_t argv[],
 /*
  * UT_test_tempfile()
  * - returns a temporary filename allocated on the heap that will be released
- *   after the test completes.
+ *   after the test completes.  If `subdirs` is non-NULL, it is a
+ *   NULL-terminated array of sub-directory names that will be auto-created
+ *   and prepended to the temporary file.
  */
-extern uu_cstring_t UT_test_tempfile( uu_cstring_t extension );
+extern uu_cstring_t UT_test_tempfile( uu_cstring_t extension,
+                                      uu_cstring_t subdirs[] );
 
 
 #endif /* UNUM_TEST_H */

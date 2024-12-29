@@ -68,6 +68,7 @@
 
 
 #define UU_mem_set(p, v, n)           memset((p), (v), (n))
+#define UU_mem_reset(p, n)            bzero(p, n)
 #define UU_mem_copy(d, s, n)          memcpy((d), (s), (n))
 
 

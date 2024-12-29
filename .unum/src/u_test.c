@@ -43,7 +43,9 @@ static uu_string_t tmp_dir    = NULL;
 static uu_string_t *tmp_files = NULL;
 static int         num_tmp    = 0;
 
+static uu_string_t track_tmp_file( uu_cstring_t file );
 static void delete_tmp_files( void );
+static int tmp_dir_compare(const void *f1, const void *f2);
 
 
 int _UT_test_run( uu_cstring_t file, int argc, uu_string_t argv[],
@@ -139,7 +141,8 @@ char *UT_test_filename( uu_cstring_t file ) {
 }
 
 
-uu_cstring_t UT_test_tempfile( uu_cstring_t extension ) {
+uu_cstring_t UT_test_tempfile( uu_cstring_t extension,
+                               uu_cstring_t subdirs[] ) {
 	time_t           now;
 	struct tm        *tm_now;
 	char             buf[32];
@@ -164,17 +167,54 @@ uu_cstring_t UT_test_tempfile( uu_cstring_t extension ) {
 	
 	snprintf(buf, sizeof(buf)/sizeof(buf[0]), "tmp-%ld%d.%s", now, num_tmp,
 			 extension ? extension : "tmp");
+			 
+	ret = tmp_dir;
+	while (subdirs && *subdirs) {
+		ret = (uu_string_t) UU_path_join_s(ret, *subdirs, NULL);
+		UT_test_assert(UU_dir_create(ret, S_IRWXU, true) == UU_OK,
+					   "dir create failed");
+		ret = track_tmp_file(ret);
+		subdirs++;
+	}
+	ret = track_tmp_file(UU_path_join_s(ret, buf, NULL));
+	
+	return ret;
+}
 
+
+static uu_string_t track_tmp_file( uu_cstring_t file ) {
+	uu_string_t ret;
+	
+	UT_test_assert(file, "invalid file");
+	
+	for (int i = 0; i < num_tmp; i++) {
+		if (!strcmp(tmp_files[i], file)) {
+			return tmp_files[i];
+		}
+	}
+		
 	num_tmp++;
+	
 	tmp_files = UU_mem_realloc(tmp_files, sizeof(uu_string_t) * num_tmp);
 	UT_test_assert(tmp_files, "out of memory");
 	UU_mem_tare(tmp_files);
-	tmp_files[num_tmp - 1] = ret = UU_mem_strdup(
-									  UU_path_join_s(tmp_dir, buf, NULL));
+	
+	tmp_files[num_tmp - 1] = ret = UU_mem_strdup(file);
 	UT_test_assert(ret, "out of memory");
 	UU_mem_tare(ret);
 	
 	return ret;
+}
+
+
+static int tmp_dir_compare(const void *f1, const void *f2) {
+	uu_cstring_t *sf1 = (uu_cstring_t *) f1;
+	uu_cstring_t *sf2 = (uu_cstring_t *) f2;
+	
+	UT_test_assert(*sf1 && *sf2, "invalid");
+	
+	// ...delete from bottom-up.
+	return (int) strlen(*sf2) - (int) strlen(*sf1);
 }
 
 
@@ -187,8 +227,17 @@ static void delete_tmp_files( void ) {
 	
 	for (int i = 0; i < num_tmp; i++) {
 		if (UU_file_exists(tmp_files[i]) && unlink(tmp_files[i]) != 0) {
-			UT_test_printf("error: failed to delete %s (errno=%d)", tmp_files[i],
-			          errno);
+			UT_test_printf("error: failed to delete %s (errno=%d)",
+			               tmp_files[i], errno);
+			ok = false;
+		}
+	}
+	
+	qsort(tmp_files, num_tmp, sizeof(uu_string_t), tmp_dir_compare);
+	for (int i = 0; i < num_tmp; i++) {
+		if (UU_dir_exists(tmp_files[i]) && rmdir(tmp_files[i]) != 0) {
+			UT_test_printf("error: failed to rmdir %s (errno=%d)", tmp_files[i],
+			               errno);
 			ok = false;
 		}
 	}
