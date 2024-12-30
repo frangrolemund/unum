@@ -17,12 +17,17 @@
 | PERFORMANCE OF THIS SOFTWARE. 
 | ---------------------------------------------------------------*/
 
+#include <time.h>
+
 #include "u_common.h"
 #include "d_manifest.h"
 #include "u_test.h"
 
 static int unittest_manifest( int argc, char *argv[] );
 static void manifest_test_simple( void );
+static uu_cstring_t tmp_root ( void );
+static uu_cstring_t tmp_file_wdir( uu_cstring_t ext,
+                                   uu_cstring_t path_offsets[] );
 
 
 int main( int argc, char *argv[] ) {
@@ -39,15 +44,53 @@ static int unittest_manifest( int argc, char *argv[] ) {
 static void manifest_test_simple( void ) {
 	ud_manifest_t *man;
 	uu_error_e    err;
-	
 	uu_cstring_t  tmp_file;
 	
-	tmp_file = UT_test_tempfile("csv", (uu_cstring_t []) {"foo", "bar", NULL});
-	tmp_file = UT_test_tempfile("csv", (uu_cstring_t []) {"foo", "bar", "baz",
-	                            NULL});
-	tmp_file = UT_test_tempfile("csv", (uu_cstring_t []) {"abc", "def", "ghi",
-	                            NULL});
-	UT_test_assert(tmp_file, "failed to create temp file");
+	UT_test_setname("simple manifest");
 	
-//	man = UD_manifest_new("", &err)
+	tmp_file = tmp_root();
+	UT_test_printf("root: %s", tmp_file);
+	
+	man = UD_manifest_new(tmp_file, &err);
+	UT_test_assert(man && err == UU_OK, "failed to create manifest");
+	
+	tmp_file = tmp_file_wdir("c",
+	                         (uu_cstring_t []){".unum", "src", "core", NULL});
+	UT_test_printf("file-1: %s", tmp_file);
+	
+	tmp_file = tmp_file_wdir("un", (uu_cstring_t []){"src", "server", NULL});
+	UT_test_printf("file-2: %s", tmp_file);
+	
+	UD_manifest_delete(man);
+}
+
+
+static uu_cstring_t tmp_file_wdir( uu_cstring_t ext,
+                                   uu_cstring_t path_offsets[] ) {
+	uu_cstring_t ret;
+	FILE         *fp;
+	time_t       now;
+	
+	ret = UT_test_tempfile(ext, path_offsets);
+	
+	fp  = fopen(ret, "w");
+	UT_test_assert(fp, "failed to open file.");
+	now = time(NULL);
+	UT_test_assert(fprintf(fp, "sample file: %ld", now) > 0, "failed to write");
+	fclose(fp);
+	
+	return ret;
+}
+
+static uu_cstring_t tmp_root ( void ) {
+	uu_cstring_t tmp_file;
+	uu_string_t  ret;
+	
+	tmp_file = UT_test_tempfile("csv", NULL);
+	ret = UU_mem_strdup(tmp_file);
+	UT_test_assert(ret, "out of memory")
+	UU_mem_tare((void *) ret);
+	UT_test_assert(UU_path_dirname(ret, strlen(ret) + 1, ret) == UU_OK,
+	               "failed to get dir");
+	return ret;
 }

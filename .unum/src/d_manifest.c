@@ -160,5 +160,13 @@ uu_error_e UD_manifest_write( ud_manifest_t *man, uu_cstring_t path ) {
 
 
 void UD_manifest_delete( ud_manifest_t *man ) {
-
+	if (!man) {
+		return;
+	}
+	
+	if (man->csv) {
+		UU_csv_delete(man->csv);
+	}
+	
+	UU_mem_free(man);
 }
