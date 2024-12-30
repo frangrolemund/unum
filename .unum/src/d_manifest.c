@@ -120,6 +120,19 @@ static ud_manifest_t *manifest_new( uu_cstring_t root, uu_error_e *err ) {
 }
 
 
+void UD_manifest_delete( ud_manifest_t *man ) {
+	if (!man) {
+		return;
+	}
+	
+	if (man->csv) {
+		UU_csv_delete(man->csv);
+	}
+	
+	UU_mem_free(man);
+}
+
+
 uu_error_e UD_manifest_add( ud_manifest_t *man, ud_manifest_file_t file ) {
 	return UU_ERR_NOIMPL;
 }
@@ -147,8 +160,16 @@ uu_error_e UD_manifest_delete_file ( ud_manifest_t *man, uu_cstring_t path ) {
 }
 
 
-uu_error_e UD_manifest_delete_file_u ( ud_manifest_t *man, unsigned index ) {
+uu_error_e UD_manifest_delete_file_n ( ud_manifest_t *man, unsigned index ) {
 	return UU_ERR_NOIMPL;
+}
+
+
+extern uu_cstring_t UD_manifest_root( ud_manifest_t *man ) {
+	if (!man || !man->csv) {
+		return NULL;
+	}
+	return man->root;
 }
 
 
@@ -156,17 +177,4 @@ uu_error_e UD_manifest_write( ud_manifest_t *man, uu_cstring_t path ) {
 	return UU_ERR_NOIMPL;
 	
 	// TODO: reorganize when order differs
-}
-
-
-void UD_manifest_delete( ud_manifest_t *man ) {
-	if (!man) {
-		return;
-	}
-	
-	if (man->csv) {
-		UU_csv_delete(man->csv);
-	}
-	
-	UU_mem_free(man);
 }

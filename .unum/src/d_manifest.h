@@ -115,9 +115,14 @@ extern uu_error_e    UD_manifest_delete_file ( ud_manifest_t *man,
  * UD_manifest_delete_file()
  * - delete a file from the manifest identified by index.
  */
-extern uu_error_e    UD_manifest_delete_file_u ( ud_manifest_t *man,
+extern uu_error_e    UD_manifest_delete_file_n ( ud_manifest_t *man,
 											     unsigned index );
 
+/*
+ * UD_manifest_root()
+ * - return the root for the manifest.
+ */
+extern uu_cstring_t  UD_manifest_root( ud_manifest_t *man );
 
 /*
  * UU_manifest_write()

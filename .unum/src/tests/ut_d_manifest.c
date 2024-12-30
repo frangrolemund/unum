@@ -46,6 +46,7 @@ static void manifest_test_simple( void ) {
 	uu_error_e    err;
 	uu_cstring_t  tmp_file;
 	uu_cstring_t  bad_root;
+	uu_path_t     tpath;
 	
 	UT_test_setname("simple manifest");
 	
@@ -54,10 +55,13 @@ static void manifest_test_simple( void ) {
 	
 	bad_root = UU_path_join_s(tmp_file, "bar", NULL);
 	man = UD_manifest_new(bad_root, &err);
-	UT_test_assert(!man && err == UU_ERR_FILE, "failed to detect missing root");	
+	UT_test_assert(!man && err == UU_ERR_FILE, "failed to detect missing root");
 	
 	man = UD_manifest_new(tmp_file, &err);
 	UT_test_assert(man && err == UU_OK, "failed to create manifest");
+	
+	UT_test_assert(UU_path_normalize(tpath, tmp_file, NULL), "invalid path");
+	UT_test_assert_eq(tpath, UD_manifest_root(man), "invalid root");
 	
 	tmp_file = tmp_file_wdir("c",
 	                         (uu_cstring_t []){".unum", "src", "core", NULL});
