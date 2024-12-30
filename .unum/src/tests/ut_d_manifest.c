@@ -45,11 +45,16 @@ static void manifest_test_simple( void ) {
 	ud_manifest_t *man;
 	uu_error_e    err;
 	uu_cstring_t  tmp_file;
+	uu_cstring_t  bad_root;
 	
 	UT_test_setname("simple manifest");
 	
 	tmp_file = tmp_root();
 	UT_test_printf("root: %s", tmp_file);
+	
+	bad_root = UU_path_join_s(tmp_file, "bar", NULL);
+	man = UD_manifest_new(bad_root, &err);
+	UT_test_assert(!man && err == UU_ERR_FILE, "failed to detect missing root");	
 	
 	man = UD_manifest_new(tmp_file, &err);
 	UT_test_assert(man && err == UU_OK, "failed to create manifest");
