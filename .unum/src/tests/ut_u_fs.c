@@ -92,6 +92,12 @@ static void fs_test_paths( void ) {
 	}
 	UT_test_assert_eq(last, __FILE__, "unexpected difference");
 	
+	UT_test_assert(!UU_path_to_independent(buf, U_PATH_MAX, "/foo/bar"),
+	               "failed to detect error");
+	UT_test_assert_eq(UU_path_to_independent(buf, U_PATH_MAX, ".\\foo\\bar"),
+	               "./foo/bar", "failed to convert");
+	
+	
 	#if UNUM_OS_UNIX == 0
 	// - the path checks below will need to be reworked.
 	#error "Not yet supported."
@@ -105,6 +111,9 @@ static void fs_test_paths( void ) {
 	               "invalid join");
 	UT_test_assert(UU_path_join(buf, 0, "Cd", "De", "Za", NULL) == NULL,
 	               "invalid join");
+	               
+	UT_test_assert_eq(UU_path_to_platform(buf, U_PATH_MAX, "./foo/bar"),
+	               "./foo/bar", "failed to convert");	               
 }
 
  

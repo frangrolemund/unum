@@ -21,7 +21,7 @@
 
 /*
  *  Systemic manifest:
- *  - accounting for all project source files
+ *  - accounting for all project source files in platform-independent format
  *  - supports manual editing where desired
  *  - auto-reformatting for format upgrades or hand-editing with external tools
  *  - simple access patterns to ensure correctness
@@ -165,10 +165,13 @@ uu_error_e UD_manifest_add_file( ud_manifest_t *man, ud_manifest_file_t file ) {
 	}
 
 	file.path = file.res1 + strlen(man->root) + 1;
+	if (!UU_path_to_independent(file.res1, U_PATH_MAX, file.path)) {
+		return UU_ERR_ARGS;
+	}
 	
 	for (int i = 0; i < UU_csv_row_count(man->csv); i++) {
 		if ((value = UU_csv_get(man->csv, i, MAN_COL_FILE(man), NULL)) &&
-		    !strcmp(value, file.path)) {
+		    !strcmp(value, file.res1)) {
 			row = i;
 			break;
 		}
@@ -182,7 +185,7 @@ uu_error_e UD_manifest_add_file( ud_manifest_t *man, ud_manifest_file_t file ) {
 		row--;
 	}
 	
-	if (UU_csv_set(man->csv, (unsigned) row, MAN_COL_FILE(man), file.path) ||
+	if (UU_csv_set(man->csv, (unsigned) row, MAN_COL_FILE(man), file.res1) ||
 		UU_csv_set(man->csv, (unsigned) row, MAN_COL_PHASE(man), ptext) ||
 		UU_csv_set(man->csv, (unsigned) row, MAN_COL_REQ(man), rtext) ||
 		UU_csv_set(man->csv, (unsigned) row, MAN_COL_NAME(man), file.name)) {

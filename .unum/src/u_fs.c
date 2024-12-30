@@ -110,6 +110,15 @@ uu_error_e UU_dir_create( uu_string_t dir, mode_t mode, uu_bool_t intermed) {
 }
 
 
+uu_bool_t UU_path_is_relative( uu_cstring_t path ) {
+	if (!path || path[0] == '/' || path[0] == '\\') {
+		return false;
+	}
+	
+	return true;
+}
+
+
 uu_cstring_t UU_path_join( uu_string_t dst, size_t len, ...) {
 	va_list      ap;
 	
@@ -235,4 +244,48 @@ extern uu_cstring_t UU_path_normalize_s( uu_cstring_t path, uu_error_e *err ) {
 	static uu_path_t ret = { '\0' };
 	
 	return UU_path_normalize(ret, path, err);
+}
+
+
+extern uu_cstring_t UU_path_to_platform( uu_string_t dst, size_t len,
+										 uu_cstring_t path ) {
+	if (!path || path[0] == '/' || strlen(path) >= len ) {
+		return NULL;
+	}
+
+#if UNUM_OS_UNIX
+	strcpy(dst, path);
+	return dst;
+		
+#else
+	#error "Not implemented."
+	
+#endif
+                                        
+}
+
+
+extern uu_cstring_t UU_path_to_independent( uu_string_t dst, size_t len,
+										    uu_cstring_t path ) {
+	uu_cstring_t ret = dst;
+	
+	if (!UU_path_is_relative(path)) {
+		return NULL;
+	}
+	
+	for (;;) {
+		if (!path || !len) {
+			return NULL;
+		}
+	
+		*dst++ = *path == '\\' ? '/' : *path;
+		
+		if (!*path) {
+			break;
+		}
+		
+		path++;
+	}
+	
+	return ret;
 }

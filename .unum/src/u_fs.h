@@ -82,6 +82,12 @@ extern uu_error_e   UU_path_dirname( uu_string_t dst, size_t len,
 
 
 /*
+ * UU_path_is_releative()
+ * - identifies if the path is a relative path.
+ */
+extern uu_bool_t    UU_path_is_relative( uu_cstring_t path );
+
+/*
  * UU_path_join()
  * - join the path segments (!! NULL terminated !!, variable list uu_cstring_t)
  *   into a single path stored in `dst` and return the result.
@@ -122,6 +128,25 @@ extern uu_cstring_t UU_path_normalize_s( uu_cstring_t path, uu_error_e *err );
  */
 extern uu_cstring_t UU_path_prefix( uu_string_t dst, size_t len,
                                     uu_cstring_t path );
+                                    
+
+/*
+ *  UU_path_to_dependent()
+ *  - convert a path from a known platform-indpendent form to a
+ *    platform-dependent form, saving it in `dst` or returning NULL if invalid.
+ */
+extern uu_cstring_t UU_path_to_platform( uu_string_t dst, size_t len,
+									   uu_cstring_t path );
+
+
+/*
+ *  UU_path_to_independent()
+ *  - convert a path from a known platform-dependent form to a
+ *    platform-independent form, saving it in `dst` or returning NULL if
+ *    invalid.
+ */
+extern uu_cstring_t UU_path_to_independent( uu_string_t dst, size_t len,
+										    uu_cstring_t path );
 
 
 #endif /* UNUM_FS_H */
