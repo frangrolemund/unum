@@ -65,10 +65,41 @@ static void manifest_test_simple( void ) {
 	
 	tmp_file = tmp_file_wdir("c",
 	                         (uu_cstring_t []){".unum", "src", "core", NULL});
+	                         
+	UT_test_assert(UD_manifest_add_file(man, (ud_manifest_file_t) {
+		tmp_file,
+		UD_MANP_CORE,
+		UD_MANP_KERN,
+		NULL
+	}) != UU_OK, "failed to detect invalid dep");
+	
+	UT_test_assert(UD_manifest_add_file(man, (ud_manifest_file_t) {
+		__FILE__,
+		UD_MANP_CORE,
+		UD_MANP_KERN,
+		NULL
+	}) != UU_OK, "failed to detect invalid file");
+
+	UT_test_assert(UD_manifest_add_file(man, (ud_manifest_file_t) {
+		tmp_file,
+		UD_MANP_KERN,
+		UD_MANP_CORE,
+		NULL
+	}) == UU_OK, "failed to add file");
 	UT_test_printf("file-1: %s", tmp_file);
 	
 	tmp_file = tmp_file_wdir("un", (uu_cstring_t []){"src", "server", NULL});
 	UT_test_printf("file-2: %s", tmp_file);
+	UT_test_assert(UD_manifest_add_file(man, (ud_manifest_file_t) {
+		tmp_file,
+		UD_MANP_CUSTOM,
+		UD_MANP_KERN,
+		NULL
+	}) == UU_OK, "failed to add file");
+	
+	tmp_file = UT_test_tempfile("csv", NULL);
+	UT_test_assert(UD_manifest_write(man, tmp_file) == UU_OK, "failed write");
+	UT_test_printf("manifest: %s", tmp_file);
 	
 	UD_manifest_delete(man);
 }

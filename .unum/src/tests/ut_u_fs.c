@@ -42,7 +42,7 @@ static int unittest_fs( int argc, char *argv[] ) {
 
 
 static void fs_test_paths( void ) {
-	uu_path_t    path, buf, spath;
+	uu_path_t    path, buf;
 	struct stat  s;
 	uu_string_t  src, dest, last;
 
@@ -57,6 +57,8 @@ static void fs_test_paths( void ) {
 	               "failed dir");
 	UT_test_assert(path[strlen(path)-1] == UNUM_PATH_SEP, "failed dir");
 	UT_test_printf("file dir: %s", path);
+	UT_test_assert(UU_path_normalize(path, path, NULL), "failed normalize");
+	UT_test_assert(path[strlen(path)-1] != UNUM_PATH_SEP, "failed dir");
 	
 	UT_test_assert(UU_file_exists(__FILE__), "not file");
 	s = UU_file_info(__FILE__);

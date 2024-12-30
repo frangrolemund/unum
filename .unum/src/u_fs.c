@@ -211,14 +211,17 @@ extern uu_cstring_t UU_path_prefix( uu_string_t dst, size_t len,
 
 uu_cstring_t UU_path_normalize( uu_string_t dst, uu_cstring_t path,
                                 uu_error_e *err ) {
+	uu_path_t ret;  // - to support dst == path
+	
 	UU_set_errorp(err, UU_OK);
 	
 #if UNUM_OS_MACOS
-	if (!dst || !realpath(path, dst)) {
+	if (!dst || !realpath(path, ret)) {
 		UU_set_errorp(err, dst ? UU_ERR_FILE : UU_ERR_ARGS);
 		return NULL;
 	}
 	
+	strcpy(dst, ret);
 	return dst;
 	
 #else

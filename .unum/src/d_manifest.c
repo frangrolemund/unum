@@ -31,12 +31,18 @@
 static ud_manifest_t *manifest_new( uu_cstring_t root, uu_error_e *err );
 static uu_bool_t     manifest_reload( ud_manifest_t *man, uu_cstring_t path,
                                       uu_error_e *err );
+static uu_cstring_t  phase_text( ud_manifest_phase_e phase );
 
 
 #define COL_FILE     "file"
 #define COL_PHASE    "phase"
 #define COL_REQ      "requires"
 #define COL_NAME     "name"
+
+#define MAN_COL_FILE(m)      	(m)->col_map[UD_MANC_FILE]
+#define MAN_COL_PHASE(m)      	(m)->col_map[UD_MANC_PHASE]
+#define MAN_COL_REQ(m)      	(m)->col_map[UD_MANC_REQ]
+#define MAN_COL_NAME(m)      	(m)->col_map[UD_MANC_NAME]
 
 
 ud_manifest_t *UD_manifest_new( uu_cstring_t root, uu_error_e *err ) {
@@ -133,8 +139,84 @@ void UD_manifest_delete( ud_manifest_t *man ) {
 }
 
 
-uu_error_e UD_manifest_add( ud_manifest_t *man, ud_manifest_file_t file ) {
-	return UU_ERR_NOIMPL;
+uu_error_e UD_manifest_add_file( ud_manifest_t *man, ud_manifest_file_t file ) {
+	uu_error_e   err;
+	int          row    = -1;
+	uu_cstring_t value, ptext, rtext;
+	
+	if (!man || !man->csv) {
+		return UU_ERR_ARGS;
+	}
+	
+	if (UU_path_normalize(file.res1, file.path, &err) == NULL) {
+		return err;
+	}
+	
+	if (strstr(file.res1, man->root) != file.res1 ||
+	   (file.name && strlen(file.name) >= U_MANIFEST_MAX_NAME) ||
+	   (file.req > file.phase) ||
+	   !(ptext = phase_text(file.phase)) ||
+	   !(rtext = phase_text(file.req))) {
+		return UU_ERR_ARGS;
+	}
+	
+	if (!UU_file_exists(file.res1)) {
+		return UU_ERR_FILE;
+	}
+
+	file.path = file.res1 + strlen(man->root) + 1;
+	
+	for (int i = 0; i < UU_csv_row_count(man->csv); i++) {
+		if ((value = UU_csv_get(man->csv, i, MAN_COL_FILE(man), NULL)) &&
+		    !strcmp(value, file.path)) {
+			row = i;
+			break;
+		}
+	}
+	
+	if (row == -1) {
+		row = (int) UU_csv_add_row(man->csv);
+		if (!row) {
+			return UU_ERR_MEM;
+		}
+		row--;
+	}
+	
+	if (UU_csv_set(man->csv, (unsigned) row, MAN_COL_FILE(man), file.path) ||
+		UU_csv_set(man->csv, (unsigned) row, MAN_COL_PHASE(man), ptext) ||
+		UU_csv_set(man->csv, (unsigned) row, MAN_COL_REQ(man), rtext) ||
+		UU_csv_set(man->csv, (unsigned) row, MAN_COL_NAME(man), file.name)) {
+		return UU_ERR_MEM;
+	}
+
+	return UU_OK;
+}
+
+
+static uu_cstring_t phase_text( ud_manifest_phase_e phase ) {
+	switch (phase) {
+	case UD_MANP_CORE:
+		return "core";
+		break;
+			
+	case UD_MANP_KERN:
+		return "kernel";
+		break;
+			
+	case UD_MANP_CUSTOM:
+		return "custom";
+		break;
+			
+	case UD_MANP_TEST:
+		return "test";
+		break;
+			
+	default:
+		// invalid phase
+		UU_assert(0);
+		return NULL;
+		break;
+	}
 }
 
 
@@ -174,7 +256,12 @@ extern uu_cstring_t UD_manifest_root( ud_manifest_t *man ) {
 
 
 uu_error_e UD_manifest_write( ud_manifest_t *man, uu_cstring_t path ) {
-	return UU_ERR_NOIMPL;
+	if (!man || !man->csv) {
+		return UU_ERR_ARGS;
+	}
 	
 	// TODO: reorganize when order differs
+	// TODO: atomic write
+	
+	return UU_csv_write(man->csv, path);
 }

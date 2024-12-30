@@ -16,7 +16,7 @@
 # TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 # PERFORMANCE OF THIS SOFTWARE.
 # --------------------------------------------------------------
-.PHONY : all clean
+.PHONY : all clean clean-test
 
 BASIS  := ./.unum
 UBOOT  := $(BASIS)/deployed/bin/uboot
@@ -29,6 +29,9 @@ all : $(UBOOT)
 
 clean :
 	$(RMDIR) $(BASIS)/deployed
+
+clean-test:
+	$(RMDIR) $(BASIS)/deployed/test
 
 $(UBOOT): $(BASIS)/boot/main.c
 	$(MKDIR) $(BASIS)/deployed/bin

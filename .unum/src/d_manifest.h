@@ -54,7 +54,7 @@ typedef struct {
 typedef struct {
 	uu_cstring_t        path;
 	ud_manifest_phase_e phase;
-	ud_manifest_phase_e link_req;
+	ud_manifest_phase_e req;
 	uu_cstring_t        name;       // - ignored for non-test files
 	
 	// - reserved
@@ -81,11 +81,11 @@ extern ud_manifest_t *UD_manifest_open( uu_cstring_t root, uu_cstring_t path,
 
 
 /*
- * UD_manifest_add()
+ * UD_manifest_add_file()
  * - add/update a file to the manifest.
  */
-extern uu_error_e    UD_manifest_add( ud_manifest_t *man,
-                                      ud_manifest_file_t file );
+extern uu_error_e    UD_manifest_add_file( ud_manifest_t *man,
+                                           ud_manifest_file_t file );
 
 
 /*
@@ -123,6 +123,7 @@ extern uu_error_e    UD_manifest_delete_file_n ( ud_manifest_t *man,
  * - return the root for the manifest.
  */
 extern uu_cstring_t  UD_manifest_root( ud_manifest_t *man );
+
 
 /*
  * UU_manifest_write()
