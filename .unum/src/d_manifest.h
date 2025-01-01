@@ -34,20 +34,10 @@ typedef enum {
 	UD_MANP_TEST        // ... unit testing (requires custom, kern or core)
 } ud_manifest_phase_e;
 
-typedef enum {
-	UD_MANC_FILE  = 0,
-	UD_MANC_PHASE,
-	UD_MANC_REQ,
-	UD_MANC_NAME,
-	
-	UD_MANC_COUNT
-} ud_manifest_column_e;
-
 
 typedef struct {
 	uu_path_t root;
 	uu_csv_t  *csv;
-	int       col_map[UD_MANC_COUNT];
 } ud_manifest_t;
 
 

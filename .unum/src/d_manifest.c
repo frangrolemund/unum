@@ -28,21 +28,35 @@
  */
 
 
-static ud_manifest_t *manifest_new( uu_cstring_t root, uu_error_e *err );
-static uu_bool_t     manifest_reload( ud_manifest_t *man, uu_cstring_t path,
-                                      uu_error_e *err );
-static uu_cstring_t  phase_text( ud_manifest_phase_e phase );
+static ud_manifest_t       *manifest_new( uu_cstring_t root, uu_error_e *err );
+static uu_bool_t           manifest_reload( ud_manifest_t *man,
+                                            uu_cstring_t path,
+                                            uu_error_e *err );
+static uu_cstring_t        phase_to_text( ud_manifest_phase_e phase );
+static ud_manifest_phase_e text_to_phase( uu_cstring_t text );
 
 
-#define COL_FILE     "file"
-#define COL_PHASE    "phase"
-#define COL_REQ      "requires"
-#define COL_NAME     "name"
+typedef enum {
+	UD_MANC_FILE  = 0,
+	UD_MANC_PHASE,
+	UD_MANC_REQ,
+	UD_MANC_NAME,
+	
+	UD_MANC_COUNT
+} ud_manifest_column_e;
 
-#define MAN_COL_FILE(m)      	(m)->col_map[UD_MANC_FILE]
-#define MAN_COL_PHASE(m)      	(m)->col_map[UD_MANC_PHASE]
-#define MAN_COL_REQ(m)      	(m)->col_map[UD_MANC_REQ]
-#define MAN_COL_NAME(m)      	(m)->col_map[UD_MANC_NAME]
+
+#define COL_FILE        "file"
+#define COL_PHASE       "phase"
+#define COL_REQ         "requires"
+#define COL_NAME        "name"
+
+#define PHASE_CORE      "core"
+#define PHASE_KERN      "kernel"
+#define PHASE_CUSTOM    "custom"
+#define PHASE_TEST      "test"
+
+#define UD_MANP_INVALID -1
 
 
 ud_manifest_t *UD_manifest_new( uu_cstring_t root, uu_error_e *err ) {
@@ -63,10 +77,6 @@ ud_manifest_t *UD_manifest_new( uu_cstring_t root, uu_error_e *err ) {
 		return NULL;
 	}
 	
-	for (int i = 0; i < UD_MANC_COUNT; i++) {
-		ret->col_map[i] = i;
-	}
-		
 	return ret;
 }
 
@@ -155,8 +165,8 @@ uu_error_e UD_manifest_add_file( ud_manifest_t *man, ud_manifest_file_t file ) {
 	if (strstr(file.res1, man->root) != file.res1 ||
 	   (file.name && strlen(file.name) >= U_MANIFEST_MAX_NAME) ||
 	   (file.req > file.phase) ||
-	   !(ptext = phase_text(file.phase)) ||
-	   !(rtext = phase_text(file.req))) {
+	   !(ptext = phase_to_text(file.phase)) ||
+	   !(rtext = phase_to_text(file.req))) {
 		return UU_ERR_ARGS;
 	}
 	
@@ -170,7 +180,7 @@ uu_error_e UD_manifest_add_file( ud_manifest_t *man, ud_manifest_file_t file ) {
 	}
 	
 	for (int i = 0; i < UU_csv_row_count(man->csv); i++) {
-		if ((value = UU_csv_get(man->csv, i, MAN_COL_FILE(man), NULL)) &&
+		if ((value = UU_csv_get(man->csv, i, UD_MANC_FILE, NULL)) &&
 		    !strcmp(value, file.res1)) {
 			row = i;
 			break;
@@ -185,10 +195,10 @@ uu_error_e UD_manifest_add_file( ud_manifest_t *man, ud_manifest_file_t file ) {
 		row--;
 	}
 	
-	if (UU_csv_set(man->csv, (unsigned) row, MAN_COL_FILE(man), file.res1) ||
-		UU_csv_set(man->csv, (unsigned) row, MAN_COL_PHASE(man), ptext) ||
-		UU_csv_set(man->csv, (unsigned) row, MAN_COL_REQ(man), rtext) ||
-		UU_csv_set(man->csv, (unsigned) row, MAN_COL_NAME(man), file.name)) {
+	if (UU_csv_set(man->csv, (unsigned) row, UD_MANC_FILE, file.res1) ||
+		UU_csv_set(man->csv, (unsigned) row, UD_MANC_PHASE, ptext) ||
+		UU_csv_set(man->csv, (unsigned) row, UD_MANC_REQ, rtext) ||
+		UU_csv_set(man->csv, (unsigned) row, UD_MANC_NAME, file.name)) {
 		return UU_ERR_MEM;
 	}
 
@@ -196,22 +206,22 @@ uu_error_e UD_manifest_add_file( ud_manifest_t *man, ud_manifest_file_t file ) {
 }
 
 
-static uu_cstring_t phase_text( ud_manifest_phase_e phase ) {
+static uu_cstring_t phase_to_text( ud_manifest_phase_e phase ) {
 	switch (phase) {
 	case UD_MANP_CORE:
-		return "core";
+		return PHASE_CORE;
 		break;
 			
 	case UD_MANP_KERN:
-		return "kernel";
+		return PHASE_KERN;
 		break;
 			
 	case UD_MANP_CUSTOM:
-		return "custom";
+		return PHASE_CUSTOM;
 		break;
 			
 	case UD_MANP_TEST:
-		return "test";
+		return PHASE_TEST;
 		break;
 			
 	default:
@@ -220,6 +230,24 @@ static uu_cstring_t phase_text( ud_manifest_phase_e phase ) {
 		return NULL;
 		break;
 	}
+}
+
+
+static ud_manifest_phase_e text_to_phase( uu_cstring_t text ) {
+	if (!strcmp(text, PHASE_CORE)) {
+		return UD_MANP_CORE;
+
+	} else if (!strcmp(text, PHASE_KERN)) {
+		return UD_MANP_KERN;
+
+	} else if (!strcmp(text, PHASE_CUSTOM)) {
+		return UD_MANP_CUSTOM;
+
+	} else if (!strcmp(text, PHASE_TEST)) {
+		return UD_MANP_TEST;
+	}
+
+	return UD_MANP_INVALID;
 }
 
 
