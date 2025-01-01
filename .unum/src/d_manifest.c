@@ -336,13 +336,38 @@ uu_bool_t UD_manifest_get( ud_manifest_t *man, unsigned index,
 }
 
 
-uu_error_e UD_manifest_delete_file ( ud_manifest_t *man, uu_cstring_t path ) {
-	return UU_ERR_NOIMPL;
+uu_error_e UD_manifest_delete_file( ud_manifest_t *man, uu_cstring_t path ) {
+	size_t    len;
+	uu_path_t npath;
+	
+	if (!man || !man->csv || !path ||
+	    !(len = strlen(man->root)) ||
+	    !(path = UU_path_normalize(npath, path, NULL)) ||
+		strncmp(npath, man->root, len)) {
+		return UU_ERR_ARGS;
+	}
+	
+	path += len;
+	if (!*path || !*++path) {
+		return UU_ERR_ARGS;
+	}
+	
+	for (int i = 1; i < UU_csv_row_count(man->csv); i++) {
+		if (!strcmp(UU_csv_get(man->csv, i, UD_MANC_FILE, NULL), path)) {
+			return UU_csv_delete_row(man->csv, i);
+		}
+	}
+
+	return UU_ERR_NOTFOUND;
 }
 
 
-uu_error_e UD_manifest_delete_file_n ( ud_manifest_t *man, unsigned index ) {
-	return UU_ERR_NOIMPL;
+uu_error_e UD_manifest_delete_file_n( ud_manifest_t *man, unsigned index ) {
+	if (!man || !man->csv || index >= UD_manifest_file_count(man)) {
+		return UU_ERR_ARGS;
+	}
+	
+	return UU_csv_delete_row(man->csv, index + 1);
 }
 
 

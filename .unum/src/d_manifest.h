@@ -106,16 +106,16 @@ extern uu_bool_t     UD_manifest_get( ud_manifest_t *man, unsigned index,
  * UD_manifest_delete_file()
  * - delete a file from the manifest identified by path.
  */
-extern uu_error_e    UD_manifest_delete_file ( ud_manifest_t *man,
-											   uu_cstring_t path );
+extern uu_error_e    UD_manifest_delete_file( ud_manifest_t *man,
+											  uu_cstring_t path );
 
 
 /*
  * UD_manifest_delete_file()
  * - delete a file from the manifest identified by index.
  */
-extern uu_error_e    UD_manifest_delete_file_n ( ud_manifest_t *man,
-											     unsigned index );
+extern uu_error_e    UD_manifest_delete_file_n( ud_manifest_t *man,
+											    unsigned index );
 
 /*
  * UD_manifest_root()

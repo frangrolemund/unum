@@ -43,12 +43,13 @@ typedef struct {
 
 
 typedef enum {
-	UU_OK         = 0,
-	UU_ERR_ARGS   = 1,
-	UU_ERR_MEM    = 2,
-	UU_ERR_FILE   = 3,
-	UU_ERR_FMT    = 4,
-	UU_ERR_NOIMPL = 5
+	UU_OK           = 0,
+	UU_ERR_ARGS     = 1,
+	UU_ERR_MEM      = 2,
+	UU_ERR_FILE     = 3,
+	UU_ERR_FMT      = 4,
+	UU_ERR_NOIMPL   = 5,
+	UU_ERR_NOTFOUND = 6
 } uu_error_e;
 
 #define UU_set_errorp(ep, v)  if (ep) { *ep = v; }

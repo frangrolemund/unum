@@ -161,7 +161,26 @@ static void manifest_test_simple( void ) {
 	UT_test_assert(file.phase == UD_MANP_TEST, "file phase invalid");
 	UT_test_assert(file.req == UD_MANP_CUSTOM, "file req invalid");
 	UT_test_assert_eq(file.name, "sample-test", "file name invalid");
-		
+	
+	// - delete items/verify
+	UT_test_assert(UD_manifest_delete_file(man, tf2) == UU_OK,
+	               "failed to delete");
+	UT_test_assert(UD_manifest_file_count(man) == 2, "invalid file count");
+	UT_test_assert(UD_manifest_delete_file_n(man, 1) == UU_OK,
+	               "failed to delete");
+	UT_test_assert(UD_manifest_file_count(man) == 1, "invalid file count");
+	UT_test_assert(UD_manifest_write(man, NULL) == UU_OK, "failed to write");
+	UD_manifest_delete(man);
+	
+	man = UD_manifest_open(root, man_file, NULL);
+	UT_test_assert(man, "failed to reopen")
+	UT_test_assert(UD_manifest_file_count(man) == 1, "invalid file count");
+	UT_test_assert(UD_manifest_get(man, 0, &file), "failed to get file");
+	UT_test_assert_eq(file.path, UU_path_normalize_s(tf1, NULL),
+	                  "failed to match filename");
+	UT_test_assert(file.phase == UD_MANP_KERN, "file phase invalid");
+	UT_test_assert(file.req == UD_MANP_CORE, "file req invalid");
+	UT_test_assert_eq(file.name, NULL, "file name invalid");	
 	UD_manifest_delete(man);
 }
 
