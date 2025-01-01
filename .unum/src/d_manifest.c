@@ -19,14 +19,6 @@
 
 #include "d_manifest.h"
 
-/*
- *  Systemic manifest:
- *  - accounting for all project source files in platform-independent format
- *  - supports manual editing where desired
- *  - auto-reformatting for format upgrades or hand-editing with external tools
- *  - simple access patterns to ensure correctness
- */
-
 
 static ud_manifest_t       *manifest_new( uu_cstring_t root, uu_error_e *err );
 static uu_cstring_t        phase_to_text( ud_manifest_phase_e phase );

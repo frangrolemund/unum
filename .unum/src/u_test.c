@@ -28,13 +28,6 @@
 #include "u_test.h"
 #include "u_mem.h"
 
-/*
- *  Unit-testing facilities:
- *  - simplified access to supporting test files near source
- *  - sandboxing of test files
- *  - cleanup of test
- *  - simple assert-like API.
- */
  
 static char        prog[256];
 static uu_path_t   src_path;

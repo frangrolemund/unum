@@ -23,6 +23,16 @@
 #include <stdio.h>
 #include "u_common.h"
 
+
+/*
+ *  Unit-testing facilities:
+ *  - simplified access to supporting test files near source
+ *  - sandboxing of test files
+ *  - cleanup of test
+ *  - simple assert-like API.
+ */
+
+
 #ifndef UNUM_UNIT_TEST
 #error "Unit testing only."
 #endif

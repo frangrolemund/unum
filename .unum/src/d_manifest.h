@@ -24,6 +24,15 @@
 #include "u_csv.h"
 
 
+/*
+ *  Systemic manifest:
+ *  - accounting and dependency relationships for project source files in
+ *    platform-independent format
+ *  - supports manual editing where necessary
+ *  - simple access patterns to ensure correctness
+ */
+
+
 #define U_MANIFEST_MAX_NAME 256
 
 
