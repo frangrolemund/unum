@@ -42,11 +42,12 @@ static int unittest_manifest( int argc, char *argv[] ) {
 
 
 static void manifest_test_simple( void ) {
-	ud_manifest_t *man;
-	uu_error_e    err;
-	uu_cstring_t  root, tf1, tf2, tf3, man_file;
-	uu_cstring_t  bad_root;
-	uu_path_t     tpath;
+	ud_manifest_t      *man;
+	uu_error_e         err;
+	uu_path_t          tpath;
+	uu_cstring_t       root, tf1, tf2, tf3, man_file;
+	uu_cstring_t       bad_root;
+	ud_manifest_file_t file;
 	
 	UT_test_setname("simple manifest");
 	
@@ -98,7 +99,6 @@ static void manifest_test_simple( void ) {
 		NULL
 	}) == UU_OK, "failed to add file");
 	UT_test_assert(UD_manifest_file_count(man) == 1, "invalid file count");
-
 	
 	tf2 = tmp_file_wdir("un", (uu_cstring_t []){"src", "server", NULL});
 	UT_test_assert(UD_manifest_add_file(man, (ud_manifest_file_t) {
@@ -137,12 +137,31 @@ static void manifest_test_simple( void ) {
 	// - reload
 	man = UD_manifest_open(bad_root, man_file, &err);
 	UT_test_assert(!man && err == UU_ERR_FILE, "failed to detect bad root");
-	
 	man = UD_manifest_open(root, man_file, &err);
 	UT_test_assert(man && err == UU_OK, "failed to open manifest");
-	
 	UT_test_assert(UD_manifest_file_count(man) == 3, "invalid file count");
+
+	UT_test_assert(UD_manifest_get(man, 0, &file), "failed to get file");
+	UT_test_assert_eq(file.path, UU_path_normalize_s(tf1, NULL),
+	                  "failed to match filename");
+	UT_test_assert(file.phase == UD_MANP_KERN, "file phase invalid");
+	UT_test_assert(file.req == UD_MANP_CORE, "file req invalid");
+	UT_test_assert_eq(file.name, NULL, "file name invalid");
 	
+	UT_test_assert(UD_manifest_get(man, 1, &file), "failed to get file");
+	UT_test_assert_eq(file.path, UU_path_normalize_s(tf2, NULL),
+	                  "failed to match filename");
+	UT_test_assert(file.phase == UD_MANP_CUSTOM, "file phase invalid");
+	UT_test_assert(file.req == UD_MANP_KERN, "file req invalid");
+	UT_test_assert_eq(file.name, NULL, "file name invalid");
+	
+	UT_test_assert(UD_manifest_get(man, 2, &file), "failed to get file");
+	UT_test_assert_eq(file.path, UU_path_normalize_s(tf3, NULL),
+	                  "failed to match filename");
+	UT_test_assert(file.phase == UD_MANP_TEST, "file phase invalid");
+	UT_test_assert(file.req == UD_MANP_CUSTOM, "file req invalid");
+	UT_test_assert_eq(file.name, "sample-test", "file name invalid");
+		
 	UD_manifest_delete(man);
 }
 

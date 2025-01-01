@@ -96,6 +96,16 @@ void _UT_test_failed( uu_cstring_t expr, uu_cstring_t file, int line,
 }
 
 
+void UT_test_assert_eq( uu_cstring_t s1, uu_cstring_t s2, uu_cstring_t msg ) {
+	if (!s1 && !s2) {
+		return;
+	}
+	
+	UT_test_assert(s1 && s2, msg);
+	UT_test_assert(!strcmp((s1), (s2)), msg);
+}
+
+
 void UT_test_setname( uu_cstring_t name ) {
 	if (test_name != NULL) {
 		UT_test_printf("OK");

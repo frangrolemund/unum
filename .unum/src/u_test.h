@@ -54,7 +54,8 @@ extern void _UT_test_failed( uu_cstring_t expr, uu_cstring_t file, int line,
  * UT_test_assert_eq()
  * - verify a test assert that two strings are equivalent.
  */
-#define UT_test_assert_eq( s1, s2, d ) UT_test_assert(!strcmp((s1), (s2)), (d))
+extern void UT_test_assert_eq( uu_cstring_t s1, uu_cstring_t s2,
+                               uu_cstring_t msg );
 
 
 /*

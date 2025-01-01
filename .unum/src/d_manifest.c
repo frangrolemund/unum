@@ -298,7 +298,41 @@ unsigned UD_manifest_file_count( ud_manifest_t *man ) {
 
 uu_bool_t UD_manifest_get( ud_manifest_t *man, unsigned index,
                            ud_manifest_file_t *file ) {
-	return false;
+	uu_cstring_t        path, phase, req, name;
+	ud_manifest_phase_e pp, pr;
+                           
+	if (!man || !man->csv || index >= UD_manifest_file_count(man)) {
+		return false;
+	}
+	
+	if (!(path  = UU_csv_get(man->csv, index + 1, UD_MANC_FILE, NULL)) ||
+	    !(phase = UU_csv_get(man->csv, index + 1, UD_MANC_PHASE, NULL)) ||
+	    (pp     = text_to_phase(phase)) == UD_MANP_INVALID ||
+	    !(req   = UU_csv_get(man->csv, index + 1, UD_MANC_REQ, NULL)) ||
+	    (pr     = text_to_phase(req)) == UD_MANP_INVALID) {
+		return false;
+	}
+	
+	name = UU_csv_get(man->csv, index + 1, UD_MANC_NAME, NULL);
+		
+	if (file) {
+		UU_path_join(file->res1, U_PATH_MAX, man->root, path, NULL);
+		file->path    = file->res1;
+		
+		file->phase   = pp;
+		file->req     = pr;
+		
+		file->res2[0] = '\0';
+		if (name && pp == UD_MANP_TEST) {
+			strncpy(file->res2, name, U_MANIFEST_MAX_NAME);
+			file->name = file->res2;
+
+		} else {
+			file->name = NULL;
+		}
+	}
+		
+	return true;
 }
 
 
