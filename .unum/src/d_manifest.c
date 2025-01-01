@@ -332,8 +332,5 @@ uu_error_e UD_manifest_write( ud_manifest_t *man, uu_cstring_t path ) {
 		return UU_ERR_ARGS;
 	}
 	
-	// TODO: reorganize when order differs
-	// TODO: atomic write
-	
 	return UU_csv_write(man->csv, path);
 }

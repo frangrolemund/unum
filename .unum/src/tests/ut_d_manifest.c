@@ -44,7 +44,7 @@ static int unittest_manifest( int argc, char *argv[] ) {
 static void manifest_test_simple( void ) {
 	ud_manifest_t *man;
 	uu_error_e    err;
-	uu_cstring_t  root, tmp_file, man_file;
+	uu_cstring_t  root, tf1, tf2, man_file;
 	uu_cstring_t  bad_root;
 	uu_path_t     tpath;
 	
@@ -64,11 +64,11 @@ static void manifest_test_simple( void ) {
 	UT_test_assert(UU_path_normalize(tpath, root, NULL), "invalid path");
 	UT_test_assert_eq(tpath, UD_manifest_root(man), "invalid root");
 	
-	tmp_file = tmp_file_wdir("c",
-	                         (uu_cstring_t []){".unum", "src", "core", NULL});
+	tf1 = tmp_file_wdir("c",
+					    (uu_cstring_t []){".unum", "src", "core", NULL});
 	                         
 	UT_test_assert(UD_manifest_add_file(man, (ud_manifest_file_t) {
-		tmp_file,
+		tf1,
 		UD_MANP_CORE,
 		UD_MANP_KERN,
 		NULL
@@ -82,17 +82,17 @@ static void manifest_test_simple( void ) {
 	}) != UU_OK, "failed to detect invalid file");
 
 	UT_test_assert(UD_manifest_add_file(man, (ud_manifest_file_t) {
-		tmp_file,
+		tf1,
 		UD_MANP_KERN,
 		UD_MANP_CORE,
 		NULL
 	}) == UU_OK, "failed to add file");
-	UT_test_printf("file-1: %s", tmp_file);
+	UT_test_printf("file-1: %s", tf1);
 	UT_test_assert(UD_manifest_file_count(man) == 1, "invalid file count");
 	
-	// - should be NOOP
+	// ...should be NOOP
 	UT_test_assert(UD_manifest_add_file(man, (ud_manifest_file_t) {
-		tmp_file,
+		tf1,
 		UD_MANP_KERN,
 		UD_MANP_CORE,
 		NULL
@@ -100,14 +100,14 @@ static void manifest_test_simple( void ) {
 	UT_test_assert(UD_manifest_file_count(man) == 1, "invalid file count");
 
 	
-	tmp_file = tmp_file_wdir("un", (uu_cstring_t []){"src", "server", NULL});
+	tf2 = tmp_file_wdir("un", (uu_cstring_t []){"src", "server", NULL});
 	UT_test_assert(UD_manifest_add_file(man, (ud_manifest_file_t) {
-		tmp_file,
+		tf2,
 		UD_MANP_CUSTOM,
 		UD_MANP_KERN,
 		NULL
 	}) == UU_OK, "failed to add file");
-	UT_test_printf("file-2: %s", tmp_file);
+	UT_test_printf("file-2: %s", tf2);
 	UT_test_assert(UD_manifest_file_count(man) == 2, "invalid file count");
 	
 	man_file = UT_test_tempfile("csv", NULL);
