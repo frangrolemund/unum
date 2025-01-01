@@ -44,7 +44,7 @@ static int unittest_manifest( int argc, char *argv[] ) {
 static void manifest_test_simple( void ) {
 	ud_manifest_t *man;
 	uu_error_e    err;
-	uu_cstring_t  root, tf1, tf2, man_file;
+	uu_cstring_t  root, tf1, tf2, tf3, man_file;
 	uu_cstring_t  bad_root;
 	uu_path_t     tpath;
 	
@@ -110,6 +110,24 @@ static void manifest_test_simple( void ) {
 	UT_test_printf("file-2: %s", tf2);
 	UT_test_assert(UD_manifest_file_count(man) == 2, "invalid file count");
 	
+	tf3 = tmp_file_wdir("un", (uu_cstring_t []){"src", "db", "tests", NULL});
+	UT_test_assert(UD_manifest_add_file(man, (ud_manifest_file_t) {
+		tf3,
+		UD_MANP_TEST,
+		UD_MANP_CUSTOM,
+		NULL
+	}) != UU_OK, "failed to detect invalid test");
+	
+	UT_test_assert(UD_manifest_add_file(man, (ud_manifest_file_t) {
+		tf3,
+		UD_MANP_TEST,
+		UD_MANP_CUSTOM,
+		"sample-test"
+	}) == UU_OK, "failed to add file");
+	UT_test_printf("file-3: %s", tf3);
+	UT_test_assert(UD_manifest_file_count(man) == 3, "invalid file count");
+
+	
 	man_file = UT_test_tempfile("csv", NULL);
 	UT_test_assert(UD_manifest_write(man, man_file) == UU_OK, "failed write");
 	UT_test_printf("manifest: %s", man_file);
@@ -123,7 +141,7 @@ static void manifest_test_simple( void ) {
 	man = UD_manifest_open(root, man_file, &err);
 	UT_test_assert(man && err == UU_OK, "failed to open manifest");
 	
-	UT_test_assert(UD_manifest_file_count(man) == 2, "invalid file count");
+	UT_test_assert(UD_manifest_file_count(man) == 3, "invalid file count");
 	
 	UD_manifest_delete(man);
 }

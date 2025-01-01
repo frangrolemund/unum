@@ -28,7 +28,7 @@
  *  Systemic manifest:
  *  - accounting and dependency relationships for project source files in
  *    platform-independent format
- *  - supports manual editing where necessary
+ *  - supports manual editing where necessary (and done carefully)
  *  - simple access patterns to ensure correctness
  */
 

@@ -199,7 +199,8 @@ uu_error_e UD_manifest_add_file( ud_manifest_t *man, ud_manifest_file_t file ) {
 	   (file.name && strlen(file.name) >= U_MANIFEST_MAX_NAME) ||
 	   (file.req > file.phase) ||
 	   !(ptext = phase_to_text(file.phase)) ||
-	   !(rtext = phase_to_text(file.req))) {
+	   !(rtext = phase_to_text(file.req)) ||
+		(file.phase == UD_MANP_TEST && (!file.name || !*file.name))) {
 		return UU_ERR_ARGS;
 	}
 	
