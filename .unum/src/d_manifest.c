@@ -29,9 +29,6 @@
 
 
 static ud_manifest_t       *manifest_new( uu_cstring_t root, uu_error_e *err );
-static uu_bool_t           manifest_reload( ud_manifest_t *man,
-                                            uu_cstring_t path,
-                                            uu_error_e *err );
 static uu_cstring_t        phase_to_text( ud_manifest_phase_e phase );
 static ud_manifest_phase_e text_to_phase( uu_cstring_t text );
 
@@ -83,33 +80,77 @@ ud_manifest_t *UD_manifest_new( uu_cstring_t root, uu_error_e *err ) {
 
 ud_manifest_t *UD_manifest_open( uu_cstring_t root, uu_cstring_t path,
                                  uu_error_e *err ) {
-	return NULL;
-}
-
-
-static uu_bool_t manifest_reload( ud_manifest_t *man, uu_cstring_t path,
-                                  uu_error_e *err ) {
-	uu_csv_t     *cf;
-	uu_cstring_t from_path;
+	ud_manifest_t       *ret     = NULL;
+	uu_csv_t            *csv     = NULL;
+	uu_bool_t           is_valid = true;
+	uu_cstring_t        value;
+	ud_manifest_phase_e phase;
 	
 	UU_set_errorp(err, UU_OK);
 	
-	if (!man || !man->csv ||
-	    (!(from_path = UU_csv_file_path(man->csv)) && !(from_path = path))) {
-		UU_set_errorp(err, UU_ERR_ARGS);
-		return false;
+	if (!UU_dir_exists(root)) {
+		UU_set_errorp(err, UU_ERR_FILE);
+		goto open_failed;
 	}
 	
-	if (!(cf = UU_csv_open(from_path, err))) {
-		return false;
+	if (!(csv = UU_csv_open(path, err))) {
+		goto open_failed;
 	}
 	
-	// TODO: validate/remap
+	if (!(ret = manifest_new(root, err))) {
+		goto open_failed;
+	}
 	
-	// TODO: reassign
+	if (!UU_csv_row_count(csv) ||
+		strcmp(UU_csv_get(csv, 0, 0, NULL), COL_FILE) ||
+		strcmp(UU_csv_get(csv, 0, 1, NULL), COL_PHASE) ||
+		strcmp(UU_csv_get(csv, 0, 2, NULL), COL_REQ) ||
+		strcmp(UU_csv_get(csv, 0, 3, NULL), COL_NAME)) {
+		UU_set_errorp(err, UU_ERR_FMT);
+		goto open_failed;
+	}
 	
-	return true;
+	for (int i = 1; is_valid && i < UU_csv_row_count(csv); i++) {
+		if (!UU_csv_get(csv, i, UD_MANC_FILE, NULL)) {
+			UU_set_errorp(err, UU_ERR_FMT);
+			is_valid = false;
+
+		} else if (!(value = UU_csv_get(csv, i, UD_MANC_PHASE, NULL)) ||
+				   (phase = text_to_phase(value)) == UD_MANP_INVALID) {
+			UU_set_errorp(err, UU_ERR_FMT);
+			is_valid = false;
+
+		} else if (!(value = UU_csv_get(csv, i, UD_MANC_REQ, NULL)) ||
+				   text_to_phase(value) == UD_MANP_INVALID) {
+			UU_set_errorp(err, UU_ERR_FMT);
+			is_valid = false;
+			
+		} else if ((value = UU_csv_get(csv, i, UD_MANC_NAME, NULL)) &&
+				   phase != UD_MANP_TEST) {
+			UU_set_errorp(err, UU_ERR_FMT);
+			is_valid = false;
+		}
+	}
+	
+	if (is_valid) {
+		ret->csv = csv;
+		return ret;
+	}
+	
+
+open_failed:
+	
+	if (csv) {
+		UU_csv_delete(csv);
+	}
+	
+	if (ret) {
+		UD_manifest_delete(ret);
+	}
+	
+	return NULL;
 }
+
 
 
 static ud_manifest_t *manifest_new( uu_cstring_t root, uu_error_e *err ) {

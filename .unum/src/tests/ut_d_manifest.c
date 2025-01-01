@@ -44,23 +44,24 @@ static int unittest_manifest( int argc, char *argv[] ) {
 static void manifest_test_simple( void ) {
 	ud_manifest_t *man;
 	uu_error_e    err;
-	uu_cstring_t  tmp_file;
+	uu_cstring_t  root, tmp_file, man_file;
 	uu_cstring_t  bad_root;
 	uu_path_t     tpath;
 	
 	UT_test_setname("simple manifest");
 	
-	tmp_file = tmp_root();
-	UT_test_printf("root: %s", tmp_file);
+	// - create
+	root = tmp_root();
+	UT_test_printf("root: %s", root);
 	
-	bad_root = UU_path_join_s(tmp_file, "bar", NULL);
+	bad_root = UU_path_join_s(root, "bar", NULL);
 	man = UD_manifest_new(bad_root, &err);
 	UT_test_assert(!man && err == UU_ERR_FILE, "failed to detect missing root");
 	
-	man = UD_manifest_new(tmp_file, &err);
+	man = UD_manifest_new(root, &err);
 	UT_test_assert(man && err == UU_OK, "failed to create manifest");
 	
-	UT_test_assert(UU_path_normalize(tpath, tmp_file, NULL), "invalid path");
+	UT_test_assert(UU_path_normalize(tpath, root, NULL), "invalid path");
 	UT_test_assert_eq(tpath, UD_manifest_root(man), "invalid root");
 	
 	tmp_file = tmp_file_wdir("c",
@@ -109,9 +110,20 @@ static void manifest_test_simple( void ) {
 	UT_test_printf("file-2: %s", tmp_file);
 	UT_test_assert(UD_manifest_file_count(man) == 2, "invalid file count");
 	
-	tmp_file = UT_test_tempfile("csv", NULL);
-	UT_test_assert(UD_manifest_write(man, tmp_file) == UU_OK, "failed write");
-	UT_test_printf("manifest: %s", tmp_file);
+	man_file = UT_test_tempfile("csv", NULL);
+	UT_test_assert(UD_manifest_write(man, man_file) == UU_OK, "failed write");
+	UT_test_printf("manifest: %s", man_file);
+	
+	UD_manifest_delete(man);
+	
+	// - reload
+	man = UD_manifest_open(bad_root, man_file, &err);
+	UT_test_assert(!man && err == UU_ERR_FILE, "failed to detect bad root");
+	
+	man = UD_manifest_open(root, man_file, &err);
+	UT_test_assert(man && err == UU_OK, "failed to open manifest");
+	
+	UT_test_assert(UD_manifest_file_count(man) == 2, "invalid file count");
 	
 	UD_manifest_delete(man);
 }
