@@ -87,6 +87,7 @@ static void write_config( void );
 #define BIN_DIR            "./deployed/bin"
 #define UCONFIG_FILE       "./deployed/build/include/u_config.h"
 #define UKERN_FILE         "./deployed/bin/unum"
+#define DEBUG_ENV          "UBOOT_DEBUG"
 #define is_file(p)         (file_info((p)).st_mode & S_IFREG)
 #define is_dir(p)          (file_info((p)).st_mode & S_IFDIR)
 #define path_sep_s         ((char [2]) { path_sep, '\0' })
@@ -105,7 +106,9 @@ static char        *cfg_offset        = config;
 int main( int argc, char *argv[] ) {
 	// - don't spam stderr with system()
 	uberr = fdopen(dup(fileno(stderr)), "w");
-	fclose(stderr);
+	if (!getenv(DEBUG_ENV)) {
+		fclose(stderr);
+	}
 
 	// - order is important here
 	detect_path_style();
@@ -496,7 +499,7 @@ static void build_pre_k( void ) {
 	cstrarr_t src                   = {
 		strdup(to_basis("./src/main.c")),
 		strdup(to_basis("./src/main_pre_k.c")),
-		strdup(to_basis("./src/deploy.c")),
+		strdup(to_basis("./src/d_deploy.c")),
 		NULL
 	};
 	const char **sp                 = src;
