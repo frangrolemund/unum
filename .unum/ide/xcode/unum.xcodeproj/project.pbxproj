@@ -133,6 +133,7 @@
 		A1975C5B2CF38838005F115E /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = main.c; path = /Users/fran/work/realproven/unum/.unum/src/main.c; sourceTree = "<absolute>"; };
 		A1975C5C2CF38838005F115E /* main_pre_k.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = main_pre_k.c; path = /Users/fran/work/realproven/unum/.unum/src/main_pre_k.c; sourceTree = "<absolute>"; };
 		A1B587D92CF8AED0000D6C46 /* ut_u_csv.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = ut_u_csv.c; path = /Users/fran/work/realproven/unum/.unum/src/tests/ut_u_csv.c; sourceTree = "<absolute>"; };
+		A1ED99472D2C168D008256A1 /* u_proc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = u_proc.h; path = /Users/fran/work/realproven/unum/.unum/src/u_proc.h; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -236,6 +237,7 @@
 				A1725F8E2CFDF8A600734BC1 /* u_config.h */,
 				A1725F8D2CFDF82700734BC1 /* u_common.h */,
 				A1725F8F2CFDF94500734BC1 /* u_csv.h */,
+				A1ED99472D2C168D008256A1 /* u_proc.h */,
 				A15CC5202CFCB8F0003E8F4D /* u_fs.h */,
 				A14E65972CFF3EEC00003116 /* u_mem.h */,
 				A103CEBA2CF765DF0057C7A3 /* u_test.h */,

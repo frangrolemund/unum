@@ -23,6 +23,12 @@
 #include "u_common.h"
 #include "u_fs.h"
 
+/*
+ *  CSV parsing:
+ *  - fast/efficient read from disk
+ *  - basic CRUD ops
+ */
+
 typedef struct {
 	size_t 		 size;
 	unsigned     num_cols;   // const
