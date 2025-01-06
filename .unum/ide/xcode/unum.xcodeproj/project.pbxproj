@@ -32,6 +32,10 @@
 		A1975C5E2CF38838005F115E /* d_deploy.c in Sources */ = {isa = PBXBuildFile; fileRef = A1975C5A2CF38838005F115E /* d_deploy.c */; };
 		A1975C5F2CF38838005F115E /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = A1975C5B2CF38838005F115E /* main.c */; };
 		A1B587DA2CF8AED0000D6C46 /* ut_u_csv.c in Sources */ = {isa = PBXBuildFile; fileRef = A1B587D92CF8AED0000D6C46 /* ut_u_csv.c */; };
+		A1ED99672D2C2443008256A1 /* ut_u_proc.c in Sources */ = {isa = PBXBuildFile; fileRef = A1ED99662D2C2443008256A1 /* ut_u_proc.c */; };
+		A1ED996B2D2C24E7008256A1 /* u_mem.c in Sources */ = {isa = PBXBuildFile; fileRef = A1ED99692D2C24E7008256A1 /* u_mem.c */; };
+		A1ED996C2D2C24E7008256A1 /* u_test.c in Sources */ = {isa = PBXBuildFile; fileRef = A1ED996A2D2C24E7008256A1 /* u_test.c */; };
+		A1ED996D2D2C24E7008256A1 /* u_fs.c in Sources */ = {isa = PBXBuildFile; fileRef = A1ED99682D2C24E7008256A1 /* u_fs.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -89,6 +93,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 		};
+		A1ED995D2D2C240A008256A1 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
@@ -134,6 +147,11 @@
 		A1975C5C2CF38838005F115E /* main_pre_k.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = main_pre_k.c; path = /Users/fran/work/realproven/unum/.unum/src/main_pre_k.c; sourceTree = "<absolute>"; };
 		A1B587D92CF8AED0000D6C46 /* ut_u_csv.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = ut_u_csv.c; path = /Users/fran/work/realproven/unum/.unum/src/tests/ut_u_csv.c; sourceTree = "<absolute>"; };
 		A1ED99472D2C168D008256A1 /* u_proc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = u_proc.h; path = /Users/fran/work/realproven/unum/.unum/src/u_proc.h; sourceTree = "<absolute>"; };
+		A1ED995F2D2C240A008256A1 /* ut_u_proc */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ut_u_proc; sourceTree = BUILT_PRODUCTS_DIR; };
+		A1ED99662D2C2443008256A1 /* ut_u_proc.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = ut_u_proc.c; path = /Users/fran/work/realproven/unum/.unum/src/tests/ut_u_proc.c; sourceTree = "<absolute>"; };
+		A1ED99682D2C24E7008256A1 /* u_fs.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = u_fs.c; path = /Users/fran/work/realproven/unum/.unum/src/u_fs.c; sourceTree = "<absolute>"; };
+		A1ED99692D2C24E7008256A1 /* u_mem.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = u_mem.c; path = /Users/fran/work/realproven/unum/.unum/src/u_mem.c; sourceTree = "<absolute>"; };
+		A1ED996A2D2C24E7008256A1 /* u_test.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = u_test.c; path = /Users/fran/work/realproven/unum/.unum/src/u_test.c; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -173,6 +191,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		A1975C432CF37DDA005F115E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A1ED995C2D2C240A008256A1 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -245,10 +270,11 @@
 				A15D927E2D20360F00504703 /* d_manifest.h */,
 				A1975C512CF37EDE005F115E /* unum */,
 				A1975C592CF387F2005F115E /* unum_pk */,
+				A15D928A2D20532D00504703 /* ut_d_manifest */,
 				A103CEAD2CF763F50057C7A3 /* ut_u_csv */,
+				A1ED995A2D2C23F7008256A1 /* ut_u_proc */,
 				A163100F2D0DEF1F00F92EC6 /* ut_u_mem */,
 				A17C4DCA2D130E7D00CCFA29 /* ut_u_fs */,
-				A15D928A2D20532D00504703 /* ut_d_manifest */,
 				A1975C2D2CF37C1C005F115E /* Products */,
 			);
 			sourceTree = "<group>";
@@ -262,6 +288,7 @@
 				A16310082D0DEF1700F92EC6 /* ut_u_mem */,
 				A17C4DC32D130E6200CCFA29 /* ut_u_fs */,
 				A15D92832D20532400504703 /* ut_d_manifest */,
+				A1ED995F2D2C240A008256A1 /* ut_u_proc */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -284,6 +311,17 @@
 				A1975C5A2CF38838005F115E /* d_deploy.c */,
 			);
 			name = unum_pk;
+			sourceTree = "<group>";
+		};
+		A1ED995A2D2C23F7008256A1 /* ut_u_proc */ = {
+			isa = PBXGroup;
+			children = (
+				A1ED99662D2C2443008256A1 /* ut_u_proc.c */,
+				A1ED99682D2C24E7008256A1 /* u_fs.c */,
+				A1ED99692D2C24E7008256A1 /* u_mem.c */,
+				A1ED996A2D2C24E7008256A1 /* u_test.c */,
+			);
+			name = ut_u_proc;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -403,6 +441,25 @@
 			productReference = A1975C462CF37DDA005F115E /* unum_pk */;
 			productType = "com.apple.product-type.tool";
 		};
+		A1ED995E2D2C240A008256A1 /* ut_u_proc */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A1ED99632D2C240A008256A1 /* Build configuration list for PBXNativeTarget "ut_u_proc" */;
+			buildPhases = (
+				A1ED995B2D2C240A008256A1 /* Sources */,
+				A1ED995C2D2C240A008256A1 /* Frameworks */,
+				A1ED995D2D2C240A008256A1 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ut_u_proc;
+			packageProductDependencies = (
+			);
+			productName = ut_u_proc;
+			productReference = A1ED995F2D2C240A008256A1 /* ut_u_proc */;
+			productType = "com.apple.product-type.tool";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -430,6 +487,9 @@
 					A1975C452CF37DDA005F115E = {
 						CreatedOnToolsVersion = 16.1;
 					};
+					A1ED995E2D2C240A008256A1 = {
+						CreatedOnToolsVersion = 16.2;
+					};
 				};
 			};
 			buildConfigurationList = A1975C272CF37C1C005F115E /* Build configuration list for PBXProject "unum" */;
@@ -452,6 +512,7 @@
 				A16310072D0DEF1700F92EC6 /* ut_u_mem */,
 				A17C4DC22D130E6200CCFA29 /* ut_u_fs */,
 				A15D92822D20532400504703 /* ut_d_manifest */,
+				A1ED995E2D2C240A008256A1 /* ut_u_proc */,
 			);
 		};
 /* End PBXProject section */
@@ -521,6 +582,17 @@
 				A1975C5D2CF38838005F115E /* main_pre_k.c in Sources */,
 				A1975C5E2CF38838005F115E /* d_deploy.c in Sources */,
 				A1975C5F2CF38838005F115E /* main.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A1ED995B2D2C240A008256A1 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1ED996B2D2C24E7008256A1 /* u_mem.c in Sources */,
+				A1ED996C2D2C24E7008256A1 /* u_test.c in Sources */,
+				A1ED996D2D2C24E7008256A1 /* u_fs.c in Sources */,
+				A1ED99672D2C2443008256A1 /* ut_u_proc.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -827,6 +899,34 @@
 			};
 			name = Release;
 		};
+		A1ED99642D2C240A008256A1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = Q9UQ5RW44T;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"UNUM_UNIT_TEST=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		A1ED99652D2C240A008256A1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = Q9UQ5RW44T;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"UNUM_UNIT_TEST=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -889,6 +989,15 @@
 			buildConfigurations = (
 				A1975C4B2CF37DDA005F115E /* Debug */,
 				A1975C4C2CF37DDA005F115E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A1ED99632D2C240A008256A1 /* Build configuration list for PBXNativeTarget "ut_u_proc" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A1ED99642D2C240A008256A1 /* Debug */,
+				A1ED99652D2C240A008256A1 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
