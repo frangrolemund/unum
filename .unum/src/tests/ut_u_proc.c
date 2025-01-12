@@ -83,9 +83,11 @@ static void proc_test_bad( void ) {
 	UT_test_assert(UU_proc_stdout(proc), "Failed to get standard output.");
 	UT_test_assert(UU_proc_stderr(proc), "Failed to get standard error.");
 	UT_test_assert_eq(t_proc_stdread(proc),
-	                  "/* stdout */\nfake_attempt()\n"
-					  "/* stderr */\nut_u_proc: planned fail\n",
+	                  "/* stdout */\nut_u_proc_c: fake_attempt()\n"
+					  "/* stderr */\nut_u_proc_c: planned fail\n",
 	                  "Failed to get standard result.");
+	UT_test_assert(UU_proc_wait(proc, &err) == 3 && err == UU_OK,
+	               "failed to get result.");
 	UU_proc_delete(proc);
 }
 
@@ -107,8 +109,10 @@ static void proc_test_ok( void ) {
 	UT_test_assert(UU_proc_stdout(proc), "Failed to get standard output.");
 	UT_test_assert(UU_proc_stderr(proc), "Failed to get standard error.");
 	UT_test_assert_eq(t_proc_stdread(proc),
-	                  "/* stdout */\nut_u_proc: success\n",
+	                  "/* stdout */\nut_u_proc_c: success\n",
 	                  "Failed to get standard result.");
+	UT_test_assert(UU_proc_wait(proc, &err) == 0 && err == UU_OK,
+	               "failed to get result.");
 	UU_proc_delete(proc);
 }
 
@@ -186,16 +190,17 @@ static uu_cstring_t t_proc_stdread( uu_proc_t *proc ) {
  */
 static int selftest_run( uu_cstring_t arg_selftest ) {
 	if (!strcmp(arg_selftest, CMD_OKRC)) {
-		fprintf(stdout, "ut_u_proc: success\n");
+		fprintf(stdout, "ut_u_proc_c: success\n");
 		return 0;
 		
 	} else if (!strcmp(arg_selftest, CMD_BADRC)) {
-		fprintf(stdout, "fake_attempt()\n");
+		fprintf(stdout, "ut_u_proc_c: fake_attempt()\n");
 		// ...imagine failure occurs.
-		fprintf(stderr, "ut_u_proc: planned fail\n");
+		fprintf(stderr, "ut_u_proc_c: planned fail\n");
 		return 3;
 	}
 
-	fprintf(stderr, "ut_u_proc: unsupported self-test '%s'\n", arg_selftest);
+	fprintf(stderr, "ut_u_proc_c: unsupported self-test '%s'\n",
+	        arg_selftest);
 	return -255;
 }
