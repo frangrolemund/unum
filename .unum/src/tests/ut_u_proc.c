@@ -25,6 +25,7 @@
 static uu_cstring_t prog;
 
 static int          unittest_proc( int argc, char *argv[] );
+static void         proc_test_ok( void );
 static void         proc_test_bad( void );
 static uu_proc_t    *t_proc_exec(uu_cstring_t cmd, uu_cstring_t *args,
                                  uu_cstring_t *env, uu_bool_t read_out,
@@ -59,6 +60,7 @@ int main( int argc, char *argv[] ) {
 
 static int unittest_proc( int argc, char *argv[] ) {
 	proc_test_bad();
+	proc_test_ok();
 	
 	return 0;
 }
@@ -68,7 +70,7 @@ static void proc_test_bad( void ) {
 	uu_proc_t    *proc;
 	uu_error_e   err;
 
-	UT_test_setname("ok-bad test");
+	UT_test_setname("bad test");
 	
 	proc = t_proc_exec(CMD_BADRC, NULL, NULL, false, &err);
 	UT_test_assert(proc && err == UU_OK, "Failed to get process.");
@@ -83,6 +85,29 @@ static void proc_test_bad( void ) {
 	UT_test_assert_eq(t_proc_stdread(proc),
 	                  "/* stdout */\nfake_attempt()\n"
 					  "/* stderr */\nut_u_proc: planned fail\n",
+	                  "Failed to get standard result.");
+	UU_proc_delete(proc);
+}
+
+
+static void proc_test_ok( void ) {
+	uu_proc_t    *proc;
+	uu_error_e   err;
+
+	UT_test_setname("ok test");
+
+	proc = t_proc_exec(CMD_OKRC, NULL, NULL, false, &err);
+	UT_test_assert(proc && err == UU_OK, "Failed to get process.");
+	UT_test_assert(UU_proc_wait(proc, &err) == 0 && err == UU_OK,
+	               "failed to get result.");
+	UU_proc_delete(proc);
+	
+	proc = t_proc_exec(CMD_OKRC, NULL, NULL, true, &err);
+	UT_test_assert(proc && err == UU_OK, "Failed to get process.");
+	UT_test_assert(UU_proc_stdout(proc), "Failed to get standard output.");
+	UT_test_assert(UU_proc_stderr(proc), "Failed to get standard error.");
+	UT_test_assert_eq(t_proc_stdread(proc),
+	                  "/* stdout */\nut_u_proc: success\n",
 	                  "Failed to get standard result.");
 	UU_proc_delete(proc);
 }
@@ -114,17 +139,21 @@ static uu_cstring_t t_proc_stdread( uu_proc_t *proc ) {
 	size_t             offset   = 0;
 	char               tmp[256];
 	size_t             num_read = 0;
-	uu_bool_t          has_err  = false;
+	uu_bool_t          has_out  = false, has_err  = false;
 
 	UT_test_assert(UU_proc_stdout(proc) && UU_proc_stderr(proc),
                    "failed to get standard handles.");
 
+	if (buf) {
+		*buf = '\0';
+	}
 	
 	while (!feof(UU_proc_stdout(proc)) && !ferror(UU_proc_stdout(proc))) {
 		if ((num_read = fread(tmp, 1, sizeof(tmp), UU_proc_stdout(proc)))) {
-			if (!buf) {
+			if (!has_out) {
 				UT_test_assert(buf = UU_mem_restrcat(buf, "/* stdout */\n",
 				               &blen), "out of memory.");
+				has_out = true;
 			}
 
 			tmp[num_read] = '\0';
