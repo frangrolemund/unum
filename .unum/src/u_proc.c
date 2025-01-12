@@ -128,12 +128,18 @@ static uu_proc_t *UU_proc_exec_unix( uu_cstring_t bin_name,
 		if (read_out) {
 			close(fdout[0]);
 			close(fderr[0]);
+			
 			close(STDIN_FILENO);
+			close(STDOUT_FILENO);
+			close(STDERR_FILENO);
 			
 			if (dup2(fdout[1], STDOUT_FILENO) == -1 ||
 				dup2(fderr[1], STDERR_FILENO) == -1) {
 				exit(255);
 			}
+			
+			close(fdout[1]);
+			close(fderr[1]);
 		}
 				
 		if (penv) {
