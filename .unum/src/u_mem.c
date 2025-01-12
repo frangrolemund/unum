@@ -206,3 +206,31 @@ unsigned _UU_memc_dump ( void ) {
 	printf("|------ UNUM MEMORY ALLOCATIONS ------\n\n");
 	return remain;
 }
+
+
+extern uu_string_t UU_mem_restrcat(uu_string_t buf, uu_string_t s,
+                                   size_t *nsize) {
+	size_t blen = buf ? strlen(buf) : 0;
+	size_t slen = s ? strlen(s) : 0;
+	
+	if (nsize) {
+		*nsize = blen;
+	}
+
+	if (!slen) {
+		return buf;
+	}
+	
+	buf = UU_mem_realloc(buf, blen + slen + 1);
+	if (!buf) {
+		return NULL;
+	}
+	UU_mem_tare(buf);
+	strcpy(&buf[blen], s);
+	
+	if (nsize) {
+		*nsize = (size_t) (blen + slen + 1);
+	}
+	
+	return buf;
+}

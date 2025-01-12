@@ -17,20 +17,38 @@
 | PERFORMANCE OF THIS SOFTWARE.
 | ---------------------------------------------------------------*/
 
-#ifndef UNUM_COMMON_H
-#define UNUM_COMMON_H
+#ifndef UNUM_TYPES_H
+#define UNUM_TYPES_H
 
-#include <assert.h>
-#include <limits.h>
-#include <stdlib.h>
+#include <stdbool.h>
 
-#include "u_config.h"
-#include "u_types.h"
-#include "u_mem.h"
+typedef char *               uu_string_t;
+typedef const char *         uu_cstring_t;
+typedef bool                 uu_bool_t;
 
-#define max(x, y)            ((x) >= (y) ? (x) : (y))
-#define min(x, y)            ((x) <= (y) ? (x) : (y))
 
-#define UU_assert(exp)       assert((exp))
+typedef struct {
+	int   major;
+	int   minor;
+	int   patch;
+	char  *as_string;
+} uu_version_t;
 
-#endif /* UNUM_COMMON_H */
+#define UNUM_VERSION        ((uu_version_t) { 0, 1, 0, "0.1.0" })
+
+
+typedef enum {
+	UU_OK           = 0,
+	UU_ERR_ARGS     = 1,
+	UU_ERR_MEM      = 2,
+	UU_ERR_FILE     = 3,
+	UU_ERR_FMT      = 4,
+	UU_ERR_NOIMPL   = 5,
+	UU_ERR_NOTFOUND = 6,
+	UU_ERR_PROC     = 7
+} uu_error_e;
+
+#define UU_set_errorp(ep, v)  if (ep) { *ep = v; }
+
+
+#endif /* UNUM_TYPES_H */

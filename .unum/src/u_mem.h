@@ -23,6 +23,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "u_types.h"
+
 #ifdef UNUM_UNIT_TEST
 #define UNUM_MEM_CHECKING
 #endif
@@ -70,6 +72,14 @@
 #define UU_mem_set(p, v, n)           memset((p), (v), (n))
 #define UU_mem_reset(p, n)            bzero(p, n)
 #define UU_mem_copy(d, s, n)          memcpy((d), (s), (n))
+
+/*
+ * UU_mem_restrcat()
+ * - realloc strcat appends the string to the provided buffer, returning it and
+ *   optionally the new size of the buffer (including NULL) in `nsize`.
+ */
+extern uu_string_t UU_mem_restrcat(uu_string_t buf, uu_string_t s,
+                                   size_t *nsize);
 
 
 #endif /* UNUM_MEM_H */

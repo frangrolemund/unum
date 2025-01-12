@@ -75,6 +75,16 @@ static void proc_test_bad( void ) {
 	UT_test_assert(UU_proc_wait(proc, &err) == 3 && err == UU_OK,
 	               "failed to get result.");
 	UU_proc_delete(proc);
+	
+	proc = t_proc_exec(CMD_BADRC, NULL, NULL, true, &err);
+	UT_test_assert(proc && err == UU_OK, "Failed to get process.");
+	UT_test_assert(UU_proc_stdout(proc), "Failed to get standard output.");
+	UT_test_assert(UU_proc_stderr(proc), "Failed to get standard error.");
+	UT_test_assert_eq(t_proc_stdread(proc),
+	                  "/* stdout */\nfake_attempt()\n"
+					  "/* stderr */\nut_u_proc: planned fail\n",
+	                  "Failed to get standard result.");
+	UU_proc_delete(proc);
 }
 
 
@@ -112,27 +122,29 @@ static uu_cstring_t t_proc_stdread( uu_proc_t *proc ) {
 	
 	while (!feof(UU_proc_stdout(proc)) && !ferror(UU_proc_stdout(proc))) {
 		if ((num_read = fread(tmp, 1, sizeof(tmp), UU_proc_stdout(proc)))) {
-			if (!buf || offset + num_read > blen) {
-				blen = max(blen + num_read, blen + 1024) + 10;   /* w/divider */
-				buf = UU_mem_realloc(buf, blen + 1);             /* w/NULL */
+			if (!buf) {
+				UT_test_assert(buf = UU_mem_restrcat(buf, "/* stdout */\n",
+				               &blen), "out of memory.");
 			}
-			strcpy(&buf[offset], tmp);
+
+			tmp[num_read] = '\0';
+			UT_test_assert(buf = UU_mem_restrcat(buf, tmp, &blen),
+			               "out of memory.");
 			offset += num_read;
 		}
 	}
 	
 	while (!feof(UU_proc_stderr(proc)) && !ferror(UU_proc_stderr(proc))) {
-		if (!has_err) {
-			strcat(buf, "/*err*/");
-			has_err = true;
-		}
-
 		if ((num_read = fread(tmp, 1, sizeof(tmp), UU_proc_stderr(proc)))) {
-			if (!buf || offset + num_read > blen) {
-				blen = max(blen + num_read, blen + 1024);
-				buf = UU_mem_realloc(buf, blen + 1);
+			if (!has_err) {
+				UT_test_assert(buf = UU_mem_restrcat(buf, "/* stderr */\n",
+				               &blen), "out of memory.");
+				has_err = true;
 			}
-			strcpy(&buf[offset], tmp);
+			
+			tmp[num_read] = '\0';
+			UT_test_assert(buf = UU_mem_restrcat(buf, tmp, &blen),
+			               "out of memory");
 			offset += num_read;
 		}
 	}
@@ -149,6 +161,8 @@ static int selftest_run( uu_cstring_t arg_selftest ) {
 		return 0;
 		
 	} else if (!strcmp(arg_selftest, CMD_BADRC)) {
+		fprintf(stdout, "fake_attempt()\n");
+		// ...imagine failure occurs.
 		fprintf(stderr, "ut_u_proc: planned fail\n");
 		return 3;
 	}
