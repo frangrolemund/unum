@@ -32,6 +32,9 @@ typedef char *               uu_string_t;
 typedef const char *         uu_cstring_t;
 typedef bool                 uu_bool_t;
 
+#define max(x, y)            ((x) >= (y) ? (x) : (y))
+#define min(x, y)            ((x) <= (y) ? (x) : (y))
+
 typedef struct {
 	int   major;
 	int   minor;
@@ -49,7 +52,8 @@ typedef enum {
 	UU_ERR_FILE     = 3,
 	UU_ERR_FMT      = 4,
 	UU_ERR_NOIMPL   = 5,
-	UU_ERR_NOTFOUND = 6
+	UU_ERR_NOTFOUND = 6,
+	UU_ERR_PROC     = 7
 } uu_error_e;
 
 #define UU_set_errorp(ep, v)  if (ep) { *ep = v; }

@@ -16,15 +16,25 @@
 | TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 | PERFORMANCE OF THIS SOFTWARE.
 | ---------------------------------------------------------------*/
+#include <unistd.h>
 
+#include "u_proc.h"
 #include "u_test.h"
+
 
 static uu_cstring_t prog;
 
-static int unittest_proc( int argc, char *argv[] );
-static int selftest_run( uu_cstring_t arg_selftest );
+static int          unittest_proc( int argc, char *argv[] );
+static void         proc_test_bad( void );
+static uu_proc_t    *t_proc_exec(uu_cstring_t cmd, uu_cstring_t *args,
+                                 uu_cstring_t *env, uu_bool_t read_out,
+                                 uu_error_e *err);
+static uu_cstring_t t_proc_stdread( uu_proc_t *proc );
+static int          selftest_run( uu_cstring_t arg_selftest );
 
 #define ARG_SELFTEST "--selftest="
+#define CMD_OKRC     "okrc"
+#define CMD_BADRC    "badrc"
 
 int main( int argc, char *argv[] ) {
 	uu_cstring_t a_selftest = NULL;
@@ -48,18 +58,97 @@ int main( int argc, char *argv[] ) {
 
 
 static int unittest_proc( int argc, char *argv[] ) {
-	UT_test_printf("TODO: write test!");
+	proc_test_bad();
 	
 	return 0;
 }
 
 
+static void proc_test_bad( void ) {
+	uu_proc_t    *proc;
+	uu_error_e   err;
+
+	UT_test_setname("ok-bad test");
+	
+	proc = t_proc_exec(CMD_BADRC, NULL, NULL, false, &err);
+	UT_test_assert(proc && err == UU_OK, "Failed to get process.");
+	UT_test_assert(UU_proc_wait(proc, &err) == 3 && err == UU_OK,
+	               "failed to get result.");
+	UU_proc_delete(proc);
+}
+
+
+static uu_proc_t *t_proc_exec(uu_cstring_t cmd, uu_cstring_t *args,
+                              uu_cstring_t *env, uu_bool_t read_out,
+                              uu_error_e *err) {
+	uu_cstring_t t_args[32];
+	char         st_arg[128];
+
+	sprintf(st_arg, "%s%s", ARG_SELFTEST, cmd);
+	t_args[0] = st_arg;
+	t_args[1] = NULL;
+	for (int i = 1; args; args++, i++) {
+		t_args[i] = *args;
+		if (!*args) {
+			break;
+		}
+	}
+
+	return UU_proc_exec(prog, t_args, env, read_out, err);
+}
+
+
+static uu_cstring_t t_proc_stdread( uu_proc_t *proc ) {
+	static uu_string_t buf      = NULL;
+	static size_t      blen     = 0;
+	size_t             offset   = 0;
+	char               tmp[256];
+	size_t             num_read = 0;
+	uu_bool_t          has_err  = false;
+
+	UT_test_assert(UU_proc_stdout(proc) && UU_proc_stderr(proc),
+                   "failed to get standard handles.");
+
+	
+	while (!feof(UU_proc_stdout(proc)) && !ferror(UU_proc_stdout(proc))) {
+		if ((num_read = fread(tmp, 1, sizeof(tmp), UU_proc_stdout(proc)))) {
+			if (!buf || offset + num_read > blen) {
+				blen = max(blen + num_read, blen + 1024) + 10;   /* w/divider */
+				buf = UU_mem_realloc(buf, blen + 1);             /* w/NULL */
+			}
+			strcpy(&buf[offset], tmp);
+			offset += num_read;
+		}
+	}
+	
+	while (!feof(UU_proc_stderr(proc)) && !ferror(UU_proc_stderr(proc))) {
+		if (!has_err) {
+			strcat(buf, "/*err*/");
+			has_err = true;
+		}
+
+		if ((num_read = fread(tmp, 1, sizeof(tmp), UU_proc_stderr(proc)))) {
+			if (!buf || offset + num_read > blen) {
+				blen = max(blen + num_read, blen + 1024);
+				buf = UU_mem_realloc(buf, blen + 1);
+			}
+			strcpy(&buf[offset], tmp);
+			offset += num_read;
+		}
+	}
+	
+	return buf;
+}
+
+/*
+ *  -- SELF TEST --
+ */
 static int selftest_run( uu_cstring_t arg_selftest ) {
-	if (!strcmp(arg_selftest, "okrc")) {
+	if (!strcmp(arg_selftest, CMD_OKRC)) {
 		fprintf(stdout, "ut_u_proc: success\n");
 		return 0;
 		
-	} else if (!strcmp(arg_selftest, "badrc")) {
+	} else if (!strcmp(arg_selftest, CMD_BADRC)) {
 		fprintf(stderr, "ut_u_proc: planned fail\n");
 		return 3;
 	}

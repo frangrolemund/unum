@@ -20,6 +20,7 @@
 #ifndef UNUM_PROC_H
 #define UNUM_PROC_H
 
+#include <stdio.h>
 #if UNUM_OS_UNIX
 #include <unistd.h>
 #endif
@@ -37,16 +38,14 @@
 typedef struct {
 	int          argc;
 	uu_cstring_t *argv;
-	FILE         *fstin;
 	FILE         *fstdout;
 	FILE         *fstderr;
 	
 	#if UNUM_OS_UNIX
 	pid_t        pid;
 	int          status;
-	int          stdin;
-	int          stdout;
-	int          stderr;
+	int          fdout;
+	int          fderr;
 		
 	#else
 	#error "Not implemented."
@@ -57,13 +56,18 @@ typedef struct {
 
 /*
  * UU_proc_exec()
- * - start a new process indicated by the program `bin_file`, optionally saving
- *   an error in `err` and followed by any command-line parameters with a NULL
- *   as the final argument.  Returns a process handle or NULL when an error
- *   occurs.
+ * - start a new process indicated by the program `bin_name`, optionally
+ *   providing arguments (as `args`) (following the first), environment
+ *   (as `env`) and any error generated.  If `read_out` is `true`, standard
+ *   output/error may be read later, otherwise they are shared with the
+ *   initiating process.  NULLs may be passed for optional parameters, but if
+ *   arrays of strings are passed they *MUST* be NULL-terminated. Returns a
+ *   process handle or NULL when an error occurs.
  */
-extern uu_proc_t   *UU_proc_exec( uu_cstring_t bin_file, uu_error_e *err, ... );
-
+extern uu_proc_t   *UU_proc_exec( uu_cstring_t bin_name,  uu_cstring_t *pargs,
+								  uu_cstring_t *penv, uu_bool_t read_out,
+                                  uu_error_e *err );
+                                  
 
 /*
  * UU_proc_delete()
@@ -84,15 +88,7 @@ extern uu_error_e  UU_proc_kill( uu_proc_t *proc );
  * - return a standard error file from the process or NULL if an error occurs.
  *   The returned file should not be released by the caller.
  */
-extern FILE        *UU_proc_stderr( uu_proc_t *proc, uu_error *err );
-
-
-/*
- * UU_proc_stdin()
- * - return a standard input file into the process or NULL if an error occurs.
- *   The returned file should not be released by the caller.
- */
-extern FILE        *UU_proc_stdin( uu_proc_t *proc, uu_error *err );
+extern FILE        *UU_proc_stderr( uu_proc_t *proc );
 
 
 /*
@@ -100,7 +96,7 @@ extern FILE        *UU_proc_stdin( uu_proc_t *proc, uu_error *err );
  * - return a standard output file from the process or NULL if an error occurs.
  *   The returned file should not be released by the caller.
  */
-extern FILE        *UU_proc_stdout( uu_proc_t *proc, uu_error *err );
+extern FILE        *UU_proc_stdout( uu_proc_t *proc );
 
 
 /*

@@ -98,7 +98,7 @@ static void fs_test_paths( void ) {
 	               "./foo/bar", "failed to convert");
 	
 	
-	#if UNUM_OS_UNIX == 0
+	#if !UNUM_OS_UNIX
 	// - the path checks below will need to be reworked.
 	#error "Not yet supported."
 	#endif

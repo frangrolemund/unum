@@ -92,7 +92,7 @@ extern uu_bool_t    UU_path_is_relative( uu_cstring_t path );
  * - join the path segments (!! NULL terminated !!, variable list uu_cstring_t)
  *   into a single path stored in `dst` and return the result.
  */
-extern uu_cstring_t UU_path_join( uu_string_t dst, size_t len, ... );
+extern uu_cstring_t UU_path_join( uu_string_t dst, size_t len, ... /* NULL */ );
 
 
 /*
@@ -100,7 +100,7 @@ extern uu_cstring_t UU_path_join( uu_string_t dst, size_t len, ... );
  * - join the path segments (!! NULL terminated !!, variable list uu_cstring_t)
  *   into a single path stored in a static variable returned as the result.
  */
-extern uu_cstring_t UU_path_join_s( uu_cstring_t item, ... );
+extern uu_cstring_t UU_path_join_s( uu_cstring_t item, ... /* NULL */ );
 
 
 /*
