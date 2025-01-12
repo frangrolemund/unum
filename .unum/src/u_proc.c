@@ -30,16 +30,16 @@ static uu_proc_t *proc_new( void );
 #include <errno.h>
 static uu_proc_t *UU_proc_exec_unix( uu_cstring_t bin_name,
                                      uu_cstring_t *pargs, uu_cstring_t *penv,
-                                     uu_bool_t read_out, uu_error_e *err );
+                                     uu_proc_options_e opts, uu_error_e *err );
 static pid_t     proc_waitpid(pid_t pid, int *stat_loc, int options);
 #endif
 
 
 uu_proc_t *UU_proc_exec( uu_cstring_t bin_name,  uu_cstring_t *pargs,
-                         uu_cstring_t *penv, uu_bool_t read_out,
+                         uu_cstring_t *penv, uu_proc_options_e opts,
                          uu_error_e *err ) {
 #if UNUM_OS_UNIX
-	return UU_proc_exec_unix(bin_name, pargs, penv, read_out, err);
+	return UU_proc_exec_unix(bin_name, pargs, penv, opts, err);
 #else
 #error "Not implemented"
 #endif
@@ -50,7 +50,7 @@ uu_proc_t *UU_proc_exec( uu_cstring_t bin_name,  uu_cstring_t *pargs,
 extern char **environ;
 static uu_proc_t *UU_proc_exec_unix( uu_cstring_t bin_name,
                                      uu_cstring_t *pargs, uu_cstring_t *penv,
-                                     uu_bool_t read_out, uu_error_e *err ) {
+                                     uu_proc_options_e opts, uu_error_e *err ) {
 	uu_proc_t    *ret      = NULL;
 	uu_path_t    bpath;
 	int          fdout[2]  = {0, 0};
@@ -71,7 +71,7 @@ static uu_proc_t *UU_proc_exec_unix( uu_cstring_t bin_name,
 		goto failed;
 	}
 	
-	if (read_out && (pipe(fdout) || pipe(fderr))) {
+	if ((opts & UU_PROC_CAPOUT) && (pipe(fdout) || pipe(fderr))) {
 		UU_set_errorp(err, UU_ERR_FILE);
 		goto failed;
 	}
@@ -115,7 +115,7 @@ static uu_proc_t *UU_proc_exec_unix( uu_cstring_t bin_name,
 		fdout[0]   = fdout[1] = 0;
 		fderr[0]   = fderr[1] = 0;
 		
-		if (read_out &&
+		if ((opts & UU_PROC_CAPOUT) &&
 		    (!(ret->fstdout = fdopen(ret->fdout, "r")) ||
 			 !(ret->fstderr = fdopen(ret->fderr, "r"))) ) {
 			UU_set_errorp(err, UU_ERR_FILE);
@@ -125,7 +125,7 @@ static uu_proc_t *UU_proc_exec_unix( uu_cstring_t bin_name,
 		return ret;
 	} else {
 		// - child continuing...
-		if (read_out) {
+		if ((opts & UU_PROC_CAPOUT)) {
 			close(fdout[0]);
 			close(fderr[0]);
 			
@@ -143,7 +143,7 @@ static uu_proc_t *UU_proc_exec_unix( uu_cstring_t bin_name,
 		}
 				
 		if (penv) {
-			for (int i = 0; environ[i]; i++) {
+			for (int i = 0; (opts & UU_PROC_REPENV) && environ[i]; i++) {
 				for (int j = 0; environ[i][j]; j++) {
 					assert(j < sizeof(buf));
 					buf[j] = environ[i][j];

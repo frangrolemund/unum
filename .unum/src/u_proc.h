@@ -64,8 +64,12 @@ typedef struct {
  *   arrays of strings are passed they *MUST* be NULL-terminated. Returns a
  *   process handle or NULL when an error occurs.
  */
+typedef enum {
+	UU_PROC_CAPOUT = 0x10,  // - capture stdout/stderr
+	UU_PROC_REPENV = 0x20   // - replace (instead of augment) environment
+} uu_proc_options_e;
 extern uu_proc_t   *UU_proc_exec( uu_cstring_t bin_name,  uu_cstring_t *pargs,
-								  uu_cstring_t *penv, uu_bool_t read_out,
+								  uu_cstring_t *penv, uu_proc_options_e opts,
                                   uu_error_e *err );
                                   
 

@@ -28,7 +28,7 @@ static int          unittest_proc( int argc, char *argv[] );
 static void         proc_test_ok( void );
 static void         proc_test_bad( void );
 static uu_proc_t    *t_proc_exec(uu_cstring_t cmd, uu_cstring_t *args,
-                                 uu_cstring_t *env, uu_bool_t read_out,
+                                 uu_cstring_t *env, uu_proc_options_e opts,
                                  uu_error_e *err);
 static uu_cstring_t t_proc_stdread( uu_proc_t *proc );
 static int          selftest_run( uu_cstring_t arg_selftest );
@@ -73,7 +73,7 @@ static void proc_test_bad( void ) {
 	UT_test_setname("bad test");
 	
 	UT_test_printf("exec shared stdout/stderr");
-	proc = t_proc_exec(CMD_BADRC, NULL, NULL, false, &err);
+	proc = t_proc_exec(CMD_BADRC, NULL, NULL, 0, &err);
 	UT_test_assert(proc && err == UU_OK, "Failed to get process.");
 	UT_test_assert(!UU_proc_stdout(proc), "Found standard output?");
 	UT_test_assert(!UU_proc_stderr(proc), "Found standard error?");	
@@ -82,7 +82,7 @@ static void proc_test_bad( void ) {
 	UU_proc_delete(proc);
 
 	UT_test_printf("exec captured stdout/stderr");
-	proc = t_proc_exec(CMD_BADRC, NULL, NULL, true, &err);
+	proc = t_proc_exec(CMD_BADRC, NULL, NULL, UU_PROC_CAPOUT, &err);
 	UT_test_assert(proc && err == UU_OK, "Failed to get process.");
 	UT_test_assert(UU_proc_stdout(proc), "Failed to get standard output.");
 	UT_test_assert(UU_proc_stderr(proc), "Failed to get standard error.");
@@ -103,7 +103,7 @@ static void proc_test_ok( void ) {
 	UT_test_setname("ok test");
 
 	UT_test_printf("exec shared stdout/stderr");
-	proc = t_proc_exec(CMD_OKRC, NULL, NULL, false, &err);
+	proc = t_proc_exec(CMD_OKRC, NULL, NULL, 0, &err);
 	UT_test_assert(proc && err == UU_OK, "Failed to get process.");
 	UT_test_assert(!UU_proc_stdout(proc), "Found standard output?");
 	UT_test_assert(!UU_proc_stderr(proc), "Found standard error?");
@@ -112,7 +112,7 @@ static void proc_test_ok( void ) {
 	UU_proc_delete(proc);
 	
 	UT_test_printf("exec captured stdout/stderr");
-	proc = t_proc_exec(CMD_OKRC, NULL, NULL, true, &err);
+	proc = t_proc_exec(CMD_OKRC, NULL, NULL, UU_PROC_CAPOUT, &err);
 	UT_test_assert(proc && err == UU_OK, "Failed to get process.");
 	UT_test_assert(UU_proc_stdout(proc), "Failed to get standard output.");
 	UT_test_assert(UU_proc_stderr(proc), "Failed to get standard error.");
@@ -126,7 +126,7 @@ static void proc_test_ok( void ) {
 
 
 static uu_proc_t *t_proc_exec(uu_cstring_t cmd, uu_cstring_t *args,
-                              uu_cstring_t *env, uu_bool_t read_out,
+                              uu_cstring_t *env, uu_proc_options_e opts,
                               uu_error_e *err) {
 	uu_cstring_t t_args[32];
 	char         st_arg[128];
@@ -141,7 +141,7 @@ static uu_proc_t *t_proc_exec(uu_cstring_t cmd, uu_cstring_t *args,
 		}
 	}
 
-	return UU_proc_exec(prog, t_args, env, read_out, err);
+	return UU_proc_exec(prog, t_args, env, opts, err);
 }
 
 
