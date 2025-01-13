@@ -51,14 +51,15 @@ extern char **environ;
 static uu_proc_t *UU_proc_exec_unix( uu_cstring_t bin_name,
                                      uu_cstring_t *pargs, uu_cstring_t *penv,
                                      uu_proc_options_e opts, uu_error_e *err ) {
-	uu_proc_t    *ret      = NULL;
+	uu_proc_t    *ret        = NULL;
 	uu_path_t    bpath;
-	int          fdout[2]  = {0, 0};
-	int          fderr[2]  = {0, 0};
+	int          fdout[2]    = {0, 0};
+	int          fderr[2]    = {0, 0};
 	pid_t        child;
-	uu_cstring_t *argv     = NULL;
-	int          alen;
-	char         buf[256];
+	uu_cstring_t *argv       = NULL;
+	uu_string_t  *cur_env    = NULL;
+	int          alen, elen;
+	uu_string_t  buf;
 	
 	UU_set_errorp(err, UU_OK);
 	
@@ -143,27 +144,27 @@ static uu_proc_t *UU_proc_exec_unix( uu_cstring_t bin_name,
 		}
 				
 		if (penv) {
-			for (int i = 0; (opts & UU_PROC_REPENV) && environ[i]; i++) {
-				for (int j = 0; environ[i][j]; j++) {
-					assert(j < sizeof(buf));
-					buf[j] = environ[i][j];
-					if (j > 0 && environ[i][j] == '=') {
-						buf[j+1] = '\0';
-						unsetenv(buf);
-						break;
+			if (opts & UU_PROC_REPENV) {
+				// - copy then modify
+				elen = 0;
+				for (char **tenv = environ; *tenv; tenv++) {
+					cur_env         = realloc(cur_env,
+					                          sizeof(uu_string_t) * (elen+1));
+					cur_env[elen++] = strdup(*tenv);
+					for (char *c = cur_env[elen-1]; *c; c++) {
+						if (*c == '=') {
+							*c = '\0';
+							break;
+						}
 					}
+				}
+				for (int i = 0; i < elen; i++) {
+					unsetenv(cur_env[i]);
 				}
 			}
 			
 			for (int i = 0; penv[i]; i++) {
-				for (int j = 0; penv[i][j]; j++) {
-					assert(j < sizeof(buf));
-					buf[j] = penv[i][j];
-					if (j > 0 && penv[i][j] == '=') {
-						buf[j+1] = '\0';
-						setenv(buf, &penv[i][j+1], 1);
-					}
-				}
+				putenv((uu_string_t) penv[i]);
 			}
 		}
 		
