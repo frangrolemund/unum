@@ -81,6 +81,14 @@ extern void        UU_proc_delete( uu_proc_t *proc );
 
 
 /*
+ * UU_proc_exists()
+ * - returns whether the process is running.
+ */
+extern uu_bool_t   UU_proc_exists( uu_proc_t *proc );
+
+
+
+/*
  * UU_proc_kill()
  * - kill the process, returning an error if one occurs.
  */

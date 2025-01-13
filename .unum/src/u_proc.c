@@ -28,6 +28,7 @@ static uu_proc_t *proc_new( void );
 
 #if UNUM_OS_UNIX
 #include <errno.h>
+#include <signal.h>
 static uu_proc_t *UU_proc_exec_unix( uu_cstring_t bin_name,
                                      uu_cstring_t *pargs, uu_cstring_t *penv,
                                      uu_proc_options_e opts, uu_error_e *err );
@@ -263,8 +264,20 @@ int UU_proc_wait( uu_proc_t *proc, uu_error_e *err ) {
 }
 
 
-uu_error_e  UU_proc_kill( uu_proc_t *proc ) {
-	return UU_ERR_NOIMPL;
+uu_error_e UU_proc_kill( uu_proc_t *proc ) {
+#if UNUM_OS_UNIX
+	if (!proc || proc->pid < 1) {
+		return UU_ERR_ARGS;
+	}
+	
+	if (kill(proc->pid, SIGKILL)) {
+		return UU_ERR_PROC;
+	}
+	
+	return UU_OK;
+#else
+#error "Not implemented."
+#endif
 }
 
 
@@ -303,4 +316,17 @@ void UU_proc_delete( uu_proc_t *proc ) {
 
 		UU_mem_free(proc);
 	}
+}
+
+
+uu_bool_t UU_proc_exists( uu_proc_t *proc ) {
+#if UNUM_OS_UNIX
+	if (!proc || proc->pid < 1) {
+		return false;
+	}
+	
+	return (kill(proc->pid, 0) == 0) ? true : false;
+#else
+#error "Not implemented."
+#endif
 }

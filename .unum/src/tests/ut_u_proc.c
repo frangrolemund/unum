@@ -29,6 +29,7 @@ static int          unittest_proc( int argc, char *argv[] );
 static void         proc_test_ok( void );
 static void         proc_test_bad( void );
 static void         proc_test_env( void );
+static void         proc_test_kill( void );
 static uu_proc_t    *t_proc_exec(uu_cstring_t cmd, uu_cstring_t *args,
                                  uu_cstring_t *env, uu_proc_options_e opts,
                                  uu_error_e *err);
@@ -43,6 +44,7 @@ extern char **environ;
 #define CMD_BADRC    "badrc"
 #define CMD_ENVREP   "repenv"
 #define CMD_ENVEXT   "extenv"
+#define CMD_KILL     "kill"
 
 int main( int argc, char *argv[] ) {
 	uu_cstring_t a_selftest = NULL;
@@ -69,6 +71,7 @@ static int unittest_proc( int argc, char *argv[] ) {
 	proc_test_bad();
 	proc_test_ok();
 	proc_test_env();
+	proc_test_kill();
 	
 	return 0;
 }
@@ -177,6 +180,36 @@ static void proc_test_env( void ) {
 	UT_test_assert(UU_proc_wait(proc, &err) == 0 && err == UU_OK,
 	               "failed to get result.");
 	UU_proc_delete(proc);
+}
+
+
+static void proc_test_kill( void ) {
+	uu_proc_t  *proc;
+	uu_error_e err;
+	
+	UT_test_setname("kill");
+	
+	UT_test_printf("implicit during dealloc...");
+	proc = t_proc_exec(CMD_KILL, NULL, NULL, 0, &err);
+	UT_test_assert(proc && err == UU_OK, "Failed to get process.");
+	UT_test_assert(!UU_proc_stdout(proc), "Found standard output?");
+	UT_test_assert(!UU_proc_stderr(proc), "Found standard error?");
+	sleep(1);
+	UT_test_assert(UU_proc_exists(proc), "Failed to detect existence.");
+	UU_proc_delete(proc);
+	
+	UT_test_printf("explict...");
+	proc = t_proc_exec(CMD_KILL, NULL, NULL, 0, &err);
+	UT_test_assert(proc && err == UU_OK, "Failed to get process.");
+	UT_test_assert(!UU_proc_stdout(proc), "Found standard output?");
+	UT_test_assert(!UU_proc_stderr(proc), "Found standard error?");
+	sleep(1);
+	UT_test_assert(UU_proc_exists(proc), "Failed to detect existence.");
+	UT_test_assert(UU_proc_kill(proc) == UU_OK, "Failed to kill child");
+	UT_test_assert(UU_proc_wait(proc, &err) == -1, "Failed to wait.");
+	UT_test_assert(!UU_proc_exists(proc), "Failed to detect oblivion.");
+	UU_proc_delete(proc);
+	
 }
 
 
@@ -289,6 +322,10 @@ static int selftest_run( uu_cstring_t arg_selftest ) {
 		
 		printf("ut_u_proc_c: env ok\n");
 		return 0;
+
+	} else if (!strcmp(arg_selftest, CMD_KILL)) {
+		sleep(360);
+		return 101;
 	}
 
 	fprintf(stderr, "ut_u_proc_c: unsupported self-test '%s'\n",
