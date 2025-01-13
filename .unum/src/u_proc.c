@@ -59,7 +59,6 @@ static uu_proc_t *UU_proc_exec_unix( uu_cstring_t bin_name,
 	uu_cstring_t *argv       = NULL;
 	uu_string_t  *cur_env    = NULL;
 	int          alen, elen;
-	uu_string_t  buf;
 	
 	UU_set_errorp(err, UU_OK);
 	
