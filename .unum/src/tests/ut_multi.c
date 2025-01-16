@@ -33,12 +33,17 @@
 #include "u_common.h"
 #include "u_test.h"
 #include "u_fs.h"
+#include "u_proc.h"
 #include "u_time.h"
 
 
 typedef struct {
 	uu_cstring_t name;
 	int          status;
+	uu_error_e   err;
+	
+	uu_string_t  std_out;
+	uu_string_t  std_err;
 
 } multi_result_t;
 
@@ -51,6 +56,9 @@ static void multi_test( void );
 static void *multi_alloc( size_t len );
 static void multi_test_print( multi_result_t *r, uu_string_t fmt, ... );
 static void multi_test_run( multi_result_t *r );
+static void multi_exec_capture( multi_result_t *r );
+static uu_error_e multi_capture_file( FILE *fp, uu_string_t *buf );
+static uu_bool_t multi_isok( multi_result_t *r );
 static void multi_report( void );
 
 
@@ -129,6 +137,7 @@ static void multi_test( void ) {
 		results[i] = r = multi_alloc(sizeof(multi_result_t));
 		UU_mem_reset(r, sizeof(multi_result_t));
 		r->name = sub_tests[i];
+		r->err  = UU_OK;
 		multi_test_run(r);
 	}
 }
@@ -160,7 +169,89 @@ static void multi_test_print( multi_result_t *r, uu_string_t fmt, ... ) {
 
 
 static void multi_test_run( multi_result_t *r ) {
-	multi_test_print(r, "complete");
+	uu_time_mark_t st_start;
+	char           delta[32];
+	char           result[256];
+	
+	st_start = UU_time_mark_ns();
+	multi_exec_capture(r);
+	UU_time_mark_delta(st_start, delta, sizeof(delta));
+	
+	if (multi_isok(r)) {
+		sprintf(result, "%s, success", delta);
+	} else {
+		sprintf(result, "%s, failed (status=%d, uu_error_e=%d)", delta,
+				r->status, r->err);
+	}
+	
+	multi_test_print(r, result);
+}
+
+
+static void multi_exec_capture( multi_result_t *r ) {
+	uu_proc_t  *proc;
+	uu_path_t  test_bin;
+	uu_error_e err;
+	
+	UU_path_join(test_bin, sizeof(test_bin), test_dir, r->name, NULL);
+	proc = UU_proc_exec(test_bin, NULL, NULL, UU_PROC_CAPOUT, &r->err);
+	if (!proc) {
+		r->status = -1;
+		return;
+	}
+	
+	err = multi_capture_file(UU_proc_stdout(proc), &(r->std_out));
+	if (err != UU_OK) {
+		r->status = -1;
+		r->err    = err;
+		goto done_capture;
+	}
+	if (!r->std_out) r->std_out = "\0";
+	
+	err = multi_capture_file(UU_proc_stderr(proc), &(r->std_err));
+	if (err != UU_OK) {
+		r->status = -1;
+		r->err    = err;
+ 		goto done_capture;
+	}
+	if (!r->std_err) r->std_err = "\0";
+	
+	r->status = UU_proc_wait(proc, &(r->err));
+
+done_capture:
+	UU_proc_delete(proc);
+}
+
+
+static uu_error_e multi_capture_file( FILE *fp, uu_string_t *buf ) {
+	char   tmp[256];
+	size_t len, num_read;
+	
+	while (fp && !feof(fp) && !ferror(fp)) {
+		if (!(num_read = fread(tmp, 1, sizeof(tmp), fp))) {
+			if (feof(fp)) {
+				break;
+			}
+			return UU_ERR_FILE;
+		}
+	
+		len  = *buf ? strlen(*buf) : 0;
+		*buf = UU_mem_realloc(*buf, len + num_read + 1);
+		if (!*buf) {
+			return UU_ERR_MEM;
+		}
+		UU_mem_tare(*buf);
+		
+		UU_mem_copy(*buf + len, tmp, num_read);
+		(*buf)[len + num_read] = '\0';
+	}
+	
+	return UU_OK;
+}
+
+
+static uu_bool_t multi_isok( multi_result_t *r ) {
+	return r && r->status == 0 && r->err == UU_OK;
 }
 
 
