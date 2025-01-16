@@ -173,6 +173,7 @@ static void multi_test_run( multi_result_t *r ) {
 	char           delta[32];
 	char           result[256];
 	
+	multi_test_print(r, "pending...");
 	st_start = UU_time_mark_ns();
 	multi_exec_capture(r);
 	UU_time_mark_delta(st_start, delta, sizeof(delta));
@@ -256,7 +257,20 @@ static uu_bool_t multi_isok( multi_result_t *r ) {
 
 
 static void multi_report( void ) {
+	int ok = 0, failed = 0;
+
 	multi_print("");
 	multi_print("%*s  %s", -(max_tlen+2), "Elapsed:",
 	            UU_time_mark_delta_s(start).desc);
+	            
+	for (int i = 0; i < num_tests; i++) {
+		if (multi_isok(results[i])) {
+			ok++;
+		} else {
+			failed++;
+		}
+	}
+	multi_print("%*s  %d passed, %d failed", -(max_tlen+2), "Results:",
+	            ok, failed);
+	exit(failed ? 1 : 0);
 }
