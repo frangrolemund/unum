@@ -75,8 +75,7 @@ int main( int argc, char *argv[] ) {
 
 
 static int unittest_multi( int argc, char *argv[] ) {
-	start = UU_time_mark_ns();
-	
+	start = UU_time_mark_ns();	
 	multi_parse_cmdline(argc, argv);
 	multi_test();
 	return multi_report();
