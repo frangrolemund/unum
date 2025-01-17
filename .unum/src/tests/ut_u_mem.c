@@ -56,8 +56,7 @@ static void mem_test_simple( void ) {
 		expected_size += strlen(tests[i]) + 1;
 		
 		if (i < sizeof(tares)/sizeof(tares[0])) {
-			allocs[count] = UU_mem_strdup(tares[i]);
-			UU_mem_tare(allocs[count++]);
+			allocs[count++] = UU_mem_tare(UU_mem_strdup(tares[i]));
 		}
 	}
 

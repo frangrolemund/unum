@@ -30,8 +30,8 @@
 
  
 static uu_string_t track_tmp_file( uu_cstring_t file );
-static void delete_tmp_files( void );
-static int tmp_dir_compare(const void *f1, const void *f2);
+static void        delete_tmp_files( void );
+static int         tmp_dir_compare(const void *f1, const void *f2);
 
 
 static uu_path_t   test_dir   = {'\0'};
@@ -237,9 +237,8 @@ static uu_string_t track_tmp_file( uu_cstring_t file ) {
 	UT_test_assert(tmp_files, "out of memory");
 	UU_mem_tare(tmp_files);
 	
-	tmp_files[num_tmp - 1] = ret = UU_mem_strdup(file);
+	tmp_files[num_tmp - 1] = ret = UU_mem_tare(UU_mem_strdup(file));
 	UT_test_assert(ret, "out of memory");
-	UU_mem_tare(ret);
 	
 	return ret;
 }

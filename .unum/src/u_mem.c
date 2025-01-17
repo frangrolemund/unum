@@ -233,7 +233,6 @@ extern uu_string_t UU_mem_restrcat(uu_string_t buf, uu_string_t s,
 	if (!buf) {
 		return NULL;
 	}
-	UU_mem_tare(buf);
 	strcpy(&buf[blen], s);
 	
 	if (nsize) {

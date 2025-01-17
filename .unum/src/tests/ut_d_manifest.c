@@ -207,9 +207,8 @@ static uu_cstring_t tmp_root ( void ) {
 	uu_string_t  ret;
 	
 	tmp_file = UT_test_tempfile("csv", NULL);
-	ret = UU_mem_strdup(tmp_file);
+	ret = UU_mem_tare(UU_mem_strdup(tmp_file));
 	UT_test_assert(ret, "out of memory")
-	UU_mem_tare((void *) ret);
 	UT_test_assert(UU_path_dirname(ret, strlen(ret) + 1, ret) == UU_OK,
 	               "failed to get dir");
 	return ret;

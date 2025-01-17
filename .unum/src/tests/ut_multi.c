@@ -65,7 +65,7 @@ uu_cstring_t const sub_tests[] = {
 };
 const int          num_tests   = sizeof(sub_tests) / sizeof(sub_tests[0]);
 uu_time_mark_t     start;
-size_t 			   max_tlen    = 0;
+size_t             max_tlen    = 0;
 multi_result_t     **results   = NULL;
 
 

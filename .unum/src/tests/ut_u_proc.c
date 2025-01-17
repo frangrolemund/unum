@@ -252,14 +252,15 @@ static uu_cstring_t t_proc_stdread( uu_proc_t *proc ) {
 	while (!feof(UU_proc_stdout(proc)) && !ferror(UU_proc_stdout(proc))) {
 		if ((num_read = fread(tmp, 1, sizeof(tmp) - 1, UU_proc_stdout(proc)))) {
 			if (!has_out) {
-				UT_test_assert(buf = UU_mem_restrcat(buf, "/* stdout */\n",
-				               &blen), "out of memory.");
+				buf = UU_mem_tare(UU_mem_restrcat(buf, "/* stdout */\n",
+				                                  &blen));
+				UT_test_assert(buf, "out of memory.");
 				has_out = true;
 			}
 
 			tmp[num_read] = '\0';
-			UT_test_assert(buf = UU_mem_restrcat(buf, tmp, &blen),
-			               "out of memory.");
+			buf = UU_mem_tare(UU_mem_restrcat(buf, tmp, &blen));
+			UT_test_assert(buf, "out of memory.");
 			offset += num_read;
 		}
 	}
@@ -267,14 +268,15 @@ static uu_cstring_t t_proc_stdread( uu_proc_t *proc ) {
 	while (!feof(UU_proc_stderr(proc)) && !ferror(UU_proc_stderr(proc))) {
 		if ((num_read = fread(tmp, 1, sizeof(tmp) - 1, UU_proc_stderr(proc)))) {
 			if (!has_err) {
-				UT_test_assert(buf = UU_mem_restrcat(buf, "/* stderr */\n",
-				               &blen), "out of memory.");
+				buf = UU_mem_tare(UU_mem_restrcat(buf, "/* stderr */\n",
+				                                  &blen));
+				UT_test_assert(buf, "out of memory.");
 				has_err = true;
 			}
 			
 			tmp[num_read] = '\0';
-			UT_test_assert(buf = UU_mem_restrcat(buf, tmp, &blen),
-			               "out of memory");
+			buf = UU_mem_tare(UU_mem_restrcat(buf, tmp, &blen));
+			UT_test_assert(buf, "out of memory");
 			offset += num_read;
 		}
 	}
