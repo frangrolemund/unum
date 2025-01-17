@@ -35,10 +35,14 @@ static const char  *test_name = NULL;
 static uu_string_t tmp_dir    = NULL;
 static uu_string_t *tmp_files = NULL;
 static int         num_tmp    = 0;
+static uu_bool_t   is_struct  = false;
 
 static uu_string_t track_tmp_file( uu_cstring_t file );
 static void delete_tmp_files( void );
 static int tmp_dir_compare(const void *f1, const void *f2);
+
+
+#define ARG_STRUCTURED "--unum-test-struct"
 
 
 int _UT_test_run( uu_cstring_t file, int argc, uu_string_t argv[],
@@ -46,7 +50,13 @@ int _UT_test_run( uu_cstring_t file, int argc, uu_string_t argv[],
 	int ret;
 	
 	UT_test_assert(argc > 0 && argv[0], "command-line not provided");
-
+	
+	for (int i = 1; i < argc; i++) {
+		if (!strcmp(argv[i], ARG_STRUCTURED)) {
+			is_struct = true;
+		}
+	}
+	
 	ret = UU_path_basename(prog, sizeof(prog), argv[0]);
 	UT_test_assert(ret == UU_OK, "invalid program");
 	
@@ -80,18 +90,24 @@ int _UT_test_run( uu_cstring_t file, int argc, uu_string_t argv[],
 
 void _UT_test_failed( uu_cstring_t expr, uu_cstring_t file, int line,
                       uu_cstring_t msg ) {
-	char  prefix[256] = {"\0"};
+	char        prefix[256] = {"\0"};
 	
 	if (test_name) {
 		sprintf(prefix, "%s (%s)", prog, test_name);
 	} else {
 		strcpy(prefix, prog);
 	}
-                      
-	fprintf(stderr, "%s: !! TEST FAILURE !!\n", prefix);
-	fprintf(stderr, "%s: %s <-- '%s'\n", prefix, msg, expr);
-	fprintf(stderr, "%s: %s@%d\n", prefix, file, line);
-	assert(0);
+	
+	if (is_struct) {
+		fprintf(stderr, "<uerr file=\"%s\" line=\"%d\">%s <-- '%s'</uerr>\n",
+		        file, line, msg, expr);
+	
+	} else {
+		fprintf(stderr, "%s: !! TEST FAILURE !!\n", prefix);
+		fprintf(stderr, "%s: %s <-- '%s'\n", prefix, msg, expr);
+		fprintf(stderr, "%s: %s@%d\n", prefix, file, line);
+		assert(0);
+	}
 	exit(1);
 }
 
@@ -115,17 +131,22 @@ void UT_test_setname( uu_cstring_t name ) {
 
 
 void UT_test_printf( uu_cstring_t fmt, ... ) {
-	char     buf[2048];
-	va_list  val;
+	char        buf[2048];
+	va_list     val;
+	uu_string_t s_begin, s_end;
 
 	va_start(val, fmt);
 	vsnprintf(buf, sizeof(buf), fmt, val);
 	va_end(val);
+
+	s_begin = is_struct ? "<uout>" : "";
+	s_end   = is_struct ? "</uout>" : "";
 	
 	if (test_name) {
-		fprintf(stdout, "%s (%s): %s\n", prog, test_name, buf);
+		fprintf(stdout, "%s%s (%s): %s%s\n", s_begin, prog, test_name, buf,
+		        s_end);
 	} else {
-		fprintf(stdout, "%s: %s\n", prog, buf);
+		fprintf(stdout, "%s%s: %s%s\n", s_begin, prog, buf, s_end);
 	}
 }
 

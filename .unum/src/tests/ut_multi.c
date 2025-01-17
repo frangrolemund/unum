@@ -195,7 +195,9 @@ static void multi_exec_capture( multi_result_t *r ) {
 	uu_error_e err;
 	
 	UU_path_join(test_bin, sizeof(test_bin), test_dir, r->name, NULL);
-	proc = UU_proc_exec(test_bin, NULL, NULL, UU_PROC_CAPOUT, &r->err);
+	proc = UU_proc_exec(test_bin,
+	                    (uu_cstring_t []) { "--unum-test-struct", NULL }, NULL,
+	                    UU_PROC_CAPOUT, &r->err);
 	if (!proc) {
 		r->status = -1;
 		return;
@@ -257,20 +259,73 @@ static uu_bool_t multi_isok( multi_result_t *r ) {
 
 
 static void multi_report( void ) {
-	int ok = 0, failed = 0;
+	uu_path_t   file       = {'\0'};
+	int         line       = -1;
+	char        msg[1024]  = {'\0'};
+	int ok = 0, failed     = 0;
+	int in_tag = 0, in_val = 0;
+	uu_string_t p          = NULL;
 
 	multi_print("");
-	multi_print("%*s  %s", -(max_tlen+2), "Elapsed:",
-	            UU_time_mark_delta_s(start).desc);
 	            
 	for (int i = 0; i < num_tests; i++) {
 		if (multi_isok(results[i])) {
 			ok++;
-		} else {
-			failed++;
+			continue;
+		}
+			
+		failed++;
+				
+		// REF: "<uerr file=\"%s\" line=\"%d\">%s</uerr>"
+		for (char *cur = results[i]->std_err; *cur; cur++) {
+			if (!in_tag) {
+				if (!strncmp(cur, "<uerr ", 6)) {
+					cur += 5;
+					in_tag = 1;
+				}
+				
+			} else if (!strncmp(cur, "</uerr>", 7)) {
+				break;
+								
+			} else if (in_val) {
+				*p++ = *cur;
+				*p   = '\0';
+				
+			} else if (!strncmp(cur, "file=\"", 6)) {
+				p = file;
+				for (char *sub = cur + 6; *sub; cur = sub, sub++) {
+					*p++ = (*sub == '\"') ? '\0' : *sub;
+					if (*sub == '\"') {
+						break;
+					}
+				}
+				
+			} else if (!strncmp(cur, "line=\"", 6)) {
+				cur += 6;
+				if (!sscanf(cur, "%d", &line)) {
+					continue;
+				}
+				
+			} else if (*cur == '>') {
+				in_val = 1;
+				p      = msg;
+				
+			}
+		}
+
+		if (*file && line >= 0 && *msg) {
+			multi_test_print(results[i], "%s", msg);
+			multi_test_print(results[i], "--> %s@%d", file, line);
 		}
 	}
+	
+	if (failed) {
+		multi_print("");
+	}
+	multi_print("%*s  %s", -(max_tlen+2), "Elapsed:",
+	            UU_time_mark_delta_s(start).desc);
 	multi_print("%*s  %d passed, %d failed", -(max_tlen+2), "Results:",
 	            ok, failed);
+	            	            
 	exit(failed ? 1 : 0);
 }
