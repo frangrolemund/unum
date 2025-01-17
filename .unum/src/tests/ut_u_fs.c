@@ -24,7 +24,7 @@
 #include "u_test.h"
 
 
-static int unittest_fs( int argc, char *argv[] );
+static int  unittest_fs( int argc, char *argv[] );
 static void fs_test_paths( void );
 static void fs_test_dirs( void );
 

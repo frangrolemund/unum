@@ -20,22 +20,22 @@
 #include "u_test.h"
 #include "u_csv.h"
 
-static int unittest_csv( int argc, char *argv[] );
-static void csv_test_simple( void );
-static void csv_test_simple_file_1( void );
-static uu_csv_t *read_test_file( uu_cstring_t file );
-static void csv_test_simple_file_2( void );
-static void csv_test_simple_mod_1( void );
-static void assert_mem_file( uu_csv_t *csv, void (*test)(uu_csv_t *csv));
-static void csv_sm1_verify1( uu_csv_t *csv );
-static void csv_test_simple_mod_2( void );
-static void csv_sm2_del_verify1( uu_csv_t *csv );
-static void csv_sm2_del_verify2( uu_csv_t *csv );
-static void csv_sm2_add_verify3( uu_csv_t *csv );
-static void csv_sm2_add_verify4( uu_csv_t *csv );
-static void csv_sm2_ins_verify5( uu_csv_t *csv );
-static void csv_sm2_ins_verify6( uu_csv_t *csv );
-static void csv_test_creation( void );
+static int         unittest_csv( int argc, char *argv[] );
+static void        csv_test_simple( void );
+static void        csv_test_simple_file_1( void );
+static uu_csv_t    *read_test_file( uu_cstring_t file );
+static void        csv_test_simple_file_2( void );
+static void        csv_test_simple_mod_1( void );
+static void        assert_mem_file( uu_csv_t *csv, void (*test)(uu_csv_t *csv));
+static void        csv_sm1_verify1( uu_csv_t *csv );
+static void        csv_test_simple_mod_2( void );
+static void        csv_sm2_del_verify1( uu_csv_t *csv );
+static void        csv_sm2_del_verify2( uu_csv_t *csv );
+static void        csv_sm2_add_verify3( uu_csv_t *csv );
+static void        csv_sm2_add_verify4( uu_csv_t *csv );
+static void        csv_sm2_ins_verify5( uu_csv_t *csv );
+static void        csv_sm2_ins_verify6( uu_csv_t *csv );
+static void        csv_test_creation( void );
 static uu_string_t csv_rand_text( int min, int max, uu_bool_t allow_newline );
 
 
@@ -147,7 +147,6 @@ static void csv_test_simple( void ) {
 	csv_assert_value(cf, 1, 2, "fff");
 	
 	UU_csv_delete(cf);
-
 }
 
 

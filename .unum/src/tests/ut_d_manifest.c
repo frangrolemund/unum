@@ -23,8 +23,8 @@
 #include "d_manifest.h"
 #include "u_test.h"
 
-static int unittest_manifest( int argc, char *argv[] );
-static void manifest_test_simple( void );
+static int          unittest_manifest( int argc, char *argv[] );
+static void         manifest_test_simple( void );
 static uu_cstring_t tmp_root ( void );
 static uu_cstring_t tmp_file_wdir( uu_cstring_t ext,
                                    uu_cstring_t path_offsets[] );

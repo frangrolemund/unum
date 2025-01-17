@@ -43,16 +43,16 @@ typedef struct {
 } multi_result_t;
 
 
-static int unittest_multi( int argc, char *argv[] );
-static void multi_parse_cmdline( int argc, char *argv[] );
-static void multi_test( void );
-static void *multi_alloc( size_t len );
-static void multi_test_print( multi_result_t *r, uu_string_t fmt, ... );
-static void multi_test_run( multi_result_t *r );
-static void multi_exec_capture( multi_result_t *r );
+static int        unittest_multi( int argc, char *argv[] );
+static void       multi_parse_cmdline( int argc, char *argv[] );
+static void       multi_test( void );
+static void       *multi_alloc( size_t len );
+static void       multi_test_print( multi_result_t *r, uu_string_t fmt, ... );
+static void       multi_test_run( multi_result_t *r );
+static void       multi_exec_capture( multi_result_t *r );
 static uu_error_e multi_capture_file( FILE *fp, uu_string_t *buf );
-static uu_bool_t multi_isok( multi_result_t *r );
-static int multi_report( void );
+static uu_bool_t  multi_isok( multi_result_t *r );
+static int        multi_report( void );
 
 
 uu_path_t          test_dir;
@@ -75,7 +75,7 @@ int main( int argc, char *argv[] ) {
 
 
 static int unittest_multi( int argc, char *argv[] ) {
-	start = UU_time_mark_ns();	
+	start = UU_time_mark_ns();
 	multi_parse_cmdline(argc, argv);
 	multi_test();
 	return multi_report();

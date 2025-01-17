@@ -21,7 +21,7 @@
 #include "u_test.h"
 #include "u_mem.h"
 
-static int unittest_mem( int argc, char *argv[] );
+static int  unittest_mem( int argc, char *argv[] );
 static void mem_test_simple( void );
 static void mem_test_list( void );
 static void mem_test_realloc( void );
@@ -118,6 +118,7 @@ static void mem_test_list( void ) {
 	UT_test_assert(UU_memc_num_bytes() == 0, "unexpected number of bytes.");
 	UT_test_assert(UU_memc_num_allocs() == 0, "unexpected number of allocs.");
 }
+
 
 #define mem_assert_char(p, c, n)     \
 					for (int i = 0; i < (n); i++) {\
