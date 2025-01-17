@@ -45,7 +45,6 @@ typedef struct {
 
 static int unittest_multi( int argc, char *argv[] );
 static void multi_parse_cmdline( int argc, char *argv[] );
-static void multi_abort( char *msg, ... );
 static void multi_test( void );
 static void *multi_alloc( size_t len );
 static void multi_test_print( multi_result_t *r, uu_string_t fmt, ... );
@@ -87,21 +86,8 @@ static int unittest_multi( int argc, char *argv[] ) {
 static void multi_parse_cmdline( int argc, char *argv[] ) {
 	if (!argc ||
 	    UU_path_dirname(test_dir, sizeof(test_dir), argv[0]) != UU_OK) {
-		multi_abort("failed to identify the test directory.");
+		UT_test_assert(0, "failed to identify test directory");
 	}
-}
-
-
-static void multi_abort( char *msg, ... ) {
-	va_list ap;
-	
-	va_start(ap, msg);
-	fprintf(stderr, "ut_multi: ");
-	vfprintf(stderr, msg, ap);
-	fprintf(stderr, "\n");
-	va_end(ap);
-
-	exit(1);
 }
 
 
@@ -130,11 +116,8 @@ static void multi_test( void ) {
 static void *multi_alloc( size_t len ) {
 	void *ret;
 	
-	ret = UU_mem_alloc(len);
-	if (!ret) {
-		multi_abort("out of memory");
-	}
-	UU_mem_tare(ret);
+	ret = UU_mem_tare(UU_mem_alloc(len));
+	UT_test_assert(ret, "out of memory");
 	return ret;
 }
 
@@ -224,11 +207,10 @@ static uu_error_e multi_capture_file( FILE *fp, uu_string_t *buf ) {
 		}
 	
 		len  = *buf ? strlen(*buf) : 0;
-		*buf = UU_mem_realloc(*buf, len + num_read + 1);
+		*buf = UU_mem_tare(UU_mem_realloc(*buf, len + num_read + 1));
 		if (!*buf) {
 			return UU_ERR_MEM;
 		}
-		UU_mem_tare(*buf);
 		
 		UU_mem_copy(*buf + len, tmp, num_read);
 		(*buf)[len + num_read] = '\0';

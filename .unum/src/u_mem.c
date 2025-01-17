@@ -157,8 +157,14 @@ void *_UU_memc_realloc( void *ptr, size_t size, const char *file, int line ) {
 }
 
 
-void _UU_memc_tare( void *ptr ) {
-	uu_mem_t *item = _mem_item(ptr);
+void *_UU_memc_tare( void *ptr ) {
+	uu_mem_t *item;
+	
+	if (!ptr) {
+		return NULL;
+	}
+
+	item = _mem_item(ptr);
 	
 	if (item->marker == UU_MEM_MARK) {
 		item->marker = UU_MEM_TARE;
@@ -166,6 +172,8 @@ void _UU_memc_tare( void *ptr ) {
 		total_allocs--;
 		mem_unlink(item);
 	}
+
+	return ptr;
 }
 
 

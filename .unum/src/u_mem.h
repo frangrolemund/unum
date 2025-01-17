@@ -35,7 +35,7 @@
 	extern void      _UU_memc_free( void *ptr );
 	extern void      *_UU_memc_realloc( void *ptr, size_t size,
 									    const char *file, int line );
-	extern void      _UU_memc_tare( void *ptr );
+	extern void      *_UU_memc_tare( void *ptr );
 	extern unsigned  _UU_memc_num_bytes( void );
 	extern unsigned  _UU_memc_num_allocs( void );
 	extern unsigned  _UU_memc_dump( void );
@@ -59,7 +59,7 @@
 	#define UU_mem_free(p)            free(p)
 	#define UU_mem_realloc(p, n)      realloc((p), (n))
   
-	#define UU_mem_tare(p)            assert(p != NULL)
+	#define UU_mem_tare(p)            (p)
 	#define UU_memc_num_bytes()       ((unsigned) 0)
 	#define UU_memc_num_allocs()      ((unsigned) 0)
 	#define UU_memc_dump()            assert(0)
