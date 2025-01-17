@@ -76,3 +76,17 @@ extern uu_time_delta_t UU_time_mark_delta_s( uu_time_mark_t start ) {
 	static char buf[TBUF_LEN];
 	return UU_time_mark_delta(start, buf, sizeof(buf));
 }
+
+
+extern uu_bool_t UU_time_millisleep( unsigned ms ) {
+#if UNUM_OS_UNIX
+	struct timespec ts;
+	
+	UU_mem_reset(&ts, sizeof(ts));
+	ts.tv_nsec = (long) ms * 1000000;
+	return nanosleep(&ts, NULL) != -1;
+	
+#else
+#error "Not implemented."
+#endif
+}

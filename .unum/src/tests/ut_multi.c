@@ -34,6 +34,7 @@
 #include "u_test.h"
 #include "u_fs.h"
 #include "u_proc.h"
+#include "u_test.h"
 #include "u_time.h"
 
 
@@ -48,8 +49,7 @@ typedef struct {
 } multi_result_t;
 
 
-static void multi_print( char *fmt, ... );
-static void multi_vprint( char *fmt, va_list ap );
+static int unittest_multi( int argc, char *argv[] );
 static void multi_parse_cmdline( int argc, char *argv[] );
 static void multi_abort( char *msg, ... );
 static void multi_test( void );
@@ -59,7 +59,7 @@ static void multi_test_run( multi_result_t *r );
 static void multi_exec_capture( multi_result_t *r );
 static uu_error_e multi_capture_file( FILE *fp, uu_string_t *buf );
 static uu_bool_t multi_isok( multi_result_t *r );
-static void multi_report( void );
+static int multi_report( void );
 
 
 uu_path_t          test_dir;
@@ -77,26 +77,16 @@ multi_result_t     **results   = NULL;
 
 
 int main( int argc, char *argv[] ) {
+	return UT_test_run(argc, argv, unittest_multi);
+}
+
+
+static int unittest_multi( int argc, char *argv[] ) {
 	start = UU_time_mark_ns();
 	
 	multi_parse_cmdline(argc, argv);
 	multi_test();
-	multi_report();
-}
-
-
-static void multi_print( char *fmt, ... ) {
-	va_list     ap;
-	
-	va_start(ap, fmt);
-	multi_vprint(fmt, ap);
-	va_end(ap);
-}
-
-
-static void multi_vprint( char *fmt, va_list ap ) {
-	vfprintf(stdout, fmt, ap);
-	fprintf(stdout, "\n");
+	return multi_report();
 }
 
 
@@ -150,6 +140,7 @@ static void *multi_alloc( size_t len ) {
 	if (!ret) {
 		multi_abort("out of memory");
 	}
+	UU_mem_tare(ret);
 	return ret;
 }
 
@@ -164,7 +155,7 @@ static void multi_test_print( multi_result_t *r, uu_string_t fmt, ... ) {
 	va_start(ap, fmt);
 	vsnprintf(buf, sizeof(buf), fmt, ap);
 	va_end(ap);
-	multi_print("%*s  %s", -(max_tlen+2), pfx, buf);
+	UT_test_printf("%*s  %s", -(max_tlen+2), pfx, buf);
 }
 
 
@@ -258,7 +249,7 @@ static uu_bool_t multi_isok( multi_result_t *r ) {
 }
 
 
-static void multi_report( void ) {
+static int multi_report( void ) {
 	uu_path_t   file       = {'\0'};
 	int         line       = -1;
 	char        msg[1024]  = {'\0'};
@@ -266,7 +257,7 @@ static void multi_report( void ) {
 	int in_tag = 0, in_val = 0;
 	uu_string_t p          = NULL;
 
-	multi_print("");
+	UT_test_printf("");
 	            
 	for (int i = 0; i < num_tests; i++) {
 		if (multi_isok(results[i])) {
@@ -320,12 +311,13 @@ static void multi_report( void ) {
 	}
 	
 	if (failed) {
-		multi_print("");
+		UT_test_printf("");
 	}
-	multi_print("%*s  %s", -(max_tlen+2), "Elapsed:",
-	            UU_time_mark_delta_s(start).desc);
-	multi_print("%*s  %d passed, %d failed", -(max_tlen+2), "Results:",
-	            ok, failed);
-	            	            
-	exit(failed ? 1 : 0);
+	UT_test_printf("%*s  %s", -(max_tlen+2), "Elapsed:",
+	               UU_time_mark_delta_s(start).desc);
+	UT_test_printf("%*s  %d passed, %d failed", -(max_tlen+2), "Results:",
+	               ok, failed);
+
+	UT_test_assert(failed == 0, "One or more tests have failed.");
+	return failed ? 1 : 0;
 }

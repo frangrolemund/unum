@@ -21,6 +21,7 @@
 
 #include "u_proc.h"
 #include "u_test.h"
+#include "u_time.h"
 
 
 static uu_cstring_t prog;
@@ -194,7 +195,7 @@ static void proc_test_kill( void ) {
 	UT_test_assert(proc && err == UU_OK, "Failed to get process.");
 	UT_test_assert(!UU_proc_stdout(proc), "Found standard output?");
 	UT_test_assert(!UU_proc_stderr(proc), "Found standard error?");
-	sleep(1);
+	UU_time_millisleep(50);
 	UT_test_assert(UU_proc_exists(proc), "Failed to detect existence.");
 	UU_proc_delete(proc);
 	
@@ -203,7 +204,7 @@ static void proc_test_kill( void ) {
 	UT_test_assert(proc && err == UU_OK, "Failed to get process.");
 	UT_test_assert(!UU_proc_stdout(proc), "Found standard output?");
 	UT_test_assert(!UU_proc_stderr(proc), "Found standard error?");
-	sleep(1);
+	UU_time_millisleep(50);
 	UT_test_assert(UU_proc_exists(proc), "Failed to detect existence.");
 	UT_test_assert(UU_proc_kill(proc) == UU_OK, "Failed to kill child");
 	UT_test_assert(UU_proc_wait(proc, &err) == -1, "Failed to wait.");

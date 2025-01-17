@@ -133,20 +133,23 @@ void UT_test_setname( uu_cstring_t name ) {
 void UT_test_printf( uu_cstring_t fmt, ... ) {
 	char        buf[2048];
 	va_list     val;
-	uu_string_t s_begin, s_end;
 
 	va_start(val, fmt);
 	vsnprintf(buf, sizeof(buf), fmt, val);
 	va_end(val);
-
-	s_begin = is_struct ? "<uout>" : "";
-	s_end   = is_struct ? "</uout>" : "";
 	
-	if (test_name) {
-		fprintf(stdout, "%s%s (%s): %s%s\n", s_begin, prog, test_name, buf,
-		        s_end);
+	if (is_struct) {
+		if (test_name) {
+			fprintf(stdout, "<uout>(%s): %s</uout>\n", test_name, buf);
+		} else {
+			fprintf(stdout, "<uout>%s</uout>\n", buf);
+		}
 	} else {
-		fprintf(stdout, "%s%s: %s%s\n", s_begin, prog, buf, s_end);
+		if (test_name) {
+			fprintf(stdout, "%s (%s): %s\n", prog, test_name, buf);
+		} else {
+			fprintf(stdout, "%s: %s\n", prog, buf);
+		}
 	}
 }
 

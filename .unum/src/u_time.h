@@ -67,5 +67,12 @@ extern uu_time_delta_t UU_time_mark_delta_s( uu_time_mark_t start );
  */
 #define UU_time_mark_delta_ns(td) ((td).end - (td).start)
 
+/*
+ * UU_time_millisleep()
+ * - sleep for a number of milliseconds expressed by `ms`.  Returns `false`
+ *   if interrupted by a signal or other system event.
+ */
+extern uu_bool_t UU_time_millisleep( unsigned ms );
+
 
 #endif /* UNUM_TIME_H */

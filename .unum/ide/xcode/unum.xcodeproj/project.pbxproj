@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		A103CEBC2CF765DF0057C7A3 /* u_test.c in Sources */ = {isa = PBXBuildFile; fileRef = A103CEBB2CF765DF0057C7A3 /* u_test.c */; };
+		A10DB4012D3A8DD200FFA44B /* u_test.c in Sources */ = {isa = PBXBuildFile; fileRef = A10DB4002D3A8DD200FFA44B /* u_test.c */; };
+		A10DB4032D3A90BB00FFA44B /* u_time.c in Sources */ = {isa = PBXBuildFile; fileRef = A10DB4022D3A90BB00FFA44B /* u_time.c */; };
 		A122504F2D37E6C9001EDB33 /* ut_multi.c in Sources */ = {isa = PBXBuildFile; fileRef = A122504E2D37E6C9001EDB33 /* ut_multi.c */; };
 		A12250552D37E6EC001EDB33 /* u_fs.c in Sources */ = {isa = PBXBuildFile; fileRef = A12250502D37E6EC001EDB33 /* u_fs.c */; };
 		A12250562D37E6EC001EDB33 /* u_mem.c in Sources */ = {isa = PBXBuildFile; fileRef = A12250512D37E6EC001EDB33 /* u_mem.c */; };
@@ -161,6 +163,8 @@
 		A103CEB22CF7647D0057C7A3 /* ut_u_csv */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ut_u_csv; sourceTree = BUILT_PRODUCTS_DIR; };
 		A103CEBA2CF765DF0057C7A3 /* u_test.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = u_test.h; path = /Users/fran/work/realproven/unum/.unum/src/u_test.h; sourceTree = "<absolute>"; };
 		A103CEBB2CF765DF0057C7A3 /* u_test.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = u_test.c; path = /Users/fran/work/realproven/unum/.unum/src/u_test.c; sourceTree = "<absolute>"; };
+		A10DB4002D3A8DD200FFA44B /* u_test.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = u_test.c; path = /Users/fran/work/realproven/unum/.unum/src/u_test.c; sourceTree = "<absolute>"; };
+		A10DB4022D3A90BB00FFA44B /* u_time.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = u_time.c; path = /Users/fran/work/realproven/unum/.unum/src/u_time.c; sourceTree = "<absolute>"; };
 		A12250462D37E67C001EDB33 /* ut_multi */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ut_multi; sourceTree = BUILT_PRODUCTS_DIR; };
 		A122504E2D37E6C9001EDB33 /* ut_multi.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = ut_multi.c; path = /Users/fran/work/realproven/unum/.unum/src/tests/ut_multi.c; sourceTree = "<absolute>"; };
 		A12250502D37E6EC001EDB33 /* u_fs.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = u_fs.c; path = /Users/fran/work/realproven/unum/.unum/src/u_fs.c; sourceTree = "<absolute>"; };
@@ -298,6 +302,7 @@
 				A12250632D37F267001EDB33 /* u_time.c */,
 				A12250512D37E6EC001EDB33 /* u_mem.c */,
 				A12250522D37E6EC001EDB33 /* u_proc.c */,
+				A10DB4002D3A8DD200FFA44B /* u_test.c */,
 			);
 			name = ut_multi;
 			sourceTree = "<group>";
@@ -402,10 +407,11 @@
 			isa = PBXGroup;
 			children = (
 				A1ED99662D2C2443008256A1 /* ut_u_proc.c */,
+				A1ED996A2D2C24E7008256A1 /* u_test.c */,
 				A13F481B2D2D67720088B372 /* u_proc.c */,
 				A1ED99682D2C24E7008256A1 /* u_fs.c */,
+				A10DB4022D3A90BB00FFA44B /* u_time.c */,
 				A1ED99692D2C24E7008256A1 /* u_mem.c */,
-				A1ED996A2D2C24E7008256A1 /* u_test.c */,
 			);
 			name = ut_u_proc;
 			sourceTree = "<group>";
@@ -649,6 +655,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A122504F2D37E6C9001EDB33 /* ut_multi.c in Sources */,
+				A10DB4012D3A8DD200FFA44B /* u_test.c in Sources */,
 				A12250552D37E6EC001EDB33 /* u_fs.c in Sources */,
 				A12250642D37F267001EDB33 /* u_time.c in Sources */,
 				A12250562D37E6EC001EDB33 /* u_mem.c in Sources */,
@@ -719,6 +726,7 @@
 				A1ED996C2D2C24E7008256A1 /* u_test.c in Sources */,
 				A1ED996D2D2C24E7008256A1 /* u_fs.c in Sources */,
 				A13F481C2D2D67720088B372 /* u_proc.c in Sources */,
+				A10DB4032D3A90BB00FFA44B /* u_time.c in Sources */,
 				A1ED99672D2C2443008256A1 /* ut_u_proc.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
