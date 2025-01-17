@@ -37,8 +37,6 @@
 #error "Unit testing only."
 #endif
 
-#define UNUM_DIR_TEST  UNUM_DIR_DEPLOY UNUM_PATH_SEP_S "test"
-
 
 /*
  * UT_test_assert()
@@ -56,6 +54,13 @@ extern void _UT_test_failed( uu_cstring_t expr, uu_cstring_t file, int line,
  */
 extern void UT_test_assert_eq( uu_cstring_t s1, uu_cstring_t s2,
                                uu_cstring_t msg );
+
+
+/*
+ * UT_test_dir()
+ * - return the test diretory.
+ */
+extern uu_cstring_t UT_test_dir( void );
 
 
 /*

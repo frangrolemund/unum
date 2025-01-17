@@ -29,6 +29,12 @@
 #include "u_mem.h"
 
  
+static uu_string_t track_tmp_file( uu_cstring_t file );
+static void delete_tmp_files( void );
+static int tmp_dir_compare(const void *f1, const void *f2);
+
+
+static uu_path_t   test_dir   = {'\0'};
 static char        prog[256];
 static uu_path_t   src_path;
 static const char  *test_name = NULL;
@@ -36,10 +42,6 @@ static uu_string_t tmp_dir    = NULL;
 static uu_string_t *tmp_files = NULL;
 static int         num_tmp    = 0;
 static uu_bool_t   is_struct  = false;
-
-static uu_string_t track_tmp_file( uu_cstring_t file );
-static void delete_tmp_files( void );
-static int tmp_dir_compare(const void *f1, const void *f2);
 
 
 #define ARG_STRUCTURED "--unum-test-struct"
@@ -122,6 +124,15 @@ void UT_test_assert_eq( uu_cstring_t s1, uu_cstring_t s2, uu_cstring_t msg ) {
 }
 
 
+uu_cstring_t UT_test_dir( void ) {
+	if (!test_dir[0]) {
+		UU_path_join(test_dir, sizeof(test_dir), UNUM_DIR_CODE_BASIS,
+		             UNUM_DIR_DEPLOY, "test", NULL);
+	}
+	return test_dir;
+}
+
+
 void UT_test_setname( uu_cstring_t name ) {
 	if (test_name != NULL) {
 		UT_test_printf("OK");
@@ -183,7 +194,7 @@ uu_cstring_t UT_test_tempfile( uu_cstring_t extension,
                  "%02d%02d%02d-%02d%02d%02d", tm_now->tm_mon + 1,
                  tm_now->tm_mday, tm_now->tm_year - 100, tm_now->tm_hour,
 				 tm_now->tm_min, tm_now->tm_sec);
-		tmp_dir = (uu_string_t) UU_path_join_s(UNUM_DIR_TEST, prog, buf,
+		tmp_dir = (uu_string_t) UU_path_join_s(UT_test_dir(), prog, buf,
 		                                       NULL);
 		UT_test_assert(tmp_dir && (tmp_dir = UU_mem_strdup(tmp_dir)),
 		               "temp failure");

@@ -447,13 +447,16 @@ static void write_config( void ) {
 	// - the anchor of any deployment and by putting this here it ensures
 	//   that copying the deployment somewhere else will be detected by
 	//   simply running `make` again.
-	printf_config("#define UNUM_DIR_BASIS       \"%s\"", basis_dir);
-	printf_config("#define UNUM_DIR_DEPLOY      \"%s\"", 
-                  to_basis(DEPLOYED_DIR));
-	printf_config("#define UNUM_DIR_BUILD       \"%s\"", to_basis(BUILD_DIR));
-	printf_config("#define UNUM_DIR_INCLUDE     \"%s\"", 
-                  to_basis(BUILD_INCLUDE_DIR));
-	printf_config("#define UNUM_DIR_BIN         \"%s\"", to_basis(BIN_DIR));
+	printf_config("//  The 'code basis' is the basis of _this_ repo, but"); 
+	printf_config("//  when running unum it is *important* to compute the");
+	printf_config("//  basis from the cwd upwards as git does it to ensure");
+	printf_config("//  it will correctly trampoline in to a binary that");
+	printf_config("//  matches the source in the cwd tree!");
+	printf_config("#define UNUM_DIR_CODE_BASIS  \"%s\"", basis_dir);
+	printf_config("#define UNUM_DIR_DEPLOY      \"%s\"", DEPLOYED_DIR);
+	printf_config("#define UNUM_DIR_BUILD       \"%s\"", BUILD_DIR);
+	printf_config("#define UNUM_DIR_INCLUDE     \"%s\"", BUILD_INCLUDE_DIR);
+	printf_config("#define UNUM_DIR_BIN         \"%s\"", BIN_DIR);
 	printf_config("");
 
 

@@ -122,7 +122,7 @@ void fs_test_dirs( void ) {
 	
 	UT_test_setname("directories");
 	
-	UT_test_assert(UU_path_join(tmpdir, U_PATH_MAX, UNUM_DIR_TEST, "a", "b",
+	UT_test_assert(UU_path_join(tmpdir, U_PATH_MAX, UT_test_dir(), "a", "b",
 	          "c", "d", NULL), "path_join_failed");
 	UT_test_assert(UU_file_none(tmpdir), "dir exists");
 	UT_test_assert(UU_dir_create(tmpdir, S_IRWXU, false) != UU_OK, "created dir?");
@@ -136,10 +136,10 @@ void fs_test_dirs( void ) {
 	UT_test_assert(UU_dir_exists(tmpdir), "failed to create");
 	
 	UT_test_assert(rmdir(tmpdir) == 0, "cannot remove dir");
-	UT_test_assert(rmdir(UU_path_join_s(UNUM_DIR_TEST, "a", "b", "c",
+	UT_test_assert(rmdir(UU_path_join_s(UT_test_dir(), "a", "b", "c",
 	                                    NULL)) == 0, "cannot remove dir");
-	UT_test_assert(rmdir(UU_path_join_s(UNUM_DIR_TEST, "a", "b", NULL)) == 0,
+	UT_test_assert(rmdir(UU_path_join_s(UT_test_dir(), "a", "b", NULL)) == 0,
 	               "cannot remove dir");
-	UT_test_assert(rmdir(UU_path_join_s(UNUM_DIR_TEST, "a", NULL)) == 0,
+	UT_test_assert(rmdir(UU_path_join_s(UT_test_dir(), "a", NULL)) == 0,
 	               "cannot remove dir");
 }
