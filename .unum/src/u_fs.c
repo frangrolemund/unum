@@ -22,8 +22,6 @@
 #include "u_common.h"
 #include "u_fs.h"
 
-typedef char * uu_string_t;
-
 static uu_string_t path_vjoin( uu_string_t dst, size_t len, uu_string_t dstp,
                                va_list ap);
 
