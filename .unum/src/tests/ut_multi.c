@@ -17,12 +17,6 @@
 | PERFORMANCE OF THIS SOFTWARE. 
 | ---------------------------------------------------------------*/
 
-/*
- *  Runs all unit tests.
- *  - as a matter of principle and some practicality, this doesn't
- *    use the test framework to remain externally objective and able
- *    to make finer-grained decisions about results.
- */
 
 #include <stdarg.h>
 #include <stdio.h>
