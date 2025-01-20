@@ -1,32 +1,20 @@
-/*---------------------------------------------------------------
+/*-------------------------------------------------------------------
 | vi: set noet ts=4 sw=4 fenc=utf-8
-| ---------------------------------------------------------------
-| Copyright 2024 Francis Henry Grolemund III
-|
-| Permission to use, copy, modify, and/or distribute this software for
-| any purpose with or without fee is hereby granted, provided that the
-| above copyright notice and this permission notice appear in all copies.
-|
-| THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL
-| WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED
-| WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE
-| AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL
-| DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR
-| PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
-| TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
-| PERFORMANCE OF THIS SOFTWARE.
-| ---------------------------------------------------------------*/
+| -------------------------------------------------------------------
+| Copyright (c) 2025 Francis Henry Grolemund III and RealProven, LLC.
+| SPDX-License-Identifier: LicenseRef-Unum-Commercial OR GPL-3.0-only
+| -------------------------------------------------------------------*/
 
 /*
- *  The purpose of bootstrapping is to ingest the C compiler environment
- *  from a platform-specific toolchain (ie. `make`) into the 
+ *  The purpose of bootstrapping is to ingest the C++ compiler environment
+ *  from a platform-specific toolchain (ie. `make`) into the
  *  platform-independent `unum` toolchain to allow the latter take over all
  *  further build processing.  
  *
  *  This program figures out where it is running, encodes fundamental 
  *  configuration and builds the first `unum` kernel, called the pre-kernel
  *  or 'pre-k' for short.  The objective is for it to be as minimal as possible
- *  without confusing the process or introducing needless waste if/when `make` 
+ *  without confusing the process or introducing needless waste if/when `make`
  *  is re-invoked on an existing repo.
  */
 
@@ -41,15 +29,17 @@
 
 
 typedef enum {
-	T_CC = 0,
+	T_CXX = 0,
 	T_LD,
+	T_AR,
 
 	T_COUNT
 } tool_e;
 
 static const struct { tool_e tool; const char *oname; } tool_map[] = {
-	{ T_CC, "cc" },
-	{ T_LD, "ld" }
+	{ T_CXX, "c++" },
+	{ T_LD,  "ld" },
+	{ T_AR,  "ar" }
 };
 
 typedef enum {
@@ -118,7 +108,7 @@ int main( int argc, char *argv[] ) {
 	set_basis();
 	write_config();	
 
-	build_pre_k();
+//	build_pre_k();
 
 	fclose(uberr);
 	return 0;
@@ -163,7 +153,8 @@ static void parse_cmd_line( int argc, char *argv[] ) {
 		for (i = 0; i < sizeof(tool_map)/sizeof(tool_map[0]); i++) {
 			if ((opt = parse_option(tool_map[i].oname, item))) {
 				opt = (opt && opt[0]) ? opt : NULL;
-				opt = (i == T_CC || i == T_LD) ? resolve_cmd(opt) : opt;
+				opt = (i == T_CXX || i == T_LD || i == T_AR) ?
+				       resolve_cmd(opt) : opt;
 				tools[tool_map[i].tool] = opt;
 				is_sup = 1;
 				break;
@@ -175,7 +166,7 @@ static void parse_cmd_line( int argc, char *argv[] ) {
 		}
 	}
 
-	if (!tools[T_CC] || !tools[T_LD]) {
+	if (!tools[T_CXX] || !tools[T_LD]) {
 		abort_fail("missing one or more required tool parameters.");
 	}
 }
@@ -329,7 +320,7 @@ static int run_cc( const char *bin_file, const char *inc_dir,
                    const char *pp_defs, cstrarr_t src_files ) {
 	char cmd[16384];
 
-	strcpy(cmd, tools[T_CC]);	
+	strcpy(cmd, tools[T_CXX]);
 
 	if (inc_dir && *inc_dir) {
 		strcat(cmd, " -I");
@@ -447,21 +438,26 @@ static void write_config( void ) {
 	// - the anchor of any deployment and by putting this here it ensures
 	//   that copying the deployment somewhere else will be detected by
 	//   simply running `make` again.
-	printf_config("//  The 'code basis' is the basis of _this_ repo, but"); 
-	printf_config("//  when running unum it is *important* to compute the");
-	printf_config("//  basis from the cwd upwards as git does it to ensure");
-	printf_config("//  it will correctly trampoline in to a binary that");
-	printf_config("//  matches the source in the cwd tree!");
-	printf_config("#define UNUM_DIR_CODE_BASIS  \"%s\"", basis_dir);
-	printf_config("#define UNUM_DIR_DEPLOY      \"%s\"", DEPLOYED_DIR);
-	printf_config("#define UNUM_DIR_BUILD       \"%s\"", BUILD_DIR);
-	printf_config("#define UNUM_DIR_INCLUDE     \"%s\"", BUILD_INCLUDE_DIR);
-	printf_config("#define UNUM_DIR_BIN         \"%s\"", BIN_DIR);
+	printf_config("//  This is the basis of _this_ repo, but when running");
+	printf_config("//  unum it is *important* to compute the basis from");
+	printf_config("//  cwd upwards as `git` does to ensure it will");
+	printf_config("//  correctly trampoline into the binary that matches");
+	printf_config("//  the source in the cwd tree!");
+	printf_config("#define UNUM_DIR_BASIS       \"%s\"", basis_dir);
+	printf_config("#define UNUM_SUBDIR_DEPLOY   \"%s\"", DEPLOYED_DIR);
+	printf_config("#define UNUM_SUBDIR_BUILD    \"%s\"", BUILD_DIR);
+	printf_config("#define UNUM_SUBDIR_INCLUDE  \"%s\"", BUILD_INCLUDE_DIR);
+	printf_config("#define UNUM_SUBDIR_BIN      \"%s\"", BIN_DIR);
 	printf_config("");
 
 
-	printf_config("#define UNUM_TOOL_CC         \"%s\"", tools[T_CC]);
+	printf_config("#define UNUM_TOOL_CXX        \"%s\"", tools[T_CXX]);
 	printf_config("#define UNUM_TOOL_LD         \"%s\"", tools[T_LD]);
+	if (tools[T_AR]) {
+		printf_config("#define UNUM_TOOL_AR         \"%s\"", tools[T_AR]);	
+	} else {
+		printf_config("#undef  UNUM_TOOL_AR         // - not provided");
+	}
 	printf_config("");
 
 	printf_config("#endif /* UNUM_CONFIG_H */");
@@ -539,7 +535,7 @@ static void build_pre_k( void ) {
 static const char *bin_ext( void ) {
 	const char *ptr = NULL;
 
-	ptr = tools[T_CC] + strlen(tools[T_CC]);
+	ptr = tools[T_CXX] + strlen(tools[T_CXX]);
 	while (*--ptr) {
 		if (*ptr == '.' && strlen(ptr) > 1) {
 			return ptr;
