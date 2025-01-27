@@ -12,12 +12,21 @@
  *  further build processing.  
  *
  *  This program figures out where it is running, encodes fundamental 
- *  configuration and builds the first `unum` kernel, called the pre-kernel
- *  or 'pre-k' for short.  The objective is for it to be as minimal as possible
+ *  configuration and builds the first limited `unum` kernel, called the 
+ *  pre-kernel.  The objective is for it to be as minimal as possible
  *  without confusing the process or introducing needless waste if/when `make`
- *  is re-invoked on an existing repo.
+ *  is re-invoked on an existing repo, while providing enough to build the
+ *  full unum kernel to take over future deployment responsibility.
  */
 
+/*
+ *  Although this is C++, the style is very much a C-oriented one because the
+ *  point of this is to verify that the C++ compiler is used but to maintain
+ *  a streamlined coding style.  The language will be applied more effectively
+ *  in the kernel itself.
+ */
+
+extern "C" {
 #include <assert.h>
 #include <limits.h>
 #include <stdarg.h>
@@ -26,33 +35,30 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <unistd.h>
+}
 
 
 typedef enum {
-	T_CXX = 0,
-	T_LD,
-	T_AR,
+	A_CXX = 0,
+	A_LD,
 
-	T_COUNT
-} tool_e;
+	A_COUNT
+} arg_e;
 
-static const struct { tool_e tool; const char *oname; } tool_map[] = {
-	{ T_CXX, "c++" },
-	{ T_LD,  "ld" },
-	{ T_AR,  "ar" }
+static const struct { arg_e arg; const char *name; } arg_map[] = {
+	{ A_CXX, "cpp" },
+	{ A_LD,  "link" },
 };
 
 typedef enum {
-	P_WINDOWS = 0,
+	P_UNKNOWN = 0,
 	P_MACOS,
-	P_LINUX,
-	P_UNKNOWN	
 } platform_e;
 
 typedef const char * cstrarr_t[];
 
 
-static void abort_fail( const char *fmt, ... );
+static void uabort( const char *fmt, ... );
 static const char *bin_ext( void );
 static void build_pre_k( void );
 static void detect_path_style( void );
@@ -82,12 +88,13 @@ static void write_config( void );
 #define is_dir(p)          (file_info((p)).st_mode & S_IFDIR)
 #define path_sep_s         ((char [2]) { path_sep, '\0' })
 #define CFG_SIZE           32768
+#define IS_UNIX            (platform == P_MACOS)
 
 
 static char        basis_dir[PATH_MAX];
 static char        path_sep;
 static platform_e  platform           = P_UNKNOWN;
-static const char  *tools[T_COUNT]    = { NULL, NULL };
+static const char  *bargs[A_COUNT]    = { NULL, NULL };
 static FILE        *uberr             = NULL;
 static char        config[CFG_SIZE];
 static char        *cfg_offset        = config;
@@ -126,11 +133,11 @@ static void detect_path_style( void ) {
 		}
 	}
 
-	abort_fail("missing PATH environment");
+	uabort("missing PATH environment");
 }
 
 
-static void abort_fail( const char *fmt, ... ) {
+static void uabort( const char *fmt, ... ) {
 	va_list ap;
 	char    buf[2048];
 
@@ -139,7 +146,7 @@ static void abort_fail( const char *fmt, ... ) {
 	va_end(ap);
 
 	fprintf(uberr ? uberr : stdout, "uboot error: %s\n", buf);
-	exit(1);
+	abort();
 }
 
 
@@ -150,24 +157,24 @@ static void parse_cmd_line( int argc, char *argv[] ) {
 	while (--argc) {
 		const char *item = *++argv;
 		int is_sup = 0;
-		for (i = 0; i < sizeof(tool_map)/sizeof(tool_map[0]); i++) {
-			if ((opt = parse_option(tool_map[i].oname, item))) {
+		for (i = 0; i < sizeof(arg_map)/sizeof(arg_map[0]); i++) {
+			if ((opt = parse_option(arg_map[i].name, item))) {
 				opt = (opt && opt[0]) ? opt : NULL;
-				opt = (i == T_CXX || i == T_LD || i == T_AR) ?
+				opt = (i == A_CXX || i == A_LD) ?
 				       resolve_cmd(opt) : opt;
-				tools[tool_map[i].tool] = opt;
+				bargs[arg_map[i].arg] = opt;
 				is_sup = 1;
 				break;
 			}	
 		}
 
 		if (!is_sup) {
-			abort_fail("unsuported command-line parameter '%s'", item);
+			uabort("unsuported command-line parameter '%s'", item);
 		}
 	}
 
-	if (!tools[T_CXX] || !tools[T_LD]) {
-		abort_fail("missing one or more required tool parameters.");
+	if (!bargs[A_CXX] || !bargs[A_LD]) {
+		uabort("missing one or more required tool parameters.");
 	}
 }
 
@@ -215,7 +222,7 @@ static const char *resolve_cmd( const char *cmd ) {
 	}
 
 	if (!rc || !is_file(rc) || (rc = strdup(rc)) == NULL) {
-		abort_fail("unresolvable command path '%s'", cmd);
+		uabort("unresolvable command path '%s'", cmd);
 	}
 
 	return rc;
@@ -271,7 +278,7 @@ static void detect_platform( void ) {
 		return;
 	}
 
-	abort_fail("unsupported platform type");
+	uabort("unsupported platform type");
 }
 
 
@@ -294,7 +301,7 @@ static int run_cc_with_source( const char *source ) {
 		}
 
 		if (!*++tp) {
-			abort_fail("failed to find temp directory!.");
+			uabort("failed to find temp directory!.");
 		}
 	} while (*tp);
 
@@ -302,7 +309,7 @@ static int run_cc_with_source( const char *source ) {
 
 	src_file = fopen(src_name, "w");
 	if (!src_file || !fwrite(source, strlen(source), 1, src_file)) {
-		abort_fail("failed to create temp file.");
+		uabort("failed to create temp file.");
 	}
 	fclose(src_file);
 
@@ -320,7 +327,7 @@ static int run_cc( const char *bin_file, const char *inc_dir,
                    const char *pp_defs, cstrarr_t src_files ) {
 	char cmd[16384];
 
-	strcpy(cmd, tools[T_CXX]);
+	strcpy(cmd, bargs[A_CXX]);
 
 	if (inc_dir && *inc_dir) {
 		strcat(cmd, " -I");
@@ -353,7 +360,7 @@ static void set_basis( void ) {
 	int         i;
 
 	if (!getcwd(cwd, PATH_MAX)) {
-		abort_fail("cannot retrieve cwd");
+		uabort("cannot retrieve cwd");
 	}
 	
 	if (strncmp(cwd, __FILE__, strlen(cwd))) {
@@ -372,7 +379,7 @@ static void set_basis( void ) {
 	}
 
 	if (pos <= basis_dir) {
-		abort_fail("basis not found");
+		uabort("basis not found");
 	}
 
 	chdir(basis_dir);
@@ -380,7 +387,7 @@ static void set_basis( void ) {
 	for (i = 0; i < sizeof(build_dirs)/sizeof(build_dirs[0]); i++) {
 		bd = to_basis(build_dirs[i]);
 		if (!is_dir(bd) && mkdir(bd, S_IRWXU) != 0) {
-			abort_fail("failed to create build directory '%s'", bd);
+			uabort("failed to create build directory '%s'", bd);
 		}
 	}
 }
@@ -419,14 +426,10 @@ static void write_config( void ) {
 	printf_config("");
 
 
-	printf_config("#define UNUM_OS_UNIX         %d",
-                    platform == P_WINDOWS ? 0 : 1);	
-	printf_config("#define UNUM_OS_WIN          %d", 
-	                platform == P_WINDOWS ? 1 : 0);
-	printf_config("#define UNUM_OS_MACOS        %d", 
+	printf_config("#define UNUM_OS_UNIX         %d", IS_UNIX ? 1 : 0);	
+	printf_config("%s#define UNUM_OS_MACOS        %d",
+	                platform == P_MACOS ? "" : "// ", 
 	                platform == P_MACOS ? 1 : 0);
-	printf_config("#define UNUM_OS_LINUX        %d", 
-	                platform == P_LINUX ? 1 : 0);
 	printf_config("");
 
 
@@ -438,11 +441,9 @@ static void write_config( void ) {
 	// - the anchor of any deployment and by putting this here it ensures
 	//   that copying the deployment somewhere else will be detected by
 	//   simply running `make` again.
-	printf_config("//  This is the basis of _this_ repo, but when running");
-	printf_config("//  unum it is *important* to compute the basis from");
-	printf_config("//  cwd upwards as `git` does to ensure it will");
-	printf_config("//  correctly trampoline into the binary that matches");
-	printf_config("//  the source in the cwd tree!");
+	// - when unum runs, it is important to compute the basis as Git does when
+	//   starting up so that the binary associated with the code is always the
+	//   one invoked!
 	printf_config("#define UNUM_DIR_BASIS       \"%s\"", basis_dir);
 	printf_config("#define UNUM_SUBDIR_DEPLOY   \"%s\"", DEPLOYED_DIR);
 	printf_config("#define UNUM_SUBDIR_BUILD    \"%s\"", BUILD_DIR);
@@ -451,13 +452,8 @@ static void write_config( void ) {
 	printf_config("");
 
 
-	printf_config("#define UNUM_TOOL_CXX        \"%s\"", tools[T_CXX]);
-	printf_config("#define UNUM_TOOL_LD         \"%s\"", tools[T_LD]);
-	if (tools[T_AR]) {
-		printf_config("#define UNUM_TOOL_AR         \"%s\"", tools[T_AR]);	
-	} else {
-		printf_config("#undef  UNUM_TOOL_AR         // - not provided");
-	}
+	printf_config("#define UNUM_TOOL_CXX        \"%s\"", bargs[A_CXX]);
+	printf_config("#define UNUM_TOOL_LD         \"%s\"", bargs[A_LD]);
 	printf_config("");
 
 	printf_config("#endif /* UNUM_CONFIG_H */");
@@ -476,7 +472,7 @@ static void write_config( void ) {
 
 	fp = fopen(cfg_file, "w");
 	if (!fp || fwrite(config, 1, strlen(config), fp) == 0) {
-		abort_fail("failed to generate config '%s'", cfg_file);
+		uabort("failed to generate config '%s'", cfg_file);
 	}
 	fclose(fp);
 }
@@ -525,7 +521,7 @@ static void build_pre_k( void ) {
 	            "UNUM_BOOTSTRAP", src);
 
 	if (rc != 0) {
-		abort_fail("failed to build pre-k, rc=%d", rc);
+		uabort("failed to build pre-k, rc=%d", rc);
 	}
 
 	printf("uboot: unum is ready for bootstrapping.\n");
@@ -535,7 +531,7 @@ static void build_pre_k( void ) {
 static const char *bin_ext( void ) {
 	const char *ptr = NULL;
 
-	ptr = tools[T_CXX] + strlen(tools[T_CXX]);
+	ptr = bargs[A_CXX] + strlen(bargs[A_CXX]);
 	while (*--ptr) {
 		if (*ptr == '.' && strlen(ptr) > 1) {
 			return ptr;

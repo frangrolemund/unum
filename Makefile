@@ -12,7 +12,7 @@ MKDIR  := mkdir -p
 RMDIR  := rm -rf
 
 all : $(UBOOT)
-	@$(UBOOT) --c++=$(CXX) --ld=$(LD) --ar=$(AR)
+	@$(UBOOT) --cpp=$(CXX) --link=$(LD)
 
 legacy:
 	@$(BASIS)/deployed/bin/unum deploy
