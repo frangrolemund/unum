@@ -45,11 +45,6 @@ typedef enum {
 	A_COUNT
 } arg_e;
 
-static const struct { arg_e arg; const char *name; } arg_map[] = {
-	{ A_CXX, "cpp" },
-	{ A_LD,  "link" },
-};
-
 typedef enum {
 	P_UNKNOWN = 0,
 	P_MACOS,
@@ -93,11 +88,15 @@ static void write_config( void );
 
 static char        basis_dir[PATH_MAX];
 static char        path_sep;
-static platform_e  platform           = P_UNKNOWN;
-static const char  *bargs[A_COUNT]    = { NULL, NULL };
-static FILE        *uberr             = NULL;
+static platform_e  platform                  = P_UNKNOWN;
+static FILE        *uberr                    = NULL;
 static char        config[CFG_SIZE];
-static char        *cfg_offset        = config;
+static char        *cfg_offset               = config;
+static struct { arg_e arg; 
+                const char *name; 
+                const char *value; } bargs[] = {{ A_CXX, "cpp", NULL },
+	                                            { A_LD,  "link", NULL }
+                                               };
 
 
 int main( int argc, char *argv[] ) {
@@ -157,12 +156,13 @@ static void parse_cmd_line( int argc, char *argv[] ) {
 	while (--argc) {
 		const char *item = *++argv;
 		int is_sup = 0;
-		for (i = 0; i < sizeof(arg_map)/sizeof(arg_map[0]); i++) {
-			if ((opt = parse_option(arg_map[i].name, item))) {
+		for (i = 0; i < sizeof(bargs)/sizeof(bargs[0]); i++) {
+			assert(bargs[i].arg == i);
+			if ((opt = parse_option(bargs[i].name, item))) {
 				opt = (opt && opt[0]) ? opt : NULL;
 				opt = (i == A_CXX || i == A_LD) ?
 				       resolve_cmd(opt) : opt;
-				bargs[arg_map[i].arg] = opt;
+				bargs[i].value = opt;
 				is_sup = 1;
 				break;
 			}	
@@ -173,7 +173,7 @@ static void parse_cmd_line( int argc, char *argv[] ) {
 		}
 	}
 
-	if (!bargs[A_CXX] || !bargs[A_LD]) {
+	if (!bargs[A_CXX].value || !bargs[A_LD].value) {
 		uabort("missing one or more required tool parameters.");
 	}
 }
@@ -327,7 +327,7 @@ static int run_cc( const char *bin_file, const char *inc_dir,
                    const char *pp_defs, cstrarr_t src_files ) {
 	char cmd[16384];
 
-	strcpy(cmd, bargs[A_CXX]);
+	strcpy(cmd, bargs[A_CXX].value);
 
 	if (inc_dir && *inc_dir) {
 		strcat(cmd, " -I");
@@ -452,8 +452,8 @@ static void write_config( void ) {
 	printf_config("");
 
 
-	printf_config("#define UNUM_TOOL_CXX        \"%s\"", bargs[A_CXX]);
-	printf_config("#define UNUM_TOOL_LD         \"%s\"", bargs[A_LD]);
+	printf_config("#define UNUM_TOOL_CXX        \"%s\"", bargs[A_CXX].value);
+	printf_config("#define UNUM_TOOL_LD         \"%s\"", bargs[A_LD].value);
 	printf_config("");
 
 	printf_config("#endif /* UNUM_CONFIG_H */");
@@ -531,7 +531,7 @@ static void build_pre_k( void ) {
 static const char *bin_ext( void ) {
 	const char *ptr = NULL;
 
-	ptr = bargs[A_CXX] + strlen(bargs[A_CXX]);
+	ptr = bargs[A_CXX].value + strlen(bargs[A_CXX].value);
 	while (*--ptr) {
 		if (*ptr == '.' && strlen(ptr) > 1) {
 			return ptr;
