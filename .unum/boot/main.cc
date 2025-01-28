@@ -22,20 +22,21 @@
 /*
  *  Although this is C++, the style is very much a C-oriented one because the
  *  point of this is to verify that the C++ compiler is used but to maintain
- *  a streamlined coding style.  The language will be applied more effectively
- *  in the kernel itself.
+ *  a streamlined coding style that is largely independent of the standard C++ 
+ *  library.  Some minor C++ syntactic sugar is introduced here to highlight
+ *  invocations of an insufficient compiler.
  */
 
-extern "C" {
 #include <assert.h>
 #include <limits.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
 #include <unistd.h>
-}
+
+// ...make sure this is a capable C++ compiler
+#include <cstdarg>
+#include <cstdio>
+#include <cstdlib>
 
 
 typedef enum {
@@ -269,7 +270,7 @@ static struct stat file_info( const char *path ) {
 static void detect_platform( void ) {
 	if (run_cc_with_source(
 	           "#include <Carbon/Carbon.h>\n"	
-	           "#include <stdio.h>\n\n"
+	           "#include <cstdio>\n\n"
 	           "int main(int argc, char **argv) {\n"
 	           "  printf(\"hello unum\");\n"
 	           "}\n"
