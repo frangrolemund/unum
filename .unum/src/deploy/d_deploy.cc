@@ -6,11 +6,10 @@
 | -------------------------------------------------------------------*/
 
 #include "u_common.h"
-#include "./deploy/d_deploy.h"
+#include "d_deploy.h"
 
 
-int main(int argc, char **argv) {
-	std::printf("TODO: unum version %s\n", UNUM_VERSION_S);
-	unum::deploy();
-	return 0;
+void unum::deploy( void ) {
+	printf("TODO: DEPLOY\n");
 }
+

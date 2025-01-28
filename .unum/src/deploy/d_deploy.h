@@ -5,12 +5,13 @@
 | SPDX-License-Identifier: LicenseRef-Unum-Commercial OR GPL-3.0-only
 | -------------------------------------------------------------------*/
 
-#include "u_common.h"
-#include "./deploy/d_deploy.h"
+#ifndef UNUM_DEPLOY_H
+#define UNUM_DEPLOY_H
 
+namespace unum {
+	extern void deploy( void );
 
-int main(int argc, char **argv) {
-	std::printf("TODO: unum version %s\n", UNUM_VERSION_S);
-	unum::deploy();
-	return 0;
 }
+
+#endif /* UNUM_DEPLOY_H */
+

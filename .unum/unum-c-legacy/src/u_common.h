@@ -20,6 +20,8 @@
 #ifndef UNUM_COMMON_H
 #define UNUM_COMMON_H
 
+#error "Deprecated: reference only"
+
 #include <assert.h>
 #include <limits.h>
 #include <stdint.h>

@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXCopyFilesBuildPhase section */
-		A19A484D2D3EE26900D5A7B0 /* CopyFiles */ = {
+		A187F0862D47DDC400B05C44 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = /usr/share/man/man1/;
@@ -19,16 +19,38 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		A19A484F2D3EE26900D5A7B0 /* unum */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = unum; sourceTree = BUILT_PRODUCTS_DIR; };
+		A16C69332D490EE100B02833 /* unum.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = unum.xcodeproj; sourceTree = "<group>"; };
+		A16C69A32D4924EF00B02833 /* unum.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = unum.xcodeproj; sourceTree = "<group>"; };
+		A187EFC82D47D49500B05C44 /* unum.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = unum.xcodeproj; sourceTree = "<group>"; };
+		A187EFF12D47D49500B05C44 /* unum.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = unum.xcodeproj; sourceTree = "<group>"; };
+		A187F0282D47D78B00B05C44 /* unum.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = unum.xcodeproj; sourceTree = "<group>"; };
+		A187F0542D47D78B00B05C44 /* unum.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = unum.xcodeproj; sourceTree = "<group>"; };
+		A187F0882D47DDC400B05C44 /* unum_pk */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = unum_pk; sourceTree = BUILT_PRODUCTS_DIR; };
 		A19A48AE2D3EE39500D5A7B0 /* unum.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = unum.xcodeproj; sourceTree = "<group>"; };
 		A19A48D82D3EE39500D5A7B0 /* unum.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = unum.xcodeproj; sourceTree = "<group>"; };
 		A19A49342D3EE40100D5A7B0 /* unum.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = unum.xcodeproj; sourceTree = "<group>"; };
 		A19A495C2D3EE40100D5A7B0 /* unum.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = unum.xcodeproj; sourceTree = "<group>"; };
+		A19C4E602D45662B0028969E /* unum.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = unum.xcodeproj; sourceTree = "<group>"; };
+		A19C4E892D45662B0028969E /* unum.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = unum.xcodeproj; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		A187F0922D47DDCF00B05C44 /* Exceptions for ".unum" folder in "unum_pk" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				src/deploy/d_deploy.cc,
+				src/main.cc,
+			);
+			target = A187F0872D47DDC400B05C44 /* unum_pk */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		A19A48A92D3EE38900D5A7B0 /* .unum */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				A187F0922D47DDCF00B05C44 /* Exceptions for ".unum" folder in "unum_pk" target */,
+			);
 			name = .unum;
 			path = ..;
 			sourceTree = "<group>";
@@ -36,7 +58,7 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		A19A484C2D3EE26900D5A7B0 /* Frameworks */ = {
+		A187F0852D47DDC400B05C44 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -46,6 +68,42 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		A16C69362D490EE100B02833 /* Products */ = {
+			isa = PBXGroup;
+			name = Products;
+			sourceTree = "<group>";
+		};
+		A16C69C72D4924EF00B02833 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		A187EFF42D47D49500B05C44 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		A187EFF62D47D49500B05C44 /* Products */ = {
+			isa = PBXGroup;
+			name = Products;
+			sourceTree = "<group>";
+		};
+		A187F0572D47D78B00B05C44 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		A187F0592D47D78B00B05C44 /* Products */ = {
+			isa = PBXGroup;
+			name = Products;
+			sourceTree = "<group>";
+		};
 		A19A48462D3EE26900D5A7B0 = {
 			isa = PBXGroup;
 			children = (
@@ -57,7 +115,7 @@
 		A19A48502D3EE26900D5A7B0 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				A19A484F2D3EE26900D5A7B0 /* unum */,
+				A187F0882D47DDC400B05C44 /* unum_pk */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -86,26 +144,38 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		A19C4E8C2D45662B0028969E /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		A19C4E8E2D45662B0028969E /* Products */ = {
+			isa = PBXGroup;
+			name = Products;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		A19A484E2D3EE26900D5A7B0 /* unum */ = {
+		A187F0872D47DDC400B05C44 /* unum_pk */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = A19A48562D3EE26900D5A7B0 /* Build configuration list for PBXNativeTarget "unum" */;
+			buildConfigurationList = A187F08C2D47DDC400B05C44 /* Build configuration list for PBXNativeTarget "unum_pk" */;
 			buildPhases = (
-				A19A484B2D3EE26900D5A7B0 /* Sources */,
-				A19A484C2D3EE26900D5A7B0 /* Frameworks */,
-				A19A484D2D3EE26900D5A7B0 /* CopyFiles */,
+				A187F0842D47DDC400B05C44 /* Sources */,
+				A187F0852D47DDC400B05C44 /* Frameworks */,
+				A187F0862D47DDC400B05C44 /* CopyFiles */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
-			name = unum;
+			name = unum_pk;
 			packageProductDependencies = (
 			);
-			productName = unum;
-			productReference = A19A484F2D3EE26900D5A7B0 /* unum */;
+			productName = unum_pk;
+			productReference = A187F0882D47DDC400B05C44 /* unum_pk */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
@@ -117,7 +187,7 @@
 				BuildIndependentTargetsInParallel = 1;
 				LastUpgradeCheck = 1620;
 				TargetAttributes = {
-					A19A484E2D3EE26900D5A7B0 = {
+					A187F0872D47DDC400B05C44 = {
 						CreatedOnToolsVersion = 16.2;
 					};
 				};
@@ -136,16 +206,48 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = A19A495E2D3EE40100D5A7B0 /* Products */;
-					ProjectRef = A19A49342D3EE40100D5A7B0 /* unum.xcodeproj */;
-				},
-				{
 					ProductGroup = A19A48DE2D3EE39500D5A7B0 /* Products */;
 					ProjectRef = A19A48D82D3EE39500D5A7B0 /* unum.xcodeproj */;
 				},
 				{
+					ProductGroup = A187F0592D47D78B00B05C44 /* Products */;
+					ProjectRef = A187F0542D47D78B00B05C44 /* unum.xcodeproj */;
+				},
+				{
+					ProductGroup = A16C69362D490EE100B02833 /* Products */;
+					ProjectRef = A16C69332D490EE100B02833 /* unum.xcodeproj */;
+				},
+				{
+					ProductGroup = A19C4E8E2D45662B0028969E /* Products */;
+					ProjectRef = A19C4E892D45662B0028969E /* unum.xcodeproj */;
+				},
+				{
+					ProductGroup = A187EFF62D47D49500B05C44 /* Products */;
+					ProjectRef = A187EFF12D47D49500B05C44 /* unum.xcodeproj */;
+				},
+				{
+					ProductGroup = A19C4E8C2D45662B0028969E /* Products */;
+					ProjectRef = A19C4E602D45662B0028969E /* unum.xcodeproj */;
+				},
+				{
+					ProductGroup = A187EFF42D47D49500B05C44 /* Products */;
+					ProjectRef = A187EFC82D47D49500B05C44 /* unum.xcodeproj */;
+				},
+				{
+					ProductGroup = A187F0572D47D78B00B05C44 /* Products */;
+					ProjectRef = A187F0282D47D78B00B05C44 /* unum.xcodeproj */;
+				},
+				{
+					ProductGroup = A19A495E2D3EE40100D5A7B0 /* Products */;
+					ProjectRef = A19A49342D3EE40100D5A7B0 /* unum.xcodeproj */;
+				},
+				{
 					ProductGroup = A19A49602D3EE40100D5A7B0 /* Products */;
 					ProjectRef = A19A495C2D3EE40100D5A7B0 /* unum.xcodeproj */;
+				},
+				{
+					ProductGroup = A16C69C72D4924EF00B02833 /* Products */;
+					ProjectRef = A16C69A32D4924EF00B02833 /* unum.xcodeproj */;
 				},
 				{
 					ProductGroup = A19A48DC2D3EE39500D5A7B0 /* Products */;
@@ -154,13 +256,13 @@
 			);
 			projectRoot = "";
 			targets = (
-				A19A484E2D3EE26900D5A7B0 /* unum */,
+				A187F0872D47DDC400B05C44 /* unum_pk */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXSourcesBuildPhase section */
-		A19A484B2D3EE26900D5A7B0 /* Sources */ = {
+		A187F0842D47DDC400B05C44 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -170,6 +272,42 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
+		A187F08D2D47DDC400B05C44 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = Q9UQ5RW44T;
+				ENABLE_HARDENED_RUNTIME = YES;
+				EXCLUDED_RECURSIVE_SEARCH_PATH_SUBDIRECTORIES = "*.nib *.lproj *.framework *.gch *.xcode* *.xcassets (*) .DS_Store CVS .svn .git .hg *.pbproj *.pbxproj unum-c-legacy";
+				HEADER_SEARCH_PATHS = (
+					"${PROJECT_DIR}/../src/**",
+					"${PROJECT_DIR}/../deployed/build/include",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				UNUM_BASIS_DIR = "${PROJECT_DIR}/../..";
+				UNUM_BUILD_DIR = "${UNUM_BASIS_DIR}/.unum/deployed/build";
+				USE_HEADERMAP = NO;
+			};
+			name = Debug;
+		};
+		A187F08E2D47DDC400B05C44 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = Q9UQ5RW44T;
+				ENABLE_HARDENED_RUNTIME = YES;
+				EXCLUDED_RECURSIVE_SEARCH_PATH_SUBDIRECTORIES = "*.nib *.lproj *.framework *.gch *.xcode* *.xcassets (*) .DS_Store CVS .svn .git .hg *.pbproj *.pbxproj unum-c-legacy";
+				HEADER_SEARCH_PATHS = (
+					"${PROJECT_DIR}/../src/**",
+					"${PROJECT_DIR}/../deployed/build/include",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				UNUM_BASIS_DIR = "${PROJECT_DIR}/../..";
+				UNUM_BUILD_DIR = "${UNUM_BASIS_DIR}/.unum/deployed/build";
+				USE_HEADERMAP = NO;
+			};
+			name = Release;
+		};
 		A19A48542D3EE26900D5A7B0 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -203,6 +341,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CONFIGURATION_BUILD_DIR = "${UNUM_BUILD_DIR}/xcode-macos/${CONFIGURATION}";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -222,12 +361,18 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"${PROJECT_DIR}/../src/**",
+					"${PROJECT_DIR}/../build/include",
+				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MACOSX_DEPLOYMENT_TARGET = 14.7;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
+				UNUM_BASIS_DIR = "${PROJECT_DIR}/../../";
+				UNUM_BUILD_DIR = "${UNUM_BASIS_DIR}/deployed/build";
 			};
 			name = Debug;
 		};
@@ -264,6 +409,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CONFIGURATION_BUILD_DIR = "${UNUM_BUILD_DIR}/xcode-macos/${CONFIGURATION}";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
@@ -277,51 +423,37 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"${PROJECT_DIR}/../src/**",
+					"${PROJECT_DIR}/../build/include",
+				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MACOSX_DEPLOYMENT_TARGET = 14.7;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = macosx;
-			};
-			name = Release;
-		};
-		A19A48572D3EE26900D5A7B0 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = Q9UQ5RW44T;
-				ENABLE_HARDENED_RUNTIME = YES;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Debug;
-		};
-		A19A48582D3EE26900D5A7B0 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = Q9UQ5RW44T;
-				ENABLE_HARDENED_RUNTIME = YES;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				UNUM_BASIS_DIR = "${PROJECT_DIR}/../../";
+				UNUM_BUILD_DIR = "${UNUM_BASIS_DIR}/deployed/build";
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		A187F08C2D47DDC400B05C44 /* Build configuration list for PBXNativeTarget "unum_pk" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A187F08D2D47DDC400B05C44 /* Debug */,
+				A187F08E2D47DDC400B05C44 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		A19A484A2D3EE26900D5A7B0 /* Build configuration list for PBXProject "unum" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				A19A48542D3EE26900D5A7B0 /* Debug */,
 				A19A48552D3EE26900D5A7B0 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		A19A48562D3EE26900D5A7B0 /* Build configuration list for PBXNativeTarget "unum" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				A19A48572D3EE26900D5A7B0 /* Debug */,
-				A19A48582D3EE26900D5A7B0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
