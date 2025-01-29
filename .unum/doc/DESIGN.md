@@ -105,7 +105,24 @@ the precision of their definition with increasingly descriptive syntax.
 a `git`, `npm`, `pip`, etc. manner.  _Cloning is initialization_.
 
 * An unum repository is bootstrapped with a simple makefile and _ingests_ the
-C compiler environment exposed by that makefile to use for future deployments.
+C++ compiler environment exposed by that makefile to use for future deployments.
 Makefiles need not be maintained when the developer is not implementing kernel
 enhancements (language, basis, analytics, etc).
 
+* The implementation of standards will be performed 'as-needed' with an 
+understanding that the implemention is a subset, not an official fully-compliant
+form as a rule.  The eventual full realization of compliance in any one area
+will be an eventual goal, not an immediate priority at the time of first
+introduction.
+
+
+# Specifics
+
+## Manifest
+
+* YAML format, but just a subset to support deployment.
+
+* named .unum/config/manifest.umy (unum manifest YAML format)
+
+* Organized as a 'mapping' of files to file attribute maps.  All filenames are
+expressed in relative directory notation from the top of the repo.
