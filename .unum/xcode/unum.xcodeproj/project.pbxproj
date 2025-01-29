@@ -53,6 +53,9 @@
 			exceptions = (
 				A187F0922D47DDCF00B05C44 /* Exceptions for ".unum" folder in "unum_pk" target */,
 			);
+			explicitFileTypes = {
+				config/manifest.umy = text.yaml;
+			};
 			name = .unum;
 			path = ..;
 			sourceTree = "<group>";
