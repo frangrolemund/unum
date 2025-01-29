@@ -28,6 +28,7 @@
  */
 
 #include <assert.h>
+#include <ctype.h>
 #include <limits.h>
 #include <string.h>
 #include <sys/stat.h>
@@ -66,10 +67,12 @@ static int run_cc( const char *bin_file, const char *inc_dir,
 static int run_cc_with_source( const char *source ); 
 static const char *parse_option( const char *optName, const char *from );
 static void parse_cmd_line( int argc, char *argv[] );
+static const char **prek_manifest_files( void );
 static void printf_config( const char *fmt, ... );
 static const char *resolve_cmd( const char *cmd );
 static void set_basis( void );
 static const char *to_basis( const char *path );
+static const char *to_root_checked( const char *path );
 static void write_config( void );
 
 
@@ -79,6 +82,8 @@ static void write_config( void );
 #define BIN_DIR            "./deployed/bin"
 #define UCONFIG_FILE       "./deployed/build/include/u_config.h"
 #define UKERN_FILE         "./deployed/bin/unum"
+#define BASIS_SUBDIR       ".unum"
+#define MANIFEST_FILE      "./config/manifest.umy"
 #define DEBUG_ENV          "UBOOT_DEBUG"
 #define is_file(p)         (file_info((p)).st_mode & S_IFREG)
 #define is_dir(p)          (file_info((p)).st_mode & S_IFDIR)
@@ -115,7 +120,7 @@ int main( int argc, char *argv[] ) {
 	set_basis();
 	write_config();	
 
-//	build_pre_k();
+	build_pre_k();
 
 	fclose(uberr);
 	return 0;
@@ -297,7 +302,7 @@ static int run_cc_with_source( const char *source ) {
 		const char *e_val = getenv(*tp);
 
 		if (e_val) {
-			snprintf(src_name, PATH_MAX, "%s%cunum-boot.c", e_val, path_sep);
+			snprintf(src_name, PATH_MAX, "%s%cunum-boot.cc", e_val, path_sep);
 			break;	
 		}
 
@@ -490,15 +495,10 @@ static void printf_config( const char *fmt, ... ) {
 
 
 static void build_pre_k( void ) {
-	char      bin_file[PATH_MAX];	
-	char      ucfg_file[PATH_MAX];
-	cstrarr_t src                   = {
-		strdup(to_basis("./src/main.c")),
-		strdup(to_basis("./src/main_pre_k.c")),
-		strdup(to_basis("./src/d_deploy.c")),
-		NULL
-	};
-	const char **sp                 = src;
+	char       bin_file[PATH_MAX];	
+	char       ucfg_file[PATH_MAX];
+	const char **src               = prek_manifest_files();
+	const char **sp                = src;
 
 	time_t bin_mod;	
 	int    build_pre_k = 0, rc;
@@ -526,6 +526,79 @@ static void build_pre_k( void ) {
 	}
 
 	printf("uboot: unum is ready for bootstrapping.\n");
+}
+
+
+static const char **prek_manifest_files( void ) {
+ 	FILE      *fp              = NULL;
+	char      **ret            = NULL;
+	int       count            = 0;
+	int       cur              = 0;
+	char      *src_file;
+	char      buf[PATH_MAX<<2];
+
+	fp = fopen(to_basis(MANIFEST_FILE), "r");
+	if (!fp) {
+		uabort("failed to open manifest, %s", MANIFEST_FILE);
+	}
+
+	while (char *line = fgets(buf, PATH_MAX<<2, fp)) {
+		src_file = NULL;
+		for (; *line && !isspace(*line) && !src_file; line++) {
+			if (*line == ':') {
+				*line    = '\0';
+				src_file = buf;
+			}
+		}
+
+		if (!src_file) {
+			continue;
+		}
+
+		if (cur == count) {
+			count += 10;
+			ret = (char **) realloc(ret, sizeof(char *) * (count+1));
+			if (!ret) {
+				uabort("out of memory");
+			}
+		}
+
+		src_file = strdup(to_root_checked(src_file));
+		if (!src_file) {
+			uabort("out of memory");
+		}
+		ret[cur++] = src_file;
+		ret[cur]   = NULL;
+	}
+
+	fclose(fp);
+	return (const char **) ret;
+}
+
+
+static const char *to_root_checked( const char *path ) {
+	static char  buf[PATH_MAX];
+	char         *bp = buf, *tmp;
+
+	for (tmp = basis_dir; *tmp; tmp++, bp++) {
+		*bp = (*tmp == '/') ? path_sep : *tmp;
+	}
+
+	while (strncmp(bp, BASIS_SUBDIR, strlen(BASIS_SUBDIR))) {
+		bp--;
+	}
+
+	for (; *path; path++, bp++) {
+		*bp = *path;
+	}
+
+	*bp = '\0';
+
+	if (!is_file(buf)) {
+		uabort("invalid manifest file %s\n", buf);
+	}
+	
+	return buf;
 }
 
 

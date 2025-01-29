@@ -124,5 +124,11 @@ introduction.
 
 * named .unum/config/manifest.umy (unum manifest YAML format)
 
-* Organized as a 'mapping' of files to file attribute maps.  All filenames are
-expressed in relative directory notation from the top of the repo.
+* Organized as an _ordered_ 'mapping' of files to file attribute maps.  All 
+filenames are expressed in directory notation using POSIX format relative to 
+top of the repo.
+
+* File mapping entries are organized in the file in order of build priority
+with the most fundamental dependencies first in the file and the highest level
+abstractions last.  This naturally means the file with the main() function is
+necessarily always the last one.

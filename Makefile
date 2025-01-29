@@ -13,8 +13,6 @@ RMDIR  := rm -rf
 
 all : $(UBOOT)
 	@$(UBOOT) --cpp=$(CXX) --link=$(LD)
-
-legacy:
 	@$(BASIS)/deployed/bin/unum deploy
 
 clean:
