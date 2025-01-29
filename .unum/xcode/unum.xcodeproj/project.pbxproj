@@ -32,6 +32,8 @@
 		A19A495C2D3EE40100D5A7B0 /* unum.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = unum.xcodeproj; sourceTree = "<group>"; };
 		A19C4E602D45662B0028969E /* unum.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = unum.xcodeproj; sourceTree = "<group>"; };
 		A19C4E892D45662B0028969E /* unum.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = unum.xcodeproj; sourceTree = "<group>"; };
+		A1D92CEB2D4A626200CB6682 /* unum.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = unum.xcodeproj; sourceTree = "<group>"; };
+		A1D92D272D4A626200CB6682 /* unum.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = unum.xcodeproj; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -156,6 +158,18 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		A1D92D2A2D4A626200CB6682 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		A1D92D2C2D4A626200CB6682 /* Products */ = {
+			isa = PBXGroup;
+			name = Products;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -230,6 +244,10 @@
 					ProjectRef = A19C4E602D45662B0028969E /* unum.xcodeproj */;
 				},
 				{
+					ProductGroup = A1D92D2A2D4A626200CB6682 /* Products */;
+					ProjectRef = A1D92CEB2D4A626200CB6682 /* unum.xcodeproj */;
+				},
+				{
 					ProductGroup = A187EFF42D47D49500B05C44 /* Products */;
 					ProjectRef = A187EFC82D47D49500B05C44 /* unum.xcodeproj */;
 				},
@@ -248,6 +266,10 @@
 				{
 					ProductGroup = A16C69C72D4924EF00B02833 /* Products */;
 					ProjectRef = A16C69A32D4924EF00B02833 /* unum.xcodeproj */;
+				},
+				{
+					ProductGroup = A1D92D2C2D4A626200CB6682 /* Products */;
+					ProjectRef = A1D92D272D4A626200CB6682 /* unum.xcodeproj */;
 				},
 				{
 					ProductGroup = A19A48DC2D3EE39500D5A7B0 /* Products */;
@@ -278,7 +300,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = Q9UQ5RW44T;
 				ENABLE_HARDENED_RUNTIME = YES;
-				EXCLUDED_RECURSIVE_SEARCH_PATH_SUBDIRECTORIES = "*.nib *.lproj *.framework *.gch *.xcode* *.xcassets (*) .DS_Store CVS .svn .git .hg *.pbproj *.pbxproj unum-c-legacy";
+				EXCLUDED_RECURSIVE_SEARCH_PATH_SUBDIRECTORIES = "*.nib *.lproj *.framework *.gch *.xcode* *.xcassets (*) .DS_Store CVS .svn .git .hg *.pbproj *.pbxproj _legacy";
 				HEADER_SEARCH_PATHS = (
 					"${PROJECT_DIR}/../src/**",
 					"${PROJECT_DIR}/../deployed/build/include",
@@ -296,7 +318,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = Q9UQ5RW44T;
 				ENABLE_HARDENED_RUNTIME = YES;
-				EXCLUDED_RECURSIVE_SEARCH_PATH_SUBDIRECTORIES = "*.nib *.lproj *.framework *.gch *.xcode* *.xcassets (*) .DS_Store CVS .svn .git .hg *.pbproj *.pbxproj unum-c-legacy";
+				EXCLUDED_RECURSIVE_SEARCH_PATH_SUBDIRECTORIES = "*.nib *.lproj *.framework *.gch *.xcode* *.xcassets (*) .DS_Store CVS .svn .git .hg *.pbproj *.pbxproj _legacy";
 				HEADER_SEARCH_PATHS = (
 					"${PROJECT_DIR}/../src/**",
 					"${PROJECT_DIR}/../deployed/build/include",
