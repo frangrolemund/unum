@@ -20,6 +20,6 @@
 #define UNUM_VERSION_S         _unum_version(UNUM_VERSION_MAJOR,\
                                              UNUM_VERSION_MINOR,\
 											 UNUM_VERSION_MINOR)
-
+											 
 
 #endif /* UNUM_COMMON_H */

@@ -5,11 +5,16 @@
 | SPDX-License-Identifier: LicenseRef-Unum-Commercial OR GPL-3.0-only
 | -------------------------------------------------------------------*/
 
+#ifdef UNUM_BOOTSTRAP
+
+/*
+ *  Pre-kernel
+ */
+
 #include <string.h>
 
 #include "u_common.h"
 #include "./deploy/d_deploy.h"
-
 
 int main(int argc, char **argv) {
 	std::printf("TODO: unum version %s\n", UNUM_VERSION_S);
@@ -18,3 +23,16 @@ int main(int argc, char **argv) {
 	}
 	return 0;
 }
+
+#else
+
+/*
+ *  Kernel
+ */
+ 
+#include "m_kern.h"
+int main(int argc, char **argv) {
+	return unum::main(argc, argv);
+}
+
+#endif /* UNUM_BOOTSTRAP */

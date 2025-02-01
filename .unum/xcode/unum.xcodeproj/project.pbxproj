@@ -47,6 +47,7 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				src/deploy/d_deploy.cc,
+				src/m_kern.cc,
 				src/main.cc,
 			);
 			target = A187F0872D47DDC400B05C44 /* unum_pk */;
@@ -370,6 +371,10 @@
 				DEVELOPMENT_TEAM = Q9UQ5RW44T;
 				ENABLE_HARDENED_RUNTIME = YES;
 				EXCLUDED_RECURSIVE_SEARCH_PATH_SUBDIRECTORIES = "*.nib *.lproj *.framework *.gch *.xcode* *.xcassets (*) .DS_Store CVS .svn .git .hg *.pbproj *.pbxproj _legacy";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"UNUM_BOOTSTRAP=1",
+					"$(inherited)",
+				);
 				HEADER_SEARCH_PATHS = (
 					"${PROJECT_DIR}/../src/**",
 					"${PROJECT_DIR}/../deployed/build/include",
@@ -388,6 +393,10 @@
 				DEVELOPMENT_TEAM = Q9UQ5RW44T;
 				ENABLE_HARDENED_RUNTIME = YES;
 				EXCLUDED_RECURSIVE_SEARCH_PATH_SUBDIRECTORIES = "*.nib *.lproj *.framework *.gch *.xcode* *.xcassets (*) .DS_Store CVS .svn .git .hg *.pbproj *.pbxproj _legacy";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"UNUM_BOOTSTRAP=1",
+					"$(inherited)",
+				);
 				HEADER_SEARCH_PATHS = (
 					"${PROJECT_DIR}/../src/**",
 					"${PROJECT_DIR}/../deployed/build/include",

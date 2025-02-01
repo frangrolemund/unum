@@ -5,16 +5,13 @@
 | SPDX-License-Identifier: LicenseRef-Unum-Commercial OR GPL-3.0-only
 | -------------------------------------------------------------------*/
 
-#ifndef UNUM_DEPLOY_H
-#define UNUM_DEPLOY_H
-
-#include "u_common.h"
+#ifndef UNUM_MAIN_H
+#define UNUM_MAIN_H
 
 namespace unum {
 
-extern void deploy( void );
+extern int main(int argc, char **argv);
 
 }
 
-#endif /* UNUM_DEPLOY_H */
-
+#endif /* UNUM_MAIN_H */
