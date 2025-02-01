@@ -70,22 +70,21 @@ static int run_cc( const char *bin_file, cstrarr_t pp_defs, cstrarr_t inc_dirs,
 static int run_cc_with_source( const char *source );
 static bool s_ends_with( const char *text, const char *suffix );
 static cstrarr_t to_arr( const char *text, ... /* NULL */ );
-static const char *to_platfs( const char *path );
-static const char *to_basis( const char *path );
+static const char *to_repo( const char *path, bool from_basis = true );
 static const char *trim_ws( char *text );
 static void uabort( const char *fmt, ... );
 static void write_config( void );
 
 
-#define BASIS_DIR          ".unum/"
-#define DEPLOYED_DIR       BASIS_DIR "deployed"
-#define TEMP_DIR           BASIS_DIR "deployed/temp"
-#define BUILD_DIR          BASIS_DIR "deployed/build"
-#define BUILD_INCLUDE_DIR  BASIS_DIR "deployed/build/include"
-#define BIN_DIR            BASIS_DIR "deployed/bin"
-#define UCONFIG_FILE       BASIS_DIR "deployed/build/include/u_config.h"
-#define UKERN_FILE         BASIS_DIR "deployed/bin/unum"
-#define MANIFEST_FILE      BASIS_DIR "config/manifest.umy"
+#define BASIS_DIR          to_repo(NULL)
+#define DEPLOYED_DIR       to_repo("deployed")
+#define TEMP_DIR           to_repo("deployed/temp")
+#define BUILD_DIR          to_repo("deployed/build")
+#define BUILD_INCLUDE_DIR  to_repo("deployed/build/include")
+#define BIN_DIR            to_repo("deployed/bin")
+#define UCONFIG_FILE       to_repo("deployed/build/include/u_config.h")
+#define UKERN_FILE         to_repo("deployed/bin/unum")
+#define MANIFEST_FILE      to_repo("config/manifest.umy")
 #define DEBUG_ENV          "UBOOT_DEBUG"
 #define MAN_SEC_CORE       "core:"
 #define MAN_SEC_BUILD      "build:"
@@ -104,7 +103,7 @@ static struct { arg_e arg;
                 const char *value; } bargs[] = {{ A_CXX, "cpp", NULL },
 	                                            { A_LD,  "link", NULL }
                                                };
-static char        basis_dir[PATH_MAX];
+static char        root_dir[PATH_MAX];
 static char        config[CFG_SIZE];
 static char        *cfg_offset               = config;
 static char        path_sep                  = '\0';
@@ -133,13 +132,13 @@ int main( int argc, char *argv[] ) {
 
 
 static void detect_path_style( void ) {
-	if (!getcwd(basis_dir, PATH_MAX)) {  // - must be the root of the repo!
+	if (!getcwd(root_dir, PATH_MAX)) {  // - must be the root of the repo!
 		uabort("failed to detect CWD.");
 	}
 	
-	for (char *bp = basis_dir; *bp ; bp++) {
-		if (is_path_sep(*bp)) {
-			path_sep = *bp;
+	for (char *rp = root_dir; *rp ; rp++) {
+		if (is_path_sep(*rp)) {
+			path_sep = *rp;
 			break;
 		}
 	}
@@ -147,11 +146,8 @@ static void detect_path_style( void ) {
 	if (!path_sep) {
 		uabort("failed to detect path sep");
 	}
-	
-	strcat(basis_dir, path_sep_s);
-	strcat(basis_dir, BASIS_DIR);
-	
-	if (!is_dir(basis_dir)) {
+
+	if (!is_dir(to_repo(NULL))) {
 		uabort("no basis, invalid unum repo");
 	}
 }
@@ -292,23 +288,10 @@ static void config_basis( void ) {
 								 BUILD_INCLUDE_DIR, BIN_DIR, NULL };
 	                              
 	for (const char **bd = build_dirs; *bd; bd++) {
-		if (!is_dir(*bd) && mkdir(to_platfs(*bd), S_IRWXU) != 0) {
+		if (!is_dir(*bd) && mkdir(*bd, S_IRWXU) != 0) {
 			uabort("failed to create build directory '%s'", bd);
 		}
 	}
-}
-
-
-static const char *to_platfs( const char *path ) {
-	static char buf[PATH_MAX];
-	char        *bp = buf;
-	
-	for (; *path; path++, bp++) {
-		*bp = is_path_sep(*path) ? path_sep : *path;
-	}
-	*bp = '\0';
-	
-	return buf;
 }
 
 
@@ -411,7 +394,7 @@ static cstrarr_t arr_add( cstrarr_t arr, const char *text ) {
 }
 
 
-// - source_files must be terminated with NULL
+// - arrays must be terminated with NULL
 static int run_cc( const char *bin_file, cstrarr_t pp_defs, cstrarr_t inc_dirs,
                    cstrarr_t src_files ) {
 	char *cmd = NULL;
@@ -460,21 +443,35 @@ static char *rstrcat( char *buf, const char *text ) {
 }
 
 
-static const char *to_basis( const char *path ) {
-	static char  buf[PATH_MAX];
-	char         *bp = buf, *tmp;
-
-	for (tmp = basis_dir; *tmp; tmp++, bp++) {
-		*bp = (*tmp == '/') ? path_sep : *tmp;
+static const char *to_repo( const char *path, bool from_basis ) {
+	static char buf[PATH_MAX];
+	char *bp                   = buf;
+	
+	for (const char *rp = root_dir; *rp; rp++, bp++) {
+		*bp = *rp;
 	}
-
-	for (; *path; path++, bp++) {
-		*bp = *path;
+	
+	*bp++ = path_sep;
+		
+	if (from_basis) {
+		for (const char *up = ".unum"; *up; up++, bp++) {
+			*bp = *up;
+		}
+		*bp++ = path_sep;
 	}
-
+	
+	for (const char *pp = path; pp && *pp; pp++, bp++) {
+		*bp = is_path_sep(*pp) ? path_sep : *pp;
+	}
+	
 	*bp = '\0';
 	
-	return buf;
+	bp = strdup(buf);
+	if (!bp) {
+		uabort("out of memory");
+	}
+	
+	return bp;
 }
 
 
@@ -511,11 +508,12 @@ static void write_config( void ) {
 	// - when unum runs, it is important to compute the basis as Git does when
 	//   starting up so that the binary associated with the code is always the
 	//   one invoked!
-	printf_config("#define UNUM_DIR_BASIS       \"%s\"", basis_dir);
-	printf_config("#define UNUM_SUBDIR_DEPLOY   \"%s\"", DEPLOYED_DIR);
-	printf_config("#define UNUM_SUBDIR_BUILD    \"%s\"", BUILD_DIR);
-	printf_config("#define UNUM_SUBDIR_INCLUDE  \"%s\"", BUILD_INCLUDE_DIR);
-	printf_config("#define UNUM_SUBDIR_BIN      \"%s\"", BIN_DIR);
+	printf_config("#define UNUM_DIR_ROOT        \"%s\"", root_dir);
+	printf_config("#define UNUM_DIR_BASIS       \"%s\"", BASIS_DIR);
+	printf_config("#define UNUM_BASIS_DEPLOY    \"%s\"", DEPLOYED_DIR);
+	printf_config("#define UNUM_BASIS_BUILD     \"%s\"", BUILD_DIR);
+	printf_config("#define UNUM_BASIS_INCLUDE   \"%s\"", BUILD_INCLUDE_DIR);
+	printf_config("#define UNUM_BASIS_BIN       \"%s\"", BIN_DIR);
 	printf_config("");
 
 
@@ -526,8 +524,8 @@ static void write_config( void ) {
 	printf_config("#endif /* UNUM_CONFIG_H */");
 
 	// - don't rewrite identicial content to avoid needless rebuilds
-	cfg_file = to_platfs(UCONFIG_FILE);
-	fp = fopen(cfg_file, "r");
+	cfg_file = UCONFIG_FILE;
+	fp       = fopen(cfg_file, "r");
 	if (fp) {
 		size_t rc = fread(buf, 1, CFG_SIZE, fp);
 		int err   = ferror(fp);	
