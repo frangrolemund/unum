@@ -1,2 +1,11 @@
-.unum/src/deploy/d_deploy.cc:
-.unum/src/main.cc:
+kernel:
+
+core:
+  - .unum/src/deploy/d_deploy.cc
+  - .unum/src/main.cc
+
+
+build:
+  include:
+    - .unum/deployed/build/include
+    - .unum/src

@@ -124,11 +124,29 @@ introduction.
 
 * named .unum/config/manifest.umy (unum manifest YAML format)
 
-* Organized as an _ordered_ 'mapping' of files to file attribute maps.  All 
-filenames are expressed in directory notation using POSIX format relative to 
+* Organized as an _ordered_ 'mapping' of file categories to file lists.  All 
+filenames are expressed in directory notation using POSIX format _relative_ to 
 top of the repo.
+
+* File categories are expressed as a textual word with the categories 'core',
+'kernel', and 'build' reserved. 
 
 * File mapping entries are organized in the file in order of build priority
 with the most fundamental dependencies first in the file and the highest level
 abstractions last.  This naturally means the file with the main() function is
-necessarily always the last one.
+necessarily always has the maximum line number of any source file.
+
+* The `core` category describes files that are sufficient to perform a full 
+deployment of `unum` from source code in both the basis and the primary 
+repository hierarchy (unum source).  During bootstrapping the core is built in
+isolation with limited features, which then rebuilds the entire kernel.
+
+* The 'kernel' category describes all source, both native foundational files 
+under the basis, and .un/.cc source code in the deployment hierarchy that
+fully defines the unum deployment.  It is assumed to include all of the source
+also in the `core` category.
+
+* The 'build' category describes custom build rules and behavior for the basis
+and the configured compiler.  It supports a single sub-category of 'include' 
+that defines a list of C++ include diretories to use for compilation.
+

@@ -17,24 +17,18 @@
  *  without confusing the process or introducing needless waste if/when `make`
  *  is re-invoked on an existing repo, while providing enough to build the
  *  full unum kernel to take over future deployment responsibility.
+ *
+ *  ASSUMPTION: Built using the makefile in the root while the CWD is the root.
  */
 
-/*
- *  Although this is C++, the style is very much a C-oriented one because the
- *  point of this is to verify that the C++ compiler is used but to maintain
- *  a streamlined coding style that is largely independent of the standard C++ 
- *  library.  Some minor C++ syntactic sugar is introduced here to highlight
- *  invocations of an insufficient compiler.
- */
-
-#include <assert.h>
 #include <ctype.h>
+#include <dirent.h>
 #include <limits.h>
 #include <string.h>
 #include <sys/stat.h>
 #include <unistd.h>
 
-// ...make sure this is a capable C++ compiler
+// ...test that this is a C++ compiler
 #include <cstdarg>
 #include <cstdio>
 #include <cstdlib>
@@ -52,57 +46,70 @@ typedef enum {
 	P_MACOS,
 } platform_e;
 
-typedef const char * cstrarr_t[];
+typedef const char **cstrarr_t;
 
 
-static void uabort( const char *fmt, ... );
+static cstrarr_t arr_add( cstrarr_t arr, const char *text );
 static const char *bin_ext( void );
 static void build_pre_k( void );
+static void config_basis( void );
 static void detect_path_style( void );
 static void detect_platform( void );
 static struct stat file_info( const char *path );
 static char *find_in_path( const char *cmd );
-static int run_cc( const char *bin_file, const char *inc_dir, 
-                   const char *pp_defs, cstrarr_t src_files );
-static int run_cc_with_source( const char *source ); 
+static bool last_header_mod( const char *dir_path, time_t *last_mod );
 static const char *parse_option( const char *optName, const char *from );
 static void parse_cmd_line( int argc, char *argv[] );
-static const char **prek_manifest_files( void );
 static void printf_config( const char *fmt, ... );
 static const char *resolve_cmd( const char *cmd );
-static void set_basis( void );
+static char *rstrcat( char *buf, const char *text );
+static void read_manifest( cstrarr_t *inc_dirs, cstrarr_t *src_files,
+                           time_t *last_mod );
+static int run_cc( const char *bin_file, cstrarr_t pp_defs, cstrarr_t inc_dirs,
+                   cstrarr_t src_files );
+static int run_cc_with_source( const char *source );
+static bool s_ends_with( const char *text, const char *suffix );
+static cstrarr_t to_arr( const char *text, ... /* NULL */ );
+static const char *to_platfs( const char *path );
 static const char *to_basis( const char *path );
-static const char *to_root_checked( const char *path );
+static const char *trim_ws( char *text );
+static void uabort( const char *fmt, ... );
 static void write_config( void );
 
 
-#define DEPLOYED_DIR       "./deployed"
-#define BUILD_DIR          "./deployed/build"
-#define BUILD_INCLUDE_DIR  "./deployed/build/include"
-#define BIN_DIR            "./deployed/bin"
-#define UCONFIG_FILE       "./deployed/build/include/u_config.h"
-#define UKERN_FILE         "./deployed/bin/unum"
-#define BASIS_SUBDIR       ".unum"
-#define MANIFEST_FILE      "./config/manifest.umy"
+#define BASIS_DIR          ".unum/"
+#define DEPLOYED_DIR       BASIS_DIR "deployed"
+#define TEMP_DIR           BASIS_DIR "deployed/temp"
+#define BUILD_DIR          BASIS_DIR "deployed/build"
+#define BUILD_INCLUDE_DIR  BASIS_DIR "deployed/build/include"
+#define BIN_DIR            BASIS_DIR "deployed/bin"
+#define UCONFIG_FILE       BASIS_DIR "deployed/build/include/u_config.h"
+#define UKERN_FILE         BASIS_DIR "deployed/bin/unum"
+#define MANIFEST_FILE      BASIS_DIR "config/manifest.umy"
 #define DEBUG_ENV          "UBOOT_DEBUG"
+#define MAN_SEC_CORE       "core:"
+#define MAN_SEC_BUILD      "build:"
+#define MAN_SEC_INC        "include:"
+#define is_path_sep(c)      (c == '/' || c == '\\')
 #define is_file(p)         (file_info((p)).st_mode & S_IFREG)
 #define is_dir(p)          (file_info((p)).st_mode & S_IFDIR)
 #define path_sep_s         ((char [2]) { path_sep, '\0' })
 #define CFG_SIZE           32768
 #define IS_UNIX            (platform == P_MACOS)
+#define assert(e)          if (!(e)) uabort("assert failed, line %d", __LINE__)
 
 
-static char        basis_dir[PATH_MAX];
-static char        path_sep;
-static platform_e  platform                  = P_UNKNOWN;
-static FILE        *uberr                    = NULL;
-static char        config[CFG_SIZE];
-static char        *cfg_offset               = config;
-static struct { arg_e arg; 
+static struct { arg_e arg;
                 const char *name; 
                 const char *value; } bargs[] = {{ A_CXX, "cpp", NULL },
 	                                            { A_LD,  "link", NULL }
                                                };
+static char        basis_dir[PATH_MAX];
+static char        config[CFG_SIZE];
+static char        *cfg_offset               = config;
+static char        path_sep                  = '\0';
+static platform_e  platform                  = P_UNKNOWN;
+static FILE        *uberr                    = NULL;
 
 
 int main( int argc, char *argv[] ) {
@@ -111,15 +118,13 @@ int main( int argc, char *argv[] ) {
 	if (!getenv(DEBUG_ENV)) {
 		fclose(stderr);
 	}
-
+	
 	// - order is important here
 	detect_path_style();
 	parse_cmd_line(argc, argv);
+	config_basis();
 	detect_platform();
-
-	set_basis();
-	write_config();	
-
+	write_config();
 	build_pre_k();
 
 	fclose(uberr);
@@ -128,17 +133,27 @@ int main( int argc, char *argv[] ) {
 
 
 static void detect_path_style( void ) {
-	const char  *path = getenv("PATH");
-	char        c;
-
-	while (path && (c = *path++)) {
-		if (c == '/' || c == '\\') {
-			path_sep = c;
-			return;
+	if (!getcwd(basis_dir, PATH_MAX)) {  // - must be the root of the repo!
+		uabort("failed to detect CWD.");
+	}
+	
+	for (char *bp = basis_dir; *bp ; bp++) {
+		if (is_path_sep(*bp)) {
+			path_sep = *bp;
+			break;
 		}
 	}
-
-	uabort("missing PATH environment");
+	
+	if (!path_sep) {
+		uabort("failed to detect path sep");
+	}
+	
+	strcat(basis_dir, path_sep_s);
+	strcat(basis_dir, BASIS_DIR);
+	
+	if (!is_dir(basis_dir)) {
+		uabort("no basis, invalid unum repo");
+	}
 }
 
 
@@ -272,6 +287,31 @@ static struct stat file_info( const char *path ) {
 }
 
 
+static void config_basis( void ) {
+	const char *build_dirs[] = { DEPLOYED_DIR, TEMP_DIR, BUILD_DIR,
+								 BUILD_INCLUDE_DIR, BIN_DIR, NULL };
+	                              
+	for (const char **bd = build_dirs; *bd; bd++) {
+		if (!is_dir(*bd) && mkdir(to_platfs(*bd), S_IRWXU) != 0) {
+			uabort("failed to create build directory '%s'", bd);
+		}
+	}
+}
+
+
+static const char *to_platfs( const char *path ) {
+	static char buf[PATH_MAX];
+	char        *bp = buf;
+	
+	for (; *path; path++, bp++) {
+		*bp = is_path_sep(*path) ? path_sep : *path;
+	}
+	*bp = '\0';
+	
+	return buf;
+}
+
+
 static void detect_platform( void ) {
 	if (run_cc_with_source(
 	           "#include <Carbon/Carbon.h>\n"	
@@ -319,7 +359,7 @@ static int run_cc_with_source( const char *source ) {
 	}
 	fclose(src_file);
 
-	rc = run_cc(bin_name, NULL, NULL, (cstrarr_t) { src_name, NULL });
+	rc = run_cc(bin_name, NULL, NULL, to_arr(src_name, NULL));
 
 	unlink(src_name);
 	unlink(bin_name);
@@ -328,74 +368,95 @@ static int run_cc_with_source( const char *source ) {
 }
 
 
+static cstrarr_t to_arr( const char *text, ... /* NULL */ ) {
+	cstrarr_t   ret   = NULL;
+	va_list     ap;
+	const char  *item = text;
+	
+	va_start(ap, text);
+	while (item) {
+		ret  = arr_add(ret, item);
+		item = va_arg(ap, const char *);
+	}
+	va_end(ap);
+	
+	return ret;
+}
+
+
+static cstrarr_t arr_add( cstrarr_t arr, const char *text ) {
+	cstrarr_t ret = NULL;
+	int       len = 0;
+	
+	if (!text) {
+		return arr;
+	}
+	
+	for (cstrarr_t cur = arr; cur && *cur; cur++) {
+		len++;
+	}
+	
+	ret = (cstrarr_t) realloc(arr, sizeof(char *) * (len + 2));
+	if (!ret) {
+		uabort("out of memory");
+	}
+	
+	ret[len] = strdup(text);
+	if (!ret[len]) {
+		uabort("out of memory");
+	}
+	
+	ret[len+1] = NULL;
+	return ret;
+}
+
+
 // - source_files must be terminated with NULL
-static int run_cc( const char *bin_file, const char *inc_dir, 
-                   const char *pp_defs, cstrarr_t src_files ) {
-	char cmd[16384];
+static int run_cc( const char *bin_file, cstrarr_t pp_defs, cstrarr_t inc_dirs,
+                   cstrarr_t src_files ) {
+	char *cmd = NULL;
+	
+	assert(src_files);
+	
+	cmd = rstrcat(cmd, bargs[A_CXX].value);
 
-	strcpy(cmd, bargs[A_CXX].value);
-
-	if (inc_dir && *inc_dir) {
-		strcat(cmd, " -I");
-		strcat(cmd, inc_dir);
+	for (; inc_dirs && *inc_dirs && **inc_dirs; inc_dirs++) {
+		cmd = rstrcat(cmd, " -I");
+		cmd = rstrcat(cmd, *inc_dirs);
 	}
 
-	if (pp_defs && *pp_defs) {
-		strcat(cmd, " -D");
-		strcat(cmd, pp_defs);
+	for (; pp_defs && *pp_defs && **pp_defs; pp_defs++) {
+		cmd = rstrcat(cmd, " -D");
+		cmd = rstrcat(cmd, *pp_defs);
 	}
 
-	strcat(cmd, " -o ");
-	strcat(cmd, bin_file);
+	cmd = rstrcat(cmd, " -o ");
+	cmd = rstrcat(cmd, bin_file);
 
-	for (; *src_files; src_files++) {
-		strcat(cmd, " ");
-		strcat(cmd, *src_files);
+	for (; *src_files && *src_files; src_files++) {
+		cmd = rstrcat(cmd, " ");
+		cmd = rstrcat(cmd, *src_files);
 	}
 
 	return system(cmd);
 }
 
 
-static void set_basis( void ) {
-	char        cwd[PATH_MAX];
-	char        *pos;
-	const char  *bd;
-	const char  *build_dirs[] = { DEPLOYED_DIR, BUILD_DIR, BUILD_INCLUDE_DIR, 
-	                              BIN_DIR };
-	int         i;
+static char *rstrcat( char *buf, const char *text ) {
+	const size_t len_cur = buf ? strlen(buf) : 0;
+	const size_t len_txt = strlen(text);
 
-	if (!getcwd(cwd, PATH_MAX)) {
-		uabort("cannot retrieve cwd");
-	}
-	
-	if (strncmp(cwd, __FILE__, strlen(cwd))) {
-		snprintf(basis_dir, sizeof(basis_dir), "%s%c%s", cwd, path_sep, 
-		         __FILE__);
-	} else {
-		strncpy(basis_dir, __FILE__, sizeof(basis_dir));
+	if (!len_txt) {
+		return buf;
 	}
 
-	pos = basis_dir + strlen(basis_dir);
-	while (--pos >= basis_dir) {
-		if (!strncmp(pos, "boot", 4)) {
-			*pos = '\0';
-			break;
-		}
+	buf = (char *) realloc(buf, len_cur + len_txt + 1);
+	if (!buf) {
+		uabort("out of memory");
 	}
 
-	if (pos <= basis_dir) {
-		uabort("basis not found");
-	}
-
-	chdir(basis_dir);
-
-	for (i = 0; i < sizeof(build_dirs)/sizeof(build_dirs[0]); i++) {
-		bd = to_basis(build_dirs[i]);
-		if (!is_dir(bd) && mkdir(bd, S_IRWXU) != 0) {
-			uabort("failed to create build directory '%s'", bd);
-		}
-	}
+	strcpy(&buf[len_cur], text);
+	return buf;
 }
 
 
@@ -465,7 +526,7 @@ static void write_config( void ) {
 	printf_config("#endif /* UNUM_CONFIG_H */");
 
 	// - don't rewrite identicial content to avoid needless rebuilds
-	cfg_file = to_basis(UCONFIG_FILE);
+	cfg_file = to_platfs(UCONFIG_FILE);
 	fp = fopen(cfg_file, "r");
 	if (fp) {
 		size_t rc = fread(buf, 1, CFG_SIZE, fp);
@@ -495,110 +556,199 @@ static void printf_config( const char *fmt, ... ) {
 
 
 static void build_pre_k( void ) {
-	char       bin_file[PATH_MAX];	
-	char       ucfg_file[PATH_MAX];
-	const char **src               = prek_manifest_files();
-	const char **sp                = src;
-
-	time_t bin_mod;	
-	int    build_pre_k = 0, rc;
-
-	strcpy(bin_file, to_basis(UKERN_FILE));
+	time_t      last_mod             = 0;
+	cstrarr_t   inc_dirs, src_files;
+	char        bin_file[PATH_MAX];
+	struct stat s;
+	int         rc;
+	
+	read_manifest(&inc_dirs, &src_files, &last_mod);
+	
+	strcpy(bin_file, UKERN_FILE);
 	strcat(bin_file, bin_ext());
-
-	strcpy(ucfg_file, to_basis(UCONFIG_FILE));
-
-	bin_mod     = file_info(bin_file).st_mtime;
-	build_pre_k = (bin_mod < file_info(ucfg_file).st_mtime); 
-	for (; !build_pre_k && *sp ; sp++) {
-		build_pre_k = (bin_mod < file_info(*sp).st_mtime); 
-	}
-
-	if (!build_pre_k) {
+	
+	if ((s = file_info(bin_file)).st_mode & S_IFREG && s.st_mtime > last_mod) {
 		return;
 	}
-
-	rc = run_cc(bin_file, strdup(to_basis(BUILD_INCLUDE_DIR)),
-	            "UNUM_BOOTSTRAP", src);
-
+	
+	rc = run_cc(bin_file, to_arr("UNUM_BOOTSTRAP", NULL), inc_dirs, src_files);
 	if (rc != 0) {
 		uabort("failed to build pre-k, rc=%d", rc);
 	}
-
-	printf("uboot: unum is ready for bootstrapping.\n");
+	
+	printf("uboot: unum is ready for bootstrapping\n");
 }
 
-
-static const char **prek_manifest_files( void ) {
- 	FILE      *fp              = NULL;
-	char      **ret            = NULL;
-	int       count            = 0;
-	int       cur              = 0;
-	char      *src_file;
-	char      buf[PATH_MAX<<2];
-
-	fp = fopen(to_basis(MANIFEST_FILE), "r");
-	if (!fp) {
-		uabort("failed to open manifest, %s", MANIFEST_FILE);
-	}
-
-	while (char *line = fgets(buf, PATH_MAX<<2, fp)) {
-		src_file = NULL;
-		for (; *line && !isspace(*line) && !src_file; line++) {
-			if (*line == ':') {
-				*line    = '\0';
-				src_file = buf;
-			}
-		}
-
-		if (!src_file) {
+/*
+ *  <sample-manifest>
+ *
+ *  core:
+ *    - .unum/src/deploy/d_deploy.cc
+ *    - .unum/src/main.cc
+ *
+ *  kernel:
+ *
+ *  build:
+ *    include:
+ *      - .unum/build/include
+ *      - .unum/src
+ *
+ */
+static void read_manifest( cstrarr_t *inc_dirs, cstrarr_t *src_files,
+                           time_t *last_mod ) {
+	FILE        *fp;
+	char        buf[8192];
+	char        *bp;
+	int         is_core = 0, is_build = 0, is_inc = 0;
+	int         line = 0;
+	struct stat s;
+	
+	*inc_dirs  = NULL;
+	*src_files = NULL;
+	
+	// - the pre-kernel only requires 'core' and 'include' content
+	fp = fopen(MANIFEST_FILE, "r");
+	while (fp && !feof(fp) && fgets(buf, sizeof(buf), fp)) {
+		line++;
+		
+		if (!strncmp(buf, MAN_SEC_CORE, strlen(MAN_SEC_CORE))) {
+			is_core  = 1;
+			is_build = is_inc = 0;
+			continue;
+				
+		} else if (!strncmp(buf, MAN_SEC_BUILD, strlen(MAN_SEC_BUILD))) {
+			is_build = 1;
+			is_core  = is_inc = 0;
+			continue;
+			
+		} else if ((is_core || is_build) && !isspace(*buf)) {
+			is_build = is_core = is_inc = 0;
+			continue;
+			
+		} else if (!is_core && !is_build) {
 			continue;
 		}
+		
+		for (bp = buf; *bp && isspace(*bp); bp++) {}
+		
+		if (is_core) {
+			if (*bp == '-' && isspace(*(bp+1)) && !isspace(*bp+2)) {
+				bp += 2;
+				
+				if (!trim_ws(bp) || !*bp ||
+				    !((s = file_info(bp)).st_mode & S_IFREG)) {
+					uabort("invalid manifest file %s, line %d", bp, line);
+				}
+				
+				if (s.st_mtime > *last_mod) {
+					*last_mod = s.st_mtime;
+				}
+				
+				*src_files = arr_add(*src_files, bp);
+			}
 
-		if (cur == count) {
-			count += 10;
-			ret = (char **) realloc(ret, sizeof(char *) * (count+1));
-			if (!ret) {
-				uabort("out of memory");
+		} else if (is_build) {
+			if (is_inc) {
+				if (*bp == '-' && isspace(*(bp + 1)) && !isspace(*bp+2)) {
+					bp += 2;
+				
+					if (!trim_ws(bp) || !*bp ||
+					    !last_header_mod(bp, last_mod)) {
+						uabort("invalid manifest include %s, line %d", bp, line);
+					}
+					
+					*inc_dirs = arr_add(*inc_dirs, bp);
+					
+				} else if (*bp && !isspace(*bp)) {
+					is_inc = 0;
+				}
+			
+			} else {
+				if (!strncmp(bp, MAN_SEC_INC, strlen(MAN_SEC_INC))) {
+					is_inc = 1;
+				}
 			}
 		}
-
-		src_file = strdup(to_root_checked(src_file));
-		if (!src_file) {
-			uabort("out of memory");
-		}
-		ret[cur++] = src_file;
-		ret[cur]   = NULL;
+	}
+	
+	if (!fp || ferror(fp)) {
+		uabort("failed to read manifest");
 	}
 
 	fclose(fp);
-	return (const char **) ret;
 }
 
 
-static const char *to_root_checked( const char *path ) {
-	static char  buf[PATH_MAX];
-	char         *bp = buf, *tmp;
-
-	for (tmp = basis_dir; *tmp; tmp++, bp++) {
-		*bp = (*tmp == '/') ? path_sep : *tmp;
-	}
-
-	while (strncmp(bp, BASIS_SUBDIR, strlen(BASIS_SUBDIR))) {
-		bp--;
-	}
-
-	for (; *path; path++, bp++) {
-		*bp = *path;
-	}
-
-	*bp = '\0';
-
-	if (!is_file(buf)) {
-		uabort("invalid manifest file %s\n", buf);
+static const char *trim_ws( char *text ) {
+	char *tp = text;
+	
+	for (tp = text; tp && *tp; tp++) {}
+	for (tp--; tp && tp > text && isspace(*tp); tp--) {
+		*tp = '\0';
 	}
 	
-	return buf;
+	return text;
+}
+
+
+static bool last_header_mod( const char *dir_path, time_t *last_mod ) {
+	DIR *dirp      = NULL;
+	bool ret       = true;
+	char *file;
+	struct stat s;
+	
+	dirp = opendir(dir_path);
+	if (!dirp) {
+		return false;
+	}
+	
+	while (struct dirent *ditem = readdir(dirp)) {
+		file = rstrcat(NULL, dir_path);
+		file = rstrcat(file, path_sep_s);
+		file = rstrcat(file, ditem->d_name);
+		
+		if (ditem->d_type == DT_DIR) {
+			if ((strcmp(ditem->d_name, ".") && strcmp(ditem->d_name, "..")) &&
+			    !last_header_mod(file, last_mod)) {
+				ret = false;
+				break;
+			}
+			
+		} else {
+			if ((s = file_info(file)).st_mode & S_IFREG &&
+			    s_ends_with(file, ".h") && s.st_mtime > *last_mod) {
+			    *last_mod = s.st_mtime;
+			}
+		}
+	}
+
+	closedir(dirp);
+	return ret;
+}
+
+
+static bool s_ends_with( const char *text, const char *suffix ) {
+	bool ret                = false;
+	const char *ctmp, *stmp;
+	
+	assert(suffix && suffix[0]);
+	
+	for (const char *cur = text; *cur && !ret; cur++) {
+		if (*cur != *suffix) {
+			continue;
+		}
+		
+		for (ctmp = cur, stmp = suffix;;ctmp++, stmp++) {
+			if (!*ctmp || !*stmp) {
+				if (!*ctmp && !*stmp) {
+					ret = true;
+				}
+				break;
+			}
+		}
+	}
+	
+	return ret;
 }
 
 
