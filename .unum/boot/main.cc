@@ -567,7 +567,7 @@ static void build_pre_k( void ) {
 	strcpy(bin_file, UKERN_FILE);
 	strcat(bin_file, bin_ext());
 	
-	if ((s = file_info(bin_file)).st_mode & S_IFREG && s.st_mtime > last_mod) {
+	if ((s = file_info(bin_file)).st_mode & S_IFREG && s.st_mtime >= last_mod) {
 		return;
 	}
 	
