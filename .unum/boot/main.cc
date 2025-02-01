@@ -62,9 +62,9 @@ static const char *parse_option( const char *optName, const char *from );
 static void parse_cmd_line( int argc, char *argv[] );
 static void printf_config( const char *fmt, ... );
 static const char *resolve_cmd( const char *cmd );
-static char *rstrcat( char *buf, const char *text );
 static void read_manifest( cstrarr_t *inc_dirs, cstrarr_t *src_files,
                            time_t *last_mod );
+static char *rstrcat( char *buf, const char *text );
 static int run_cc( const char *bin_file, cstrarr_t pp_defs, cstrarr_t inc_dirs,
                    cstrarr_t src_files );
 static int run_cc_with_source( const char *source );
@@ -223,17 +223,15 @@ static const char *resolve_cmd( const char *cmd ) {
 	const int has_dir = strstr(cmd, path_sep_s) != NULL;
 	const int is_rel  = cmd[0] == '.';
 
-	// - the principle here is to use as little and make this as
-	//   simple as possible to  establish that the path exists while 
-	//	 assuming the kernel will more carefully assess behavior later.  
-	// 	 Ooddly-formed paths are permitted, (eg. /usr/bin/../bin/cc)
 	if (is_rel) {
 		getcwd(tmp, PATH_MAX);
 		strcat(tmp, path_sep_s);
 		strcat(tmp, cmd);
 		rc = tmp;
+
 	} else if (has_dir) {
 		rc = cmd;
+
 	} else {
 		rc = find_in_path(cmd);	
 	}
@@ -502,12 +500,8 @@ static void write_config( void ) {
 	printf_config("");
 
 
-	// - the anchor of any deployment and by putting this here it ensures
-	//   that copying the deployment somewhere else will be detected by
-	//   simply running `make` again.
-	// - when unum runs, it is important to compute the basis as Git does when
-	//   starting up so that the binary associated with the code is always the
-	//   one invoked!
+	// - defining these here guarantee that if the code is moved to a different
+	//   root, the configuration will look different and trigger rebuilds
 	printf_config("#define UNUM_DIR_ROOT        \"%s\"", root_dir);
 	printf_config("#define UNUM_DIR_BASIS       \"%s\"", BASIS_DIR);
 	printf_config("#define UNUM_BASIS_DEPLOY    \"%s\"", DEPLOYED_DIR);
@@ -523,7 +517,6 @@ static void write_config( void ) {
 
 	printf_config("#endif /* UNUM_CONFIG_H */");
 
-	// - don't rewrite identicial content to avoid needless rebuilds
 	cfg_file = UCONFIG_FILE;
 	fp       = fopen(cfg_file, "r");
 	if (fp) {
@@ -574,7 +567,7 @@ static void build_pre_k( void ) {
 		uabort("failed to build pre-k, rc=%d", rc);
 	}
 	
-	printf("uboot: unum is ready for bootstrapping\n");
+	printf("uboot: prepared to bootstrap\n");
 }
 
 /*
