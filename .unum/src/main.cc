@@ -24,7 +24,7 @@ int main(int argc, char **argv) {
 			std::printf("unum: %s\n", buf);
 			return 1;
 		}
-		std::printf("unum: unum is bootstrapped\n");
+		std::printf("unum:  unum is bootstrapped\n");
 
 	} else if (argc > 1 && (!std::strcmp(argv[1], "--version") ||
 	                        !std::strcmp(argv[1], "-v"))) {
