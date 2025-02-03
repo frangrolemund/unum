@@ -9,12 +9,14 @@
 #define UNUM_DEPLOY_H
 
 #include "u_common.h"
+UNUM_NAMESPACE_BEG
 
-namespace unum {
 
-extern void deploy( void );
 
-}
+extern bool deploy( char *error, size_t len );
 
+
+
+UNUM_NAMESPACE_END
 #endif /* UNUM_DEPLOY_H */
 

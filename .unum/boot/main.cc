@@ -50,7 +50,6 @@ typedef const char **cstrarr_t;
 
 
 static cstrarr_t arr_add( cstrarr_t arr, const char *text );
-static const char *bin_ext( void );
 static void build_pre_k( void );
 static void config_basis( void );
 static void detect_path_style( void );
@@ -508,6 +507,9 @@ static void write_config( void ) {
 	printf_config("#define UNUM_BASIS_BUILD     \"%s\"", BUILD_DIR);
 	printf_config("#define UNUM_BASIS_INCLUDE   \"%s\"", BUILD_INCLUDE_DIR);
 	printf_config("#define UNUM_BASIS_BIN       \"%s\"", BIN_DIR);
+	printf_config("#define UNUM_MANIFEST        \"%s\"", MANIFEST_FILE);
+	printf_config("");
+	printf_config("#define UNUM_RUNTIME_BIN     \"%s\"", UKERN_FILE);
 	printf_config("");
 
 
@@ -556,7 +558,6 @@ static void build_pre_k( void ) {
 	read_manifest(&inc_dirs, &src_files, &last_mod);
 	
 	strcpy(bin_file, UKERN_FILE);
-	strcat(bin_file, bin_ext());
 	
 	if ((s = file_info(bin_file)).st_mode & S_IFREG && s.st_mtime >= last_mod) {
 		return;
@@ -740,20 +741,4 @@ static bool s_ends_with( const char *text, const char *suffix ) {
 	}
 	
 	return ret;
-}
-
-
-static const char *bin_ext( void ) {
-	const char *ptr = NULL;
-
-	ptr = bargs[A_CXX].value + strlen(bargs[A_CXX].value);
-	while (*--ptr) {
-		if (*ptr == '.' && strlen(ptr) > 1) {
-			return ptr;
-		} else if (*ptr == path_sep) {
-			break;
-		}
-	}
-
-	return "";
 }

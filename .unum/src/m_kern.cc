@@ -9,7 +9,7 @@
 
 #include "m_kern.h"
 
-int unum::main(int argc, char **argv) {
-	printf("!! In main kernel !!");
+int un::main(int argc, char **argv) {
+	printf("unum: TODO main kernel\n");
 	return 0;
 }

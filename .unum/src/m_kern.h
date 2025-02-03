@@ -8,10 +8,12 @@
 #ifndef UNUM_MAIN_H
 #define UNUM_MAIN_H
 
-namespace unum {
+#include "u_common.h"
+UNUM_NAMESPACE_BEG
+
 
 extern int main(int argc, char **argv);
 
-}
 
+UNUM_NAMESPACE_END
 #endif /* UNUM_MAIN_H */

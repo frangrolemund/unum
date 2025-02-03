@@ -11,16 +11,37 @@
  *  Pre-kernel
  */
 
-#include <string.h>
+#include <cstring>
 
 #include "u_common.h"
 #include "./deploy/d_deploy.h"
 
 int main(int argc, char **argv) {
-	std::printf("TODO: unum version %s\n", UNUM_VERSION_S);
-	if (argc > 1 && !strcmp(argv[1], "deploy")) {
-		unum::deploy();
+	char buf[256];
+	
+	if (argc > 1 && !std::strcmp(argv[1], "deploy")) {
+		if (!un::deploy(buf, sizeof(buf))) {
+			std::printf("unum: %s\n", buf);
+			return 1;
+		}
+		std::printf("unum: unum is bootstrapped\n");
+
+	} else if (argc > 1 && (!std::strcmp(argv[1], "--version") ||
+	                        !std::strcmp(argv[1], "-v"))) {
+		std::printf("unum version %s\n", UNUM_VERSION_S);
+		
+	} else if (argc < 2 || (argc > 1 && (!std::strcmp(argv[1], "--help") ||
+	                                     !std::strcmp(argv[1], "-h")))) {
+		std::printf("usage: unum [-v | --version] [-h | --help] deploy\n");
+		std::printf("\nNOTE: This binary is built for pre-kernel "
+		            "deployment.\n");
+		
+	} else {
+		std::printf("unum: '%s' is not an unum command\n", argv[1]);
+		return 1;
+	
 	}
+	
 	return 0;
 }
 
@@ -32,7 +53,7 @@ int main(int argc, char **argv) {
  
 #include "m_kern.h"
 int main(int argc, char **argv) {
-	return unum::main(argc, argv);
+	return un::main(argc, argv);
 }
 
 #endif /* UNUM_BOOTSTRAP */

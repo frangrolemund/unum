@@ -11,6 +11,9 @@
 #include <cstdio>
 #include "u_config.h"
 
+#define UNUM_NAMESPACE_BEG   namespace un {
+#define UNUM_NAMESPACE_END   }
+
 
 #define UNUM_VERSION_MAJOR     0
 #define UNUM_VERSION_MINOR     1
