@@ -150,3 +150,67 @@ also in the `core` category.
 and the configured compiler.  It supports a single sub-category of 'include' 
 that defines a list of C++ include diretories to use for compilation.
 
+## Bootstrapping
+
+When the unum repository is first cloned or wishes to perform a clean rebuild,
+it first performs bootstrapping before the unum kernel then takes over
+responsibility for deployment activities.  The bootstrapping process aims for 
+immediate self-sufficiency of the toolchain from a single primitive - the C++ 
+compiler suite.  Much of the needless complexity of modern development is 
+derived from the vast graph of inter-dependencies of modern tools and 
+third-party libraries.  The principle of 'one' in unum addresses this by 
+embedding as much of what is needed for complete development in this single 
+repository's codebase.  Unum purposely advances the 'batteries-included' 
+philosophy to ensure its developers maximize their autonomy.
+
+	NOTE:
+	In the best interest of unum consumers, there are two exceptions to
+	this embedding strategy:
+
+	1.  The C++ compiler and related tools.  The compiler is the bridge into
+	the local platform ecosystem and is expected to offer the best possible
+	results for general workloads.  Additionally, the choice of C++ for unum for
+	both internal and transpilation of its language is very intentional to 
+	ensure developers are not unknowingly committed to custom third-party 
+	compilers or toolchains at some later date.
+
+	2.  Highly-specialized third-parties.  Most notably with security 
+	implementations where mistakes could have serious consequences, but 
+	additionally with standardized complex processing often found in databases
+	(ie. SQLite, PostgreSQL, etc), a third-party will be integrated over
+	building customized implementations.  This will be a complex gray area that
+	requires significant rigor to minimize these dependencies.  In this case, 
+	the balance must be drawn between correctness/safety and developer
+	independencies.
+
+Bootstrapping involves three phases of ingestion, pre-kernel and deployment.
+
+Ingestion initiates the process through conventional native tooling (typically
+`make`) to detect the local compiler and encode it in to unum for deployment.
+
+Pre-kernel is the action of a simplified program (uboot) to compile only the 
+most fundamental parts of the `unum` kernel used for deploying respository 
+code to then rebuild the full kernel.
+
+Deployment is the rebuilding of the unum kernel with all source in the 
+repository for runtime access.
+
+The bootstrapping sequence follows this pseudo-code, assuming a recently
+cloned repository:
+	* run `make` in the root
+	  * `make` creates `uboot`
+	  * `make` executes `uboot` passing the current compiler tools to it
+	    * `uboot` identifies the system type and creates a shared header
+	    * `uboot` compiles `unum` as a pre-kernel, with only the code necessary
+	      for deployment using the manifest in the config directory of of the 
+		  basis directory `./.unum`
+	  * `make` executes the `unum` pre-kernel to deploy itself
+	    * `unum` pre-kernel rebuilds with all source in the manifest and 
+		  replaces its own binary
+		* `unum` pre-kernel re-executes the kernel again, requesting deployment
+		  verification, completing the process.
+
+It is allowable to re-run the top-level `make` file after bootstrapping, which
+will implicitly re-deploy using the most recent kernel unless the configuration
+or boot program has been modified.
+

@@ -11,20 +11,27 @@
  *  Pre-kernel
  */
 
+#include <climits>
+#include <cstdlib>
 #include <cstring>
 
 #include "u_common.h"
 #include "./deploy/d_deploy.h"
 
 int main(int argc, char **argv) {
-	char buf[256];
+	char buf[PATH_MAX * 2];
 	
 	if (argc > 1 && !std::strcmp(argv[1], "deploy")) {
 		if (!un::deploy(buf, sizeof(buf))) {
-			std::printf("unum: %s\n", buf);
+			std::fprintf(stderr, "unum: %s\n", buf);
 			return 1;
 		}
-		std::printf("unum:  unum is bootstrapped\n");
+		std::strcpy(buf, UNUM_RUNTIME_BIN);
+		std::strcat(buf, " deploy --bootstrap");
+		if (std::system(buf) != 0) {
+			std::fprintf(stderr, "unum: failed to execute bootstrapped kernel");
+			return 1;
+		}
 
 	} else if (argc > 1 && (!std::strcmp(argv[1], "--version") ||
 	                        !std::strcmp(argv[1], "-v"))) {
@@ -37,7 +44,7 @@ int main(int argc, char **argv) {
 		            "deployment.\n");
 		
 	} else {
-		std::printf("unum: '%s' is not an unum command\n", argv[1]);
+		std::fprintf(stderr, "unum: '%s' is not an unum command\n", argv[1]);
 		return 1;
 	
 	}
