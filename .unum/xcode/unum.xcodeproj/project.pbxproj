@@ -48,7 +48,6 @@
 		A19C4E892D45662B0028969E /* unum.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = unum.xcodeproj; sourceTree = "<group>"; };
 		A1A1E7052D4D08CA008B71A7 /* unum.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = unum.xcodeproj; sourceTree = "<group>"; };
 		A1A1E7422D4D08CA008B71A7 /* unum.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = unum.xcodeproj; sourceTree = "<group>"; };
-		A1B126D82D5798C100E4F319 /* unum.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = unum.xcodeproj; sourceTree = "<group>"; };
 		A1B1271A2D5798C100E4F319 /* unum.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = unum.xcodeproj; sourceTree = "<group>"; };
 		A1D92CEB2D4A626200CB6682 /* unum.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = unum.xcodeproj; sourceTree = "<group>"; };
 		A1D92D272D4A626200CB6682 /* unum.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = unum.xcodeproj; sourceTree = "<group>"; };
@@ -236,13 +235,6 @@
 		};
 		A1A1E7472D4D08CA008B71A7 /* Products */ = {
 			isa = PBXGroup;
-			name = Products;
-			sourceTree = "<group>";
-		};
-		A1B1271D2D5798C100E4F319 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-			);
 			name = Products;
 			sourceTree = "<group>";
 		};
@@ -473,10 +465,6 @@
 				{
 					ProductGroup = A16C69C72D4924EF00B02833 /* Products */;
 					ProjectRef = A16C69A32D4924EF00B02833 /* unum.xcodeproj */;
-				},
-				{
-					ProductGroup = A1B1271D2D5798C100E4F319 /* Products */;
-					ProjectRef = A1B126D82D5798C100E4F319 /* unum.xcodeproj */;
 				},
 				{
 					ProductGroup = A1FD86F62D4FA9D400049643 /* Products */;

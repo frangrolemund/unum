@@ -14,6 +14,7 @@ namespace un {
 
 
 extern bool deploy( char *error, size_t len );
+extern int deploy_status( void );
 
 
 }

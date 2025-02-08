@@ -46,6 +46,30 @@ class deployment {
 	}
 
 
+	int status( void ) {
+		cstrarr_t inc_dirs, src_files;
+		
+		try {
+			set_root();
+			read_manifest(&inc_dirs, &src_files);
+
+			int ret = 0;
+			time_t bin_mod = file_info(UNUM_RUNTIME_BIN).st_mtime;
+			for (cstrarr_t cur = src_files; *cur; cur++) {
+				if (file_info(*cur).st_mtime > bin_mod) {
+					ret++;
+				}
+			}
+			return ret;
+			
+		} catch (...) {
+			return -1;
+		}
+		
+		return 0;
+	}
+
+
 	~deployment() {
 		for (int i = 0; i < num_alloc; i++) {
 			::free(heap_allocs[i]);
@@ -377,4 +401,8 @@ const char *deployment::MAN_SEC_INC    = "include:";
 
 bool un::deploy( char *error, size_t len ) {
 	return deployment().deploy(error, len);
+}
+
+int un::deploy_status( void ) {
+	return deployment().status();
 }
