@@ -13,7 +13,8 @@ It is intended to be cloned, modified and maintained by its [licensees](./.unum/
 ## Prerequisites
 
 - GNU make
-- C++ compiler (specifically Xcode w/ command-line tools on macOS)
+- C++ compiler (specifically [Xcode](https://developer.apple.com/xcode/) 
+w/ command-line tools on macOS)
 
 
 ## Bootstrapping
