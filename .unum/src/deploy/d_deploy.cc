@@ -12,6 +12,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+#include "u_common.h"
 #include "d_deploy.h"
 
 class deployment {

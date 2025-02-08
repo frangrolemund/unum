@@ -57,7 +57,7 @@ int main(int argc, char **argv) {
 /*
  *  Kernel
  */
- 
+
 #include "m_kern.h"
 int main(int argc, char **argv) {
 	return un::main(argc, argv);
