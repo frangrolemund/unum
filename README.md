@@ -22,8 +22,11 @@ w/ command-line tools on macOS)
 This toolchain ingests the local C++ references and takes over all building of
 the included C++ source in this tree through a process of 'bootstrapping' that
 is performed at least once.  To bootstrap, in the root of the the repository
-ensure that you have access to your toolchain and run `make` to build the
-initial version of the `unum` service.
+ensure that you have access to your toolchain and run `make` from a terminal
+prompt to build the initial version of the `unum` service.
+
+Bootstrapping must precede general development workflow, including the use of
+IDEs.
 
 
 ## Development
