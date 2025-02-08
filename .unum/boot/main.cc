@@ -568,7 +568,7 @@ static void build_pre_k( void ) {
 		uabort("failed to build pre-k, rc=%d", rc);
 	}
 	
-	printf("uboot: bootstrapping prepared\n");
+	printf("unum: bootstrapping prepared\n");
 }
 
 /*

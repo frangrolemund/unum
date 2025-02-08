@@ -30,8 +30,16 @@ int un::main(int argc, char **argv) {
 		}
 
 	} else if (argc > 1 && !std::strcmp(argv[1], "deploy")) {
+		char buf[256];
+		if (!un::deploy(buf, sizeof(buf))) {
+			std::printf("unum: failed to deploy kernel");
+			return 1;
+		}
+		
 		if (argc > 2 && !std::strcmp(argv[2], "--bootstrap")) {
-	    	std::printf("unum:  unum is bootstrapped.\n");
+			// - it would be interesting to avoid a rebuild in favor of
+			//   checking the output of the bootstrapping process.
+	    	std::printf("unum: unum is bootstrapped\n");
 		}
 
 	} else if (argc > 1 && !std::strcmp(argv[1], "--version")) {
