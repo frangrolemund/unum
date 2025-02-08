@@ -29,6 +29,8 @@
 
 /* Begin PBXFileReference section */
 		A1354F9F2D57C6FE007B5490 /* unum.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = unum.xcodeproj; sourceTree = "<group>"; };
+		A1354FC92D57C7AB007B5490 /* unum.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = unum.xcodeproj; sourceTree = "<group>"; };
+		A13550232D57C863007B5490 /* unum.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = unum.xcodeproj; sourceTree = "<group>"; };
 		A16C69332D490EE100B02833 /* unum.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = unum.xcodeproj; sourceTree = "<group>"; };
 		A16C69A32D4924EF00B02833 /* unum.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = unum.xcodeproj; sourceTree = "<group>"; };
 		A182674B2D563E1E00B1D3EF /* unum.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = unum.xcodeproj; sourceTree = "<group>"; };
@@ -52,6 +54,8 @@
 		A1B1271A2D5798C100E4F319 /* unum.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = unum.xcodeproj; sourceTree = "<group>"; };
 		A1D92CEB2D4A626200CB6682 /* unum.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = unum.xcodeproj; sourceTree = "<group>"; };
 		A1D92D272D4A626200CB6682 /* unum.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = unum.xcodeproj; sourceTree = "<group>"; };
+		A1E7E4B82D57CA3C00D84340 /* unum.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = unum.xcodeproj; sourceTree = "<group>"; };
+		A1E7E5322D57CB4E00D84340 /* unum.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = unum.xcodeproj; sourceTree = "<group>"; };
 		A1F1412C2D50F51C0099DF1F /* unum.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = unum.xcodeproj; sourceTree = "<group>"; };
 		A1F1416D2D50F51C0099DF1F /* unum.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = unum.xcodeproj; sourceTree = "<group>"; };
 		A1F8316B2D4BB374007AB1D2 /* unum.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = unum.xcodeproj; sourceTree = "<group>"; };
@@ -61,22 +65,22 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		A18267BB2D5651C100B1D3EF /* Exceptions for ".unum" folder in "unum" target */ = {
+		A1E7E4D02D57CA9300D84340 /* Exceptions for ".unum" folder in "unum_pk" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				src/deploy/d_deploy.cc,
-				src/m_kern.cc,
-				src/main.cc,
-			);
-			target = A18267B02D56515100B1D3EF /* unum */;
-		};
-		A187F0922D47DDCF00B05C44 /* Exceptions for ".unum" folder in "unum_pk" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				src/deploy/d_deploy.cc,
-				src/main.cc,
+				.unum/src/deploy/d_deploy.cc,
+				.unum/src/main.cc,
 			);
 			target = A187F0872D47DDC400B05C44 /* unum_pk */;
+		};
+		A1E7E4D42D57CA9E00D84340 /* Exceptions for ".unum" folder in "unum" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				.unum/src/deploy/d_deploy.cc,
+				.unum/src/m_kern.cc,
+				.unum/src/main.cc,
+			);
+			target = A18267B02D56515100B1D3EF /* unum */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
@@ -84,14 +88,11 @@
 		A19A48A92D3EE38900D5A7B0 /* .unum */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				A187F0922D47DDCF00B05C44 /* Exceptions for ".unum" folder in "unum_pk" target */,
-				A18267BB2D5651C100B1D3EF /* Exceptions for ".unum" folder in "unum" target */,
+				A1E7E4D02D57CA9300D84340 /* Exceptions for ".unum" folder in "unum_pk" target */,
+				A1E7E4D42D57CA9E00D84340 /* Exceptions for ".unum" folder in "unum" target */,
 			);
-			explicitFileTypes = {
-				config/manifest.umy = text.yaml;
-			};
 			name = .unum;
-			path = ..;
+			path = ../../..;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -115,6 +116,16 @@
 
 /* Begin PBXGroup section */
 		A1354FA22D57C6FE007B5490 /* Products */ = {
+			isa = PBXGroup;
+			name = Products;
+			sourceTree = "<group>";
+		};
+		A1354FCB2D57C7AB007B5490 /* Products */ = {
+			isa = PBXGroup;
+			name = Products;
+			sourceTree = "<group>";
+		};
+		A13550332D57C863007B5490 /* Products */ = {
 			isa = PBXGroup;
 			name = Products;
 			sourceTree = "<group>";
@@ -261,6 +272,16 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		A1E7E4CB2D57CA3C00D84340 /* Products */ = {
+			isa = PBXGroup;
+			name = Products;
+			sourceTree = "<group>";
+		};
+		A1E7E5452D57CB4E00D84340 /* Products */ = {
+			isa = PBXGroup;
+			name = Products;
+			sourceTree = "<group>";
+		};
 		A1F141702D50F51C0099DF1F /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -389,6 +410,10 @@
 					ProjectRef = A19C4E602D45662B0028969E /* unum.xcodeproj */;
 				},
 				{
+					ProductGroup = A1354FCB2D57C7AB007B5490 /* Products */;
+					ProjectRef = A1354FC92D57C7AB007B5490 /* unum.xcodeproj */;
+				},
+				{
 					ProductGroup = A187EFF42D47D49500B05C44 /* Products */;
 					ProjectRef = A187EFC82D47D49500B05C44 /* unum.xcodeproj */;
 				},
@@ -399,6 +424,14 @@
 				{
 					ProductGroup = A19A495E2D3EE40100D5A7B0 /* Products */;
 					ProjectRef = A19A49342D3EE40100D5A7B0 /* unum.xcodeproj */;
+				},
+				{
+					ProductGroup = A13550332D57C863007B5490 /* Products */;
+					ProjectRef = A13550232D57C863007B5490 /* unum.xcodeproj */;
+				},
+				{
+					ProductGroup = A1E7E5452D57CB4E00D84340 /* Products */;
+					ProjectRef = A1E7E5322D57CB4E00D84340 /* unum.xcodeproj */;
 				},
 				{
 					ProductGroup = A1F831AD2D4BB374007AB1D2 /* Products */;
@@ -427,6 +460,10 @@
 				{
 					ProductGroup = A1B1271F2D5798C100E4F319 /* Products */;
 					ProjectRef = A1B1271A2D5798C100E4F319 /* unum.xcodeproj */;
+				},
+				{
+					ProductGroup = A1E7E4CB2D57CA3C00D84340 /* Products */;
+					ProjectRef = A1E7E4B82D57CA3C00D84340 /* unum.xcodeproj */;
 				},
 				{
 					ProductGroup = A19C4E8E2D45662B0028969E /* Products */;
@@ -544,10 +581,7 @@
 					"UNUM_BOOTSTRAP=1",
 					"$(inherited)",
 				);
-				HEADER_SEARCH_PATHS = (
-					"${PROJECT_DIR}/../src/**",
-					"${PROJECT_DIR}/../deployed/build/include",
-				);
+				HEADER_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				UNUM_BASIS_DIR = "$(inherited)";
 				UNUM_BUILD_DIR = "$(inherited)";
@@ -566,10 +600,7 @@
 					"UNUM_BOOTSTRAP=1",
 					"$(inherited)",
 				);
-				HEADER_SEARCH_PATHS = (
-					"${PROJECT_DIR}/../src/**",
-					"${PROJECT_DIR}/../deployed/build/include",
-				);
+				HEADER_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				UNUM_BASIS_DIR = "$(inherited)";
 				UNUM_BUILD_DIR = "$(inherited)";
@@ -580,7 +611,7 @@
 		A19A48542D3EE26900D5A7B0 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
+				ALWAYS_SEARCH_USER_PATHS = YES;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -632,8 +663,8 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
-					"${PROJECT_DIR}/../src/**",
-					"${PROJECT_DIR}/../deployed/build/include",
+					"${PROJECT_DIR}/../../src",
+					"${PROJECT_DIR}/../../deployed/build/include",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MACOSX_DEPLOYMENT_TARGET = 14.7;
@@ -641,15 +672,16 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
-				UNUM_BASIS_DIR = "${PROJECT_DIR}/../../";
+				UNUM_BASIS_DIR = "${PROJECT_DIR}/../../../";
 				UNUM_BUILD_DIR = "${UNUM_BASIS_DIR}.unum/deployed/build";
+				USE_HEADERMAP = NO;
 			};
 			name = Debug;
 		};
 		A19A48552D3EE26900D5A7B0 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
+				ALWAYS_SEARCH_USER_PATHS = YES;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -695,16 +727,17 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
-					"${PROJECT_DIR}/../src/**",
-					"${PROJECT_DIR}/../deployed/build/include",
+					"${PROJECT_DIR}/../../src",
+					"${PROJECT_DIR}/../../deployed/build/include",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MACOSX_DEPLOYMENT_TARGET = 14.7;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = macosx;
-				UNUM_BASIS_DIR = "${PROJECT_DIR}/../../";
+				UNUM_BASIS_DIR = "${PROJECT_DIR}/../../../";
 				UNUM_BUILD_DIR = "${UNUM_BASIS_DIR}.unum/deployed/build";
+				USE_HEADERMAP = NO;
 			};
 			name = Release;
 		};
