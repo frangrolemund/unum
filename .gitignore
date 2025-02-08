@@ -63,5 +63,3 @@ dkms.conf
 
 # Xcode
 xcuserdata/
-xcshareddata/
-project.xcworkspace/
