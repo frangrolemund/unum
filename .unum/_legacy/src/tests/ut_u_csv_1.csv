@@ -1,0 +1,23 @@
+u_bool,u_path,u_desc,u_text_ml,u_num
+FALSE,/usr/bin/pgrep,search process table,"The ""pgrep"" command searches the process table 
+
+on the running system and prints the process 
+
+IDs of all processes that match the criteria 
+
+given on the command line.",
+TRUE,/usr/sbin/chroot,change root directory,,-4
+TRUE,/etc/passwd,,"User Database
+
+Note that this file is consulted directly only when the system is running
+
+in single-user mode.  At other times this information is provided by
+
+Open Directory.",100.2
+,/bin/sleep,delay,"The ""sleep"" command suspends execution for a minimum of seconds.
+
+If the sleep command receives a signal, it takes the standard action.
+
+When the SIGINFO signal is received, the estimate of the amount of
+
+seconds left to sleep is printed on the standard output.",8

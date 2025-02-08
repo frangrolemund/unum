@@ -1,3 +1,6 @@
+# Editor
+*.swp
+
 # Prerequisites
 *.d
 
@@ -50,3 +53,15 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+# Project build
+.unum/boot/uboot
+.unum/deployed/
+
+# macOS
+.DS_Store
+
+# Xcode
+xcuserdata/
+xcshareddata/
+project.xcworkspace/
