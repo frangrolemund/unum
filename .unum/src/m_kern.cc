@@ -9,7 +9,7 @@
 #include <cstring>
 
 #include "m_kern.h"
-#include "d_deploy.h"
+#include "./deploy/d_deploy.h"
 
 int un::main(int argc, char **argv) {
 	if (argc > 1 && !std::strcmp(argv[1], "status")) {
@@ -24,7 +24,7 @@ int un::main(int argc, char **argv) {
 			return 1;
 			
 		default:
-			std::printf("%u file%s modified\n", count, count ? "s" : "");
+			std::printf("%u file%s modified\n", count, (count > 1) ? "s" : "");
 			break;
 		}
 
