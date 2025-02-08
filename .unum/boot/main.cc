@@ -100,7 +100,7 @@ static void write_config( void );
 static struct { arg_e arg;
                 const char *name; 
                 const char *value; } bargs[] = {{ A_CXX, "cpp", NULL },
-	                                            { A_LD,  "link", NULL }
+                                                { A_LD,  "link", NULL }
                                                };
 static char        root_dir[PATH_MAX];
 static char        config[CFG_SIZE];
