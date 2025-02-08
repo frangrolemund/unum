@@ -19,6 +19,6 @@
 #define _unum_version(m, n, p) _unum_as_s(m.n.p)
 #define UNUM_VERSION_S         _unum_version(UNUM_VERSION_MAJOR,\
                                              UNUM_VERSION_MINOR,\
-											 UNUM_VERSION_PATCH)
+                                             UNUM_VERSION_PATCH)
 											 
 #endif /* UNUM_COMMON_H */
