@@ -8,6 +8,7 @@
 #include <cstdio>
 #include <cstring>
 
+#include "u_common.h"
 #include "m_kern.h"
 #include "./deploy/d_deploy.h"
 
@@ -28,17 +29,19 @@ int un::main(int argc, char **argv) {
 			break;
 		}
 
-	}
-	else if (argc > 1 && !std::strcmp(argv[1], "deploy")) {
+	} else if (argc > 1 && !std::strcmp(argv[1], "deploy")) {
 		if (argc > 2 && !std::strcmp(argv[2], "--bootstrap")) {
-	    	// following a principle of trust-but-verify, the kernel validates
-	    	// its own deployment created by the pre-kernel and only signs off
-	    	// if it arrives at a similar result.
 	    	std::printf("unum:  unum is bootstrapped.\n");
 		}
 
-	} else {
-		std::printf("unum: TODO\n");
+	} else if (argc > 1 && !std::strcmp(argv[1], "--version")) {
+		std::printf("unum version %s\n", UNUM_VERSION_S);
+		
+	} else if (argc > 1) {
+		std::printf("unum: '%s' is not an unum command.  See 'unum --help'\n",
+		            argv[1]);
+		return 1;
 	}
+
 	return 0;
 }
