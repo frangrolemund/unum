@@ -42,9 +42,17 @@ int un::main(int argc, char **argv) {
 	    	std::printf("unum: unum is bootstrapped\n");
 		}
 
-	} else if (argc > 1 && !std::strcmp(argv[1], "--version")) {
+	} else if (argc > 1 && (!std::strcmp(argv[1], "--version") ||
+						    !std::strcmp(argv[1], "-v"))) {
 		std::printf("unum version %s\n", UNUM_VERSION_S);
 		
+	} else if (argc > 1 && (!std::strcmp(argv[1], "--help") ||
+	                        !std::strcmp(argv[1], "-h"))) {
+		std::printf("usage: unum [-v | --version] [-h | --help] <command>\n");
+		std::printf("\ncommands:\n");
+		std::printf("   status    Show the unum deployment status\n");
+		std::printf("   deploy    Rebuild and deploy the service\n");
+	
 	} else if (argc > 1) {
 		std::printf("unum: '%s' is not an unum command.  See 'unum --help'\n",
 		            argv[1]);
