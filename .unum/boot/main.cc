@@ -549,7 +549,7 @@ static void printf_config( const char *fmt, ... ) {
 
 
 static void build_pre_k( void ) {
-	time_t      last_mod             = 0;
+	time_t      last_mod;
 	cstrarr_t   inc_dirs, src_files;
 	char        bin_file[PATH_MAX];
 	struct stat s;
@@ -597,6 +597,7 @@ static void read_manifest( cstrarr_t *inc_dirs, cstrarr_t *src_files,
 	
 	*inc_dirs  = NULL;
 	*src_files = NULL;
+	*last_mod  = file_info(MANIFEST_FILE).st_mtime;     // ...detect deletions
 	
 	// - the pre-kernel only requires 'core' and 'include' content
 	fp = fopen(MANIFEST_FILE, "r");
