@@ -2,7 +2,9 @@ kernel:
   - .unum/src/m_kern.cc
 
 core:
+  - .unum/src/util/except.cc
   - .unum/src/deploy/d_deploy.cc
+  - .unum/src/deploy/d_manifest.cc
   - .unum/src/main.cc
 
 

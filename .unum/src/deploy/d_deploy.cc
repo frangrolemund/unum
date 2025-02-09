@@ -13,7 +13,8 @@
 #include <unistd.h>
 
 #include "u_common.h"
-#include "d_deploy.h"
+#include "deploy/d_deploy.h"
+#include "util/except.h"
 
 class deployment {
 	public:
@@ -33,7 +34,7 @@ class deployment {
 			run_cc(UNUM_RUNTIME_BIN, inc_dirs, src_files);
 			
 		} catch (uabort &err) {
-			std::strncpy(error, err.msg, len);
+			std::strncpy(error, err.message, len);
 			return false;
 			
 		}
@@ -81,19 +82,7 @@ class deployment {
 	private:
 	
 	typedef const char **cstrarr_t;
-			
-	class uabort {
-		public:
-		char msg[512];
-		uabort(const char *fmt, ...) {
-			va_list ap;
-
-			va_start(ap, fmt);
-			vsnprintf(msg, sizeof(msg), fmt, ap);
-			va_end(ap);
-		}
-	};
-	
+	typedef un::exception uabort;
 	
 	void set_root( void ) {
 		if (chdir(UNUM_DIR_ROOT) != 0) {
