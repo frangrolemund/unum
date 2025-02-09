@@ -34,17 +34,17 @@
 #include <cstdlib>
 
 
-typedef enum {
+enum arg_e {
 	A_CXX = 0,
 	A_LD,
 
 	A_COUNT
-} arg_e;
+};
 
-typedef enum {
+enum platform_e {
 	P_UNKNOWN = 0,
 	P_MACOS,
-} platform_e;
+};
 
 typedef const char **cstrarr_t;
 
