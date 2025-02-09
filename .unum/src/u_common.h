@@ -13,7 +13,7 @@
 
 
 #define UNUM_VERSION_MAJOR     0
-#define UNUM_VERSION_MINOR     1
+#define UNUM_VERSION_MINOR     2
 #define UNUM_VERSION_PATCH     0
 #define _unum_as_s(m)          #m
 #define _unum_version(m, n, p) _unum_as_s(m.n.p)
