@@ -54,6 +54,7 @@ static void build_pre_k( void );
 static void config_basis( void );
 static void detect_path_style( void );
 static void detect_platform( void );
+static bool detect_platform_macos( void );
 static struct stat file_info( const char *path );
 static char *find_in_path( const char *cmd );
 static bool last_header_mod( const char *dir_path, time_t *last_mod );
@@ -64,9 +65,9 @@ static const char *resolve_cmd( const char *cmd );
 static void read_manifest( cstrarr_t *inc_dirs, cstrarr_t *src_files,
                            time_t *last_mod );
 static char *rstrcat( char *buf, const char *text );
-static int run_cc( const char *bin_file, cstrarr_t pp_defs, cstrarr_t inc_dirs,
+static int run_cc( const char *bin_file, cstrarr_t ccflags, cstrarr_t inc_dirs,
                    cstrarr_t src_files );
-static int run_cc_with_source( const char *source );
+static int run_cc_with_source( const char *source, cstrarr_t ccflags );
 static bool s_ends_with( const char *text, const char *suffix );
 static cstrarr_t to_arr( const char *text, ... /* NULL */ );
 static const char *to_repo( const char *path, bool from_basis = true );
@@ -92,7 +93,7 @@ static void write_config( void );
 #define is_file(p)         (file_info((p)).st_mode & S_IFREG)
 #define is_dir(p)          (file_info((p)).st_mode & S_IFDIR)
 #define path_sep_s         ((char [2]) { path_sep, '\0' })
-#define CFG_SIZE           32768
+#define CFG_SIZE           65535
 #define IS_UNIX            (platform == P_MACOS)
 #define assert(e)          if (!(e)) uabort("assert failed, line %d", __LINE__)
 
@@ -107,6 +108,7 @@ static char        config[CFG_SIZE];
 static char        *cfg_offset               = config;
 static char        path_sep                  = '\0';
 static platform_e  platform                  = P_UNKNOWN;
+static cstrarr_t   cpp_flags                 = NULL;
 static FILE        *uberr                    = NULL;
 
 
@@ -293,14 +295,7 @@ static void config_basis( void ) {
 
 
 static void detect_platform( void ) {
-	if (run_cc_with_source(
-	           "#include <Carbon/Carbon.h>\n"	
-	           "#include <cstdio>\n\n"
-	           "int main(int argc, char **argv) {\n"
-	           "  printf(\"hello unum\");\n"
-	           "}\n"
-	          ) == 0) {
-		platform = P_MACOS;
+	if (detect_platform_macos()) {
 		return;
 	}
 
@@ -308,8 +303,30 @@ static void detect_platform( void ) {
 }
 
 
-static int run_cc_with_source( const char *source ) {
-	const char *tmp_env[]         = { "TMPDIR", "TMP", "TEMP", "TEMPDIR", 
+static bool detect_platform_macos( void ) {
+	cstrarr_t test_flags = to_arr("-Werror", "-std=c++11", NULL);
+
+	if (run_cc_with_source(
+	           "#include <Carbon/Carbon.h>\n"	
+	           "#include <cstdio>\n\n"
+	           "void print_hello( void ) noexcept {\n"
+	           "  printf(\"hello unum\");\n"
+	           "}\n"
+	           "int main(int argc, char **argv) {\n"
+	           "  print_hello();\n"
+	           "}\n",
+	           test_flags) == 0) {
+		platform  = P_MACOS;
+		cpp_flags = test_flags;
+		return true;
+	}
+	
+	return false;
+}
+
+
+static int run_cc_with_source( const char *source, cstrarr_t ccflags ) {
+	const char *tmp_env[]         = { "TMPDIR", "TMP", "TEMP", "TEMPDIR",
 	                                  NULL };
 	const char **tp               = tmp_env;
 	int        rc;
@@ -339,7 +356,7 @@ static int run_cc_with_source( const char *source ) {
 	}
 	fclose(src_file);
 
-	rc = run_cc(bin_name, NULL, NULL, to_arr(src_name, NULL));
+	rc = run_cc(bin_name, ccflags, NULL, to_arr(src_name, NULL));
 
 	unlink(src_name);
 	unlink(bin_name);
@@ -392,7 +409,7 @@ static cstrarr_t arr_add( cstrarr_t arr, const char *text ) {
 
 
 // - arrays must be terminated with NULL
-static int run_cc( const char *bin_file, cstrarr_t pp_defs, cstrarr_t inc_dirs,
+static int run_cc( const char *bin_file, cstrarr_t ccflags, cstrarr_t inc_dirs,
                    cstrarr_t src_files ) {
 	char *cmd = NULL;
 	
@@ -405,9 +422,9 @@ static int run_cc( const char *bin_file, cstrarr_t pp_defs, cstrarr_t inc_dirs,
 		cmd = rstrcat(cmd, *inc_dirs);
 	}
 
-	for (; pp_defs && *pp_defs && **pp_defs; pp_defs++) {
-		cmd = rstrcat(cmd, " -D");
-		cmd = rstrcat(cmd, *pp_defs);
+	for (; ccflags && *ccflags && **ccflags; ccflags++) {
+		cmd = rstrcat(cmd, " ");
+		cmd = rstrcat(cmd, *ccflags);
 	}
 
 	cmd = rstrcat(cmd, " -o ");
@@ -476,6 +493,7 @@ static void write_config( void ) {
 	FILE        *fp;
 	char        buf[CFG_SIZE];
 	const char  *cfg_file;
+	char        *flags_s      = NULL;
 
 	memset(config, 0, sizeof(config));
 	printf_config("#ifndef UNUM_CONFIG_H");	
@@ -514,6 +532,14 @@ static void write_config( void ) {
 
 
 	printf_config("#define UNUM_TOOL_CXX        \"%s\"", bargs[A_CXX].value);
+	for (cstrarr_t flcur = cpp_flags; flcur && *flcur; flcur++) {
+		if (flcur != cpp_flags) {
+			flags_s = rstrcat(flags_s, " ");
+		}
+		flags_s = rstrcat(flags_s, *flcur);
+	}
+	printf_config("#define UNUM_TOOL_CXX_FLAGS  \"%s\"",
+	              flags_s ? flags_s : "");
 	printf_config("#define UNUM_TOOL_LD         \"%s\"", bargs[A_LD].value);
 	printf_config("");
 
@@ -563,7 +589,9 @@ static void build_pre_k( void ) {
 		return;
 	}
 	
-	rc = run_cc(bin_file, to_arr("UNUM_BOOTSTRAP", NULL), inc_dirs, src_files);
+	cpp_flags = arr_add(cpp_flags, "-DUNUM_BOOTSTRAP");
+	
+	rc = run_cc(bin_file, cpp_flags, inc_dirs, src_files);
 	if (rc != 0) {
 		uabort("failed to build pre-k, rc=%d", rc);
 	}

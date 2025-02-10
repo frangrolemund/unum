@@ -66,6 +66,34 @@ above and the strategy below motivated a holistic, single mono-repo for as much
 behavior as possible, recommending that the significant version differences of 
 C++ as a language over the years not influence the architectural decisions here.
 
+Unum depends on a minimum language version of C++11, which is a compromise
+between the fairly ancient C++ of the late 90s and the most modern variants.
+Man of the features of the language are intentionally not used here to keep
+the kernel as simple as possible, while allowing any adopters to instrument
+their code as they wish.
+
+
+The style adopted in the kernel is one of maximum objectivity whenever 
+possible.  That means that things common in C++ are intentionally not chosen
+to avoid subtle errors of misunderstanding that can easily occur with a language
+where nearly everything down to its primitives may be replaced with custom
+behavior.  This means in the kernel code:
+	* No exceptions or exception handling unless it is used to guard against
+	uncontrollable third-party dependencies.  Errors are propagated using
+	classically procedural techniques from functions/methods returning data
+	either as a return code or by referenced parameter.
+
+	* No streams.  Much like their natural counterpart, streams can hide a great
+	deal beneath the surface.  Unexpected resource allocations or processing
+	from an innocent stream operator are impossible to predict by simply
+	reading code.
+
+	* Limited operator overloading, and only then with very `explicit` 
+	semantics.  Much like streams, it is nearly impossible to trace the 
+	implications of using a fundamental operator that has been quietly 
+	overloaded.
+
+
 
 ## Strategy
 
@@ -97,6 +125,7 @@ mature, general-purpose programming language available.
 of hierarchical precision.  It is intended that common tasks are very easy and
 fully automatic, while more demanding ones may be accomplished by increasing 
 the precision of their definition with increasingly descriptive syntax.
+
 
 
 ## Tactics
