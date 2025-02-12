@@ -77,7 +77,7 @@ The style adopted in the kernel is one of maximum objectivity whenever
 possible.  That means that things common in C++ are intentionally not chosen
 to avoid subtle errors of misunderstanding that can easily occur with a language
 where nearly everything down to its primitives may be replaced with custom
-behavior.  This means in the kernel code:
+behavior.  This means in the unum-kernel code:
 	* No exceptions or exception handling unless it is used to guard against
 	uncontrollable third-party dependencies.  Errors are propagated using
 	classically procedural techniques from functions/methods returning data
@@ -92,6 +92,13 @@ behavior.  This means in the kernel code:
 	semantics.  Much like streams, it is nearly impossible to trace the 
 	implications of using a fundamental operator that has been quietly 
 	overloaded.
+
+	* Limited meta-programming (templates) to only those scenarios where there
+	would be significant code duplication or obtuse semantics otherwise.  The
+	classic container classes are a good example of an opportunity for
+	metaprogramming that legitimately makes it easier and more reliable to use
+	them.  Every effort will be to minimize arbitrary other cases to reduce
+	the overall complexity of the codebase.
 
 
 
