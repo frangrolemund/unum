@@ -13,7 +13,7 @@
 namespace un {
 
 
-extern int main(int argc, char **argv);
+extern int main(int argc, char **argv) noexcept;
 
 
 }

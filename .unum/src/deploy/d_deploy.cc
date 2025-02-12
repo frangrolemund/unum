@@ -278,7 +278,9 @@ class deployment {
 		char *cmd = NULL;
 	
 		cmd = rstrcat(cmd, UNUM_TOOL_CXX);
-
+		cmd = rstrcat(cmd, " ");
+		cmd = rstrcat(cmd, UNUM_TOOL_CXX_FLAGS);
+		
 		for (; inc_dirs && *inc_dirs && **inc_dirs; inc_dirs++) {
 			cmd = rstrcat(cmd, " -I");
 			cmd = rstrcat(cmd, *inc_dirs);
@@ -399,10 +401,10 @@ const char *deployment::MAN_SEC_BUILD  = "build:";
 const char *deployment::MAN_SEC_INC    = "include:";
 
 
-bool un::deploy( char *error, size_t len ) {
+bool un::deploy( char *error, size_t len ) noexcept {
 	return deployment().deploy(error, len);
 }
 
-int un::deploy_status( void ) {
+int un::deploy_status( void ) noexcept {
 	return deployment().status();
 }

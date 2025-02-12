@@ -13,8 +13,8 @@
 namespace un {
 
 
-extern bool deploy( char *error, size_t len );
-extern int deploy_status( void );
+extern bool deploy( char *error, size_t len ) noexcept;
+extern int deploy_status( void ) noexcept;
 
 
 }

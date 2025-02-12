@@ -12,7 +12,7 @@
 #include "m_kern.h"
 #include "./deploy/d_deploy.h"
 
-int un::main(int argc, char **argv) {
+int un::main(int argc, char **argv) noexcept {
 	if (argc > 1 && !std::strcmp(argv[1], "status")) {
 		int count = un::deploy_status();
 		switch (count) {
