@@ -10,6 +10,7 @@
 
 #include <cstdio>
 #include "u_config.h"
+#include "u_types.h"
 
 
 #define UNUM_VERSION_MAJOR     0

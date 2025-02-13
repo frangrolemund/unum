@@ -7,6 +7,15 @@
 	objects = {
 
 /* Begin PBXCopyFilesBuildPhase section */
+		A128ADD02D5E2F7800BA9B36 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
 		A18267AF2D56515100B1D3EF /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -29,6 +38,8 @@
 
 /* Begin PBXFileReference section */
 		A116C7D12D5CD3F500AF2D9E /* unum.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = unum.xcodeproj; sourceTree = "<group>"; };
+		A128ADAA2D5E2AD000BA9B36 /* unum.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = unum.xcodeproj; sourceTree = "<group>"; };
+		A128ADD22D5E2F7800BA9B36 /* ut_all */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ut_all; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1354F9F2D57C6FE007B5490 /* unum.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = unum.xcodeproj; sourceTree = "<group>"; };
 		A1354FC92D57C7AB007B5490 /* unum.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = unum.xcodeproj; sourceTree = "<group>"; };
 		A13550232D57C863007B5490 /* unum.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = unum.xcodeproj; sourceTree = "<group>"; };
@@ -68,6 +79,15 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		A128ADDC2D5E2F9500BA9B36 /* Exceptions for ".unum" folder in "ut_all" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				.unum/src/tests/t_test.cc,
+				.unum/src/tests/ut_all_debug.cc,
+				.unum/src/tests/ut_d_manifest.cc,
+			);
+			target = A128ADD12D5E2F7800BA9B36 /* ut_all */;
+		};
 		A1E7E4D02D57CA9300D84340 /* Exceptions for ".unum" folder in "unum_pk" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -95,6 +115,7 @@
 			exceptions = (
 				A1E7E4D02D57CA9300D84340 /* Exceptions for ".unum" folder in "unum_pk" target */,
 				A1E7E4D42D57CA9E00D84340 /* Exceptions for ".unum" folder in "unum" target */,
+				A128ADDC2D5E2F9500BA9B36 /* Exceptions for ".unum" folder in "ut_all" target */,
 			);
 			name = .unum;
 			path = ../../..;
@@ -103,6 +124,13 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		A128ADCF2D5E2F7800BA9B36 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A18267AE2D56515100B1D3EF /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -121,6 +149,11 @@
 
 /* Begin PBXGroup section */
 		A116C7E72D5CD3F500AF2D9E /* Products */ = {
+			isa = PBXGroup;
+			name = Products;
+			sourceTree = "<group>";
+		};
+		A128ADC02D5E2AD000BA9B36 /* Products */ = {
 			isa = PBXGroup;
 			name = Products;
 			sourceTree = "<group>";
@@ -223,6 +256,7 @@
 			children = (
 				A187F0882D47DDC400B05C44 /* unum_pk */,
 				A18267B12D56515100B1D3EF /* unum */,
+				A128ADD22D5E2F7800BA9B36 /* ut_all */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -341,6 +375,25 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		A128ADD12D5E2F7800BA9B36 /* ut_all */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A128ADD62D5E2F7800BA9B36 /* Build configuration list for PBXNativeTarget "ut_all" */;
+			buildPhases = (
+				A128ADCE2D5E2F7800BA9B36 /* Sources */,
+				A128ADCF2D5E2F7800BA9B36 /* Frameworks */,
+				A128ADD02D5E2F7800BA9B36 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ut_all;
+			packageProductDependencies = (
+			);
+			productName = ut_all;
+			productReference = A128ADD22D5E2F7800BA9B36 /* ut_all */;
+			productType = "com.apple.product-type.tool";
+		};
 		A18267B02D56515100B1D3EF /* unum */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = A18267B52D56515100B1D3EF /* Build configuration list for PBXNativeTarget "unum" */;
@@ -388,6 +441,9 @@
 				BuildIndependentTargetsInParallel = 1;
 				LastUpgradeCheck = 1620;
 				TargetAttributes = {
+					A128ADD12D5E2F7800BA9B36 = {
+						CreatedOnToolsVersion = 16.2;
+					};
 					A18267B02D56515100B1D3EF = {
 						CreatedOnToolsVersion = 16.2;
 					};
@@ -430,12 +486,12 @@
 					ProjectRef = A187F0282D47D78B00B05C44 /* unum.xcodeproj */;
 				},
 				{
-					ProductGroup = A1A1E7452D4D08CA008B71A7 /* Products */;
-					ProjectRef = A1A1E7052D4D08CA008B71A7 /* unum.xcodeproj */;
-				},
-				{
 					ProductGroup = A1E7E4CB2D57CA3C00D84340 /* Products */;
 					ProjectRef = A1E7E4B82D57CA3C00D84340 /* unum.xcodeproj */;
+				},
+				{
+					ProductGroup = A1A1E7452D4D08CA008B71A7 /* Products */;
+					ProjectRef = A1A1E7052D4D08CA008B71A7 /* unum.xcodeproj */;
 				},
 				{
 					ProductGroup = A19A48DE2D3EE39500D5A7B0 /* Products */;
@@ -460,6 +516,10 @@
 				{
 					ProductGroup = A1A1E7472D4D08CA008B71A7 /* Products */;
 					ProjectRef = A1A1E7422D4D08CA008B71A7 /* unum.xcodeproj */;
+				},
+				{
+					ProductGroup = A128ADC02D5E2AD000BA9B36 /* Products */;
+					ProjectRef = A128ADAA2D5E2AD000BA9B36 /* unum.xcodeproj */;
 				},
 				{
 					ProductGroup = A182678E2D563E1E00B1D3EF /* Products */;
@@ -554,11 +614,19 @@
 			targets = (
 				A187F0872D47DDC400B05C44 /* unum_pk */,
 				A18267B02D56515100B1D3EF /* unum */,
+				A128ADD12D5E2F7800BA9B36 /* ut_all */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXSourcesBuildPhase section */
+		A128ADCE2D5E2F7800BA9B36 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A18267AD2D56515100B1D3EF /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -576,6 +644,28 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
+		A128ADD72D5E2F7800BA9B36 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = Q9UQ5RW44T;
+				ENABLE_HARDENED_RUNTIME = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		A128ADD82D5E2F7800BA9B36 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = Q9UQ5RW44T;
+				ENABLE_HARDENED_RUNTIME = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		A18267B62D56515100B1D3EF /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -776,6 +866,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		A128ADD62D5E2F7800BA9B36 /* Build configuration list for PBXNativeTarget "ut_all" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A128ADD72D5E2F7800BA9B36 /* Debug */,
+				A128ADD82D5E2F7800BA9B36 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		A18267B52D56515100B1D3EF /* Build configuration list for PBXNativeTarget "unum" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
