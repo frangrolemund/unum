@@ -1,3 +1,14 @@
+## Project Status
+This work is in early pre-production.
+
+- Its justification is mostly in place with the MANIFESTO and a concept for the
+DESIGN of transpiling to C++ is reasonbly solid.
+
+- Tree organization, source structure is getting clearer.
+
+- The bootstrapping is functional for creating the barebones unum kernel.
+
+
 ## Overview
 The `unum` repository is an implementation of a purely systemic toolchain as
 outlined in its [manifesto](./.unum/doc/MANIFESTO.md) and described in its [design](./.unum/doc/DESIGN.md).  
